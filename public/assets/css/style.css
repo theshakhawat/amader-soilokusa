@@ -1,0 +1,169 @@
+/* ==========================================================================
+   আগামীর শৈলকুপা (Agamir Shailkupa) - Custom Stylesheet & Font Faces
+   ========================================================================== */
+
+/* Google Fonts Import for Bangla & English */
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Tiro+Bangla:ital@0;1&family=Inter:wght@400;500;600;700&display=swap');
+
+/* Custom @font-face Declarations for Bangla Typography */
+@font-face {
+  font-family: 'SolaimanLipi';
+  src: local('SolaimanLipi'),
+       url('https://cdn.jsdelivr.net/gh/atik-ulla/solaimanlipi-font@master/SolaimanLipi.woff2') format('woff2'),
+       url('https://fonts.gstatic.com/s/hindsiliguri/v12/ijwTs5juQtsyLLR5jN4cxBEoTI7ax9k0.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kalpurush';
+  src: local('Kalpurush'),
+       url('https://fonts.gstatic.com/s/notosansbengali/v20/Cn-SJsCGWQxOjaGwMQ6fIiMywrNJIky6nvd8BjzVMvJx2mcSPVFpVEqE-6KmsolKudCk8izI0lc.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AgamirBangla';
+  src: local('Hind Siliguri'),
+       local('Noto Sans Bengali'),
+       url('https://fonts.gstatic.com/s/hindsiliguri/v12/ijwTs5juQtsyLLR5jN4cxBEoTI7ax9k0.woff2') format('woff2');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --brand-red: #c8102e;
+  --brand-red-dark: #a30b24;
+  --brand-green: #0b4622;
+  --brand-green-mid: #146c32;
+  --brand-green-footer: #07381b;
+  --brand-cream: #f6f2e6;
+  --page-bg: #f4f5f7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: 'Hind Siliguri', 'Noto Sans Bengali', 'AgamirBangla', 'SolaimanLipi', 'Inter', sans-serif;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+body {
+  background-color: var(--page-bg);
+  color: #1f2937;
+  font-family: 'Hind Siliguri', 'Noto Sans Bengali', 'AgamirBangla', 'SolaimanLipi', 'Inter', sans-serif;
+  overflow-x: hidden;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg, video, iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Heading Underline Accent Bar (Matches Reference Design) */
+.section-underline {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 3px;
+  background-color: rgba(11, 70, 34, 0.12);
+  margin-top: 6px;
+  margin-bottom: 14px;
+  border-radius: 999px;
+}
+
+.section-underline::before {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 3px;
+  background-color: var(--brand-green);
+  border-radius: 999px;
+}
+
+/* Hero Banner Gradient Overlay */
+.hero-overlay {
+  background: linear-gradient(
+    90deg,
+    rgba(4, 45, 20, 0.96) 0%,
+    rgba(6, 58, 26, 0.92) 34%,
+    rgba(9, 70, 32, 0.68) 54%,
+    rgba(10, 60, 28, 0.18) 76%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+}
+
+@media (max-width: 767px) {
+  .hero-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(4, 45, 20, 0.92) 0%,
+      rgba(6, 58, 26, 0.88) 65%,
+      rgba(4, 45, 20, 0.94) 100%
+    );
+  }
+}
+
+/* President Message Card Warm Cream Surface */
+.president-card-bg {
+  background: linear-gradient(135deg, #f8f4e9 0%, #f3ede0 100%);
+  border: 1px solid #e9e1cf;
+}
+
+/* Donation CTA Banner Gradient */
+.donation-banner-bg {
+  background: radial-gradient(circle at 78% 45%, #d92638 0%, #b30e22 48%, #7d0615 100%);
+}
+
+/* Soft Card Elevation & Hover Transitions */
+.ui-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 3px 14px rgba(15, 23, 42, 0.045);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.sub-card-hover {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.sub-card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+}
+
+/* Subtle Foliage Watermark on Feature Cards */
+.feature-card-watermark {
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card-watermark::after {
+  content: '';
+  position: absolute;
+  right: -10px;
+  bottom: -12px;
+  width: 95px;
+  height: 95px;
+  background-image: radial-gradient(circle, rgba(20, 108, 50, 0.04) 20%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Hero Slide Transition */
+.hero-slide {
+  transition: opacity 0.6s ease-in-out;
+}
