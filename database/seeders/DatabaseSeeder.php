@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,11 +16,33 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // 1. Seed Roles and Permissions
+        $this->call(RoleAndPermissionSeeder::class);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // 2. Create Default Super Admin
+        $superAdmin = User::firstOrCreate(
+            ['email' => 'admin@agamirshailkupa.org'],
+            [
+                'name' => 'সুপার অ্যাডমিন',
+                'phone' => '01700123456',
+                'password' => Hash::make('Admin@123456'),
+                'status' => 'active',
+                'email_verified_at' => now(),
+            ]
+        );
+        $superAdmin->syncRoles(['super-admin']);
+
+        // 3. Create Default Member
+        $member = User::firstOrCreate(
+            ['email' => 'member@agamirshailkupa.org'],
+            [
+                'name' => 'সাধারণ সদস্য',
+                'phone' => '01800123456',
+                'password' => Hash::make('Member@123456'),
+                'status' => 'active',
+                'email_verified_at' => now(),
+            ]
+        );
+        $member->syncRoles(['member']);
     }
 }

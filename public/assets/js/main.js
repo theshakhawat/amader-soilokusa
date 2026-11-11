@@ -149,6 +149,33 @@ function toggleMobileSubmenu() {
   }
 }
 
+// User Dropdown Handlers (Desktop & Mobile)
+function toggleDesktopUserDropdown(event) {
+  if (event) event.stopPropagation();
+  const dropdown = document.getElementById('desktop-user-dropdown-menu');
+  if (!dropdown) return;
+  dropdown.classList.toggle('hidden');
+}
+
+function toggleMobileUserDropdown() {
+  const links = document.getElementById('mobile-user-dropdown-links');
+  const arrow = document.getElementById('mobile-user-dropdown-arrow');
+  if (!links) return;
+  links.classList.toggle('hidden');
+  if (arrow) {
+    arrow.classList.toggle('rotate-180');
+  }
+}
+
+// Close desktop dropdown on outside click
+document.addEventListener('click', function(e) {
+  const container = document.getElementById('desktop-user-dropdown-container');
+  const dropdown = document.getElementById('desktop-user-dropdown-menu');
+  if (container && dropdown && !container.contains(e.target)) {
+    dropdown.classList.add('hidden');
+  }
+});
+
 // Universal Modal Controller
 function openInfoModal(title, category, dateOrMeta, description) {
   const modal = document.getElementById('info-modal');
