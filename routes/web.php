@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\PrideController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PlaceController;
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\SocialLinkController;
@@ -79,6 +80,9 @@ Route::get('/committee', [HomeController::class, 'committeeIndex'])->name('commi
 // Public Page: Contact (যোগাযোগ পেজ ও AJAX ফর্ম সাবমিট)
 Route::get('/contact', [\App\Http\Controllers\ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [\App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
+
+// Public Dynamic Page (কাস্টম পেজ ভিউ)
+Route::get('/page/{slug}', [HomeController::class, 'customPage'])->name('custom-page.show');
 // Authentication Routes (Guest Only)
 Route::middleware('guest')->group(function () {
     // Login
@@ -213,4 +217,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     // Contact Messages Management (যোগাযোগের বার্তাসমূহ)
     Route::resource('contact-messages', \App\Http\Controllers\Admin\ContactMessageController::class)->names('contact-messages')->except(['create', 'store', 'edit', 'update']);
     Route::patch('contact-messages/{contactMessage}/toggle-read', [\App\Http\Controllers\Admin\ContactMessageController::class, 'toggleRead'])->name('contact-messages.toggle-read');
+
+    // Pages Management (পেজ ব্যবস্থাপনা)
+    Route::resource('pages', PageController::class)->names('pages')->except(['show']);
+    Route::patch('pages/{page}/status', [PageController::class, 'toggleStatus'])->name('pages.status');
 });

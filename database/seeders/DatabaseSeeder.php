@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             PlaceSeeder::class,
             PrideSeeder::class,
             ProjectSeeder::class,
+            PageSeeder::class,
         ]);
 
         // 2. Create Default Super Admin

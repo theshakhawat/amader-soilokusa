@@ -18,8 +18,8 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          MESSAGE="${{ secrets.DOMAIN || '' }} Deployment Started!
-
+          MESSAGE="Deployment Started!
+          Domain: ${{ secrets.DOMAIN || '' }}
           Repository: ${GITHUB_REPOSITORY}
           Branch: ${GITHUB_REF_NAME}
           Commit: ${GITHUB_SHA}"
@@ -58,9 +58,10 @@ jobs:
             php artisan optimize:clear
 
             echo "Running database migrations..."
-            php artisan migrate:fresh --seed
+            php artisan migrate --force
 
-            # echo "Seeding the database..."
+            echo "Seeding the database..."
+            php artisan db:seed --class=PageSeeder --force
             # php artisan db:seed --force
 
             echo "Creating storage link if missing..."
@@ -83,17 +84,14 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          MESSAGE="✅ ${{ secrets.DOMAIN || '' }} Deployment Successful!
+          MESSAGE="✅ Deployment Successful!
 
+          Domain: ${{ secrets.DOMAIN || '' }}
           Repository: ${GITHUB_REPOSITORY}
           Branch: ${GITHUB_REF_NAME}
           Commit: ${GITHUB_SHA}
-
-          🌐 Website: https://${{ secrets.DOMAIN }}
-
+          Website: https://${{ secrets.DOMAIN }}
           🎉 Deployment completed successfully!
-
-          👉 Please visit your website and check if everything is working correctly."
 
           curl --fail --silent --show-error \
             -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
@@ -108,16 +106,15 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          MESSAGE="❌ ${{ secrets.DOMAIN || '' }} Deployment Failed!
-
+          MESSAGE="❌ Deployment Failed!
+          Domain: ${{ secrets.DOMAIN || '' }}
           Repository: ${GITHUB_REPOSITORY}
           Branch: ${GITHUB_REF_NAME}
           Commit: ${GITHUB_SHA}
 
           Please check the GitHub Actions logs for the error.
 
-          Logs:
-          ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          Check Logs: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
           curl --fail --silent --show-error \
             -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \

@@ -10,6 +10,7 @@ use App\Models\Event;
 use App\Models\GalleryItem;
 use App\Models\HeroBanner;
 use App\Models\Notice;
+use App\Models\Page;
 use App\Models\PresidentMessage;
 use App\Models\Pride;
 use App\Models\Place;
@@ -445,5 +446,17 @@ class HomeController extends Controller
         })->values();
 
         return view('pages.committee', compact('activeCommittee', 'president', 'secondRowMembers', 'otherMembers'));
+    }
+
+    /**
+     * Public Dynamic Custom Page View
+     */
+    public function customPage(string $slug): View
+    {
+        $page = Page::where('slug', $slug)
+            ->where('status', true)
+            ->firstOrFail();
+
+        return view('pages.custom-page', compact('page'));
     }
 }
