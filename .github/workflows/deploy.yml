@@ -58,10 +58,10 @@ jobs:
             php artisan optimize:clear
 
             echo "Running database migrations..."
-            php artisan migrate --force
+            php artisan migrate:fresh --seed
 
-            echo "Seeding Database"
-            php artisan db:seed
+            # echo "Seeding the database..."
+            # php artisan db:seed --force
 
             echo "Creating storage link if missing..."
             if [ ! -e public/storage ] && [ ! -L public/storage ]; then
