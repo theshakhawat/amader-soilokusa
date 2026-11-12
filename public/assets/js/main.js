@@ -3,62 +3,34 @@
  * Handles Hero Slider, Mobile Responsive Drawer, Modals, Filter Tabs & Smooth Scroll
  */
 
-const heroSlides = [
-  {
-    title: 'আগামীর শৈলকুপা',
-    subtitle: 'শৈলকুপার উন্নয়ন, ঐতিহ্য ও মানুষের অগ্রযাত্রার একটি স্বেচ্ছাসেবী সামাজিক উদ্যোগ',
-    primaryBtn: 'আমাদের সম্পর্কে জানুন',
-    primaryTarget: '#about-section',
-    secondaryBtn: 'ভিডিও দেখুন',
-    badge: 'ঐতিহ্য ও উন্নয়ন'
-  },
-  {
-    title: 'শিক্ষা ও মানবিক শৈলকুপা',
-    subtitle: 'মেধাবী শিক্ষার্থীদের বৃত্তি প্রদান, ফ্রি মেডিকেল ক্যাম্প ও সামাজিক কল্যাণে আমরা অঙ্গীকারবদ্ধ',
-    primaryBtn: 'চলমান কার্যক্রম দেখুন',
-    primaryTarget: '#events-section',
-    secondaryBtn: 'ভিডিও দেখুন',
-    badge: 'সামাজিক কল্যাণ'
-  },
-  {
-    title: 'সবুজ ও সমৃদ্ধ শৈলকুপা',
-    subtitle: 'বৃক্ষরোপণ কর্মসূচি, টেকসই অবকাঠামো উন্নয়ন ও ঐতিহাসিক স্থান সংরক্ষণে সম্মিলিত প্রয়াস',
-    primaryBtn: 'উন্নয়ন প্রকল্পসমূহ',
-    primaryTarget: '#projects-section',
-    secondaryBtn: 'ভিডিও দেখুন',
-    badge: 'সবুজ শৈলকুপা'
-  }
-];
+// Dynamic Hero Slider Data from Backend
+const heroSlides = Array.isArray(window.dynamicHeroSlides) ? window.dynamicHeroSlides : [];
 
 let currentSlideIndex = 0;
 let heroInterval = null;
 
 function renderHeroSlide(index) {
+  if (!heroSlides || heroSlides.length === 0) return;
   const slide = heroSlides[index];
+  if (!slide) return;
+
   const titleEl = document.getElementById('hero-title');
   const subtitleEl = document.getElementById('hero-subtitle');
   const primaryBtnText = document.getElementById('hero-primary-btn-text');
   const primaryBtnLink = document.getElementById('hero-primary-btn');
+  const secondaryBtn = document.getElementById('hero-secondary-btn');
+  const secondaryBtnText = document.getElementById('hero-secondary-btn-text');
   const contentBox = document.getElementById('hero-content-box');
 
-  // 1. Switch Carousel Background Images (Smooth Cross-fade & Ken Burns effect)
+  // 1. Switch Carousel Background Images (Smooth Cross-fade without forced scale zoom)
   const slideItems = document.querySelectorAll('.hero-slide-item');
   slideItems.forEach((item, idx) => {
-    const img = item.querySelector('img');
     if (idx === index) {
       item.classList.remove('opacity-0', 'pointer-events-none', 'z-0');
       item.classList.add('opacity-100', 'z-10');
-      if (img) {
-        img.classList.remove('scale-100');
-        img.classList.add('scale-105');
-      }
     } else {
       item.classList.remove('opacity-100', 'z-10');
       item.classList.add('opacity-0', 'pointer-events-none', 'z-0');
-      if (img) {
-        img.classList.remove('scale-105');
-        img.classList.add('scale-100');
-      }
     }
   });
 
@@ -67,10 +39,29 @@ function renderHeroSlide(index) {
     contentBox.style.opacity = '0';
     contentBox.style.transform = 'translateY(6px)';
     setTimeout(() => {
-      if (titleEl) titleEl.textContent = slide.title;
-      if (subtitleEl) subtitleEl.textContent = slide.subtitle;
-      if (primaryBtnText) primaryBtnText.textContent = slide.primaryBtn;
-      if (primaryBtnLink) primaryBtnLink.setAttribute('href', slide.primaryTarget);
+      if (titleEl) titleEl.textContent = slide.title || '';
+      if (subtitleEl) {
+        if (slide.subtitle) {
+          subtitleEl.textContent = slide.subtitle;
+          subtitleEl.classList.remove('hidden');
+        } else {
+          subtitleEl.textContent = '';
+          subtitleEl.classList.add('hidden');
+        }
+      }
+      if (primaryBtnText) primaryBtnText.textContent = slide.primaryBtn || '';
+      if (primaryBtnLink) primaryBtnLink.setAttribute('href', slide.primaryTarget || '#');
+
+      if (secondaryBtn) {
+        if (slide.secondaryBtn) {
+          if (secondaryBtnText) secondaryBtnText.textContent = slide.secondaryBtn;
+          secondaryBtn.setAttribute('href', slide.secondaryTarget || '#');
+          secondaryBtn.classList.remove('hidden');
+        } else {
+          secondaryBtn.classList.add('hidden');
+        }
+      }
+
       contentBox.style.opacity = '1';
       contentBox.style.transform = 'translateY(0)';
     }, 220);
@@ -90,18 +81,21 @@ function renderHeroSlide(index) {
 }
 
 function nextHeroSlide() {
+  if (!heroSlides || heroSlides.length <= 1) return;
   currentSlideIndex = (currentSlideIndex + 1) % heroSlides.length;
   renderHeroSlide(currentSlideIndex);
   resetHeroTimer();
 }
 
 function prevHeroSlide() {
+  if (!heroSlides || heroSlides.length <= 1) return;
   currentSlideIndex = (currentSlideIndex - 1 + heroSlides.length) % heroSlides.length;
   renderHeroSlide(currentSlideIndex);
   resetHeroTimer();
 }
 
 function goToHeroSlide(index) {
+  if (!heroSlides || heroSlides.length <= 1) return;
   currentSlideIndex = index;
   renderHeroSlide(currentSlideIndex);
   resetHeroTimer();
@@ -109,9 +103,17 @@ function goToHeroSlide(index) {
 
 function resetHeroTimer() {
   if (heroInterval) clearInterval(heroInterval);
-  // Auto scroll every 5 seconds (5000ms)
-  heroInterval = setInterval(nextHeroSlide, 5000);
+  if (heroSlides && heroSlides.length > 1) {
+    heroInterval = setInterval(nextHeroSlide, 5000);
+  }
 }
+
+// Initialize Hero Slider if present
+document.addEventListener('DOMContentLoaded', () => {
+  if (heroSlides && heroSlides.length > 1) {
+    resetHeroTimer();
+  }
+});
 
 // Expose slider controls to window scope
 window.nextHeroSlide = nextHeroSlide;

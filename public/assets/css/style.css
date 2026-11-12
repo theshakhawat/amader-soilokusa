@@ -94,15 +94,15 @@ img, svg, video, iframe {
   border-radius: 999px;
 }
 
-/* Hero Banner Gradient Overlay */
+/* Hero Banner Gradient Overlay (Lightened so background image stays vibrant & clean) */
 .hero-overlay {
   background: linear-gradient(
     90deg,
-    rgba(4, 45, 20, 0.96) 0%,
-    rgba(6, 58, 26, 0.92) 34%,
-    rgba(9, 70, 32, 0.68) 54%,
-    rgba(10, 60, 28, 0.18) 76%,
-    rgba(0, 0, 0, 0.05) 100%
+    rgba(6, 45, 20, 0.88) 0%,
+    rgba(8, 55, 25, 0.75) 28%,
+    rgba(10, 65, 30, 0.45) 50%,
+    rgba(10, 60, 28, 0.12) 70%,
+    rgba(0, 0, 0, 0.0) 100%
   );
 }
 
@@ -110,9 +110,9 @@ img, svg, video, iframe {
   .hero-overlay {
     background: linear-gradient(
       180deg,
-      rgba(4, 45, 20, 0.92) 0%,
-      rgba(6, 58, 26, 0.88) 65%,
-      rgba(4, 45, 20, 0.94) 100%
+      rgba(6, 45, 20, 0.82) 0%,
+      rgba(8, 55, 25, 0.70) 65%,
+      rgba(6, 45, 20, 0.78) 100%
     );
   }
 }
@@ -167,3 +167,114 @@ img, svg, video, iframe {
 .hero-slide {
   transition: opacity 0.6s ease-in-out;
 }
+
+/* ==========================================================================
+   Rich Text Content & Typography Styles (Quill HTML Rendering)
+   ========================================================================== */
+.rich-text-content h1,
+.prose h1 {
+  font-size: 1.875rem !important; /* 30px */
+  line-height: 2.25rem !important;
+  font-weight: 800 !important;
+  color: #0b4622 !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.rich-text-content h2,
+.prose h2 {
+  font-size: 1.5rem !important; /* 24px */
+  line-height: 2rem !important;
+  font-weight: 700 !important;
+  color: #0b4622 !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 0.625rem !important;
+}
+
+.rich-text-content h3,
+.prose h3 {
+  font-size: 1.25rem !important; /* 20px */
+  line-height: 1.75rem !important;
+  font-weight: 700 !important;
+  color: #0b4622 !important;
+  margin-top: 1.25rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.rich-text-content h4,
+.prose h4 {
+  font-size: 1.125rem !important; /* 18px */
+  line-height: 1.5rem !important;
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+  margin-top: 1rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.rich-text-content p,
+.prose p {
+  margin-top: 0.625rem !important;
+  margin-bottom: 0.625rem !important;
+  line-height: 1.8 !important;
+  color: #374151 !important;
+}
+
+.rich-text-content strong,
+.prose strong,
+.rich-text-content b,
+.prose b {
+  font-weight: 700 !important;
+  color: #111827 !important;
+}
+
+.rich-text-content em,
+.prose em,
+.rich-text-content i,
+.prose i {
+  font-style: italic !important;
+}
+
+.rich-text-content ul,
+.prose ul {
+  list-style-type: disc !important;
+  padding-left: 1.5rem !important;
+  margin-top: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.rich-text-content ol,
+.prose ol {
+  list-style-type: decimal !important;
+  padding-left: 1.5rem !important;
+  margin-top: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.rich-text-content li,
+.prose li {
+  margin-top: 0.375rem !important;
+  margin-bottom: 0.375rem !important;
+  line-height: 1.75 !important;
+  color: #374151 !important;
+}
+
+.rich-text-content a,
+.prose a {
+  color: #c8102e !important;
+  text-decoration: underline !important;
+  font-weight: 600 !important;
+}
+
+.rich-text-content blockquote,
+.prose blockquote {
+  border-left: 4px solid #0b4622 !important;
+  padding-left: 1rem !important;
+  font-style: italic !important;
+  color: #4b5563 !important;
+  background-color: #f8fafc !important;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+  border-radius: 0 0.5rem 0.5rem 0 !important;
+  margin: 1rem 0 !important;
+}
+

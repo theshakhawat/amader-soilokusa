@@ -7,101 +7,117 @@
   <!-- =====================================================================
        3. HERO BANNER CAROUSEL SLIDER (Auto-scrolls every 5s & Shows Controls on Hover)
        ===================================================================== -->
+  @php
+    $hasBanners = isset($heroBanners) && $heroBanners->count() > 0;
+  @endphp
+
+  @if($hasBanners)
   <section id="hero-section" class="relative w-full overflow-hidden bg-[#06381a] select-none group">
     <!-- Carousel Background Images (Smooth Multi-Slide Fade) -->
-    <div class="relative min-h-[360px] sm:min-h-[400px] md:min-h-[440px] flex items-center">
+    <div class="relative min-h-[380px] sm:min-h-[440px] md:min-h-[480px] flex items-center">
       <div id="hero-slider-images" class="absolute inset-0 w-full h-full overflow-hidden">
-        <!-- Slide 1 Image: Shailkupa Shahi Mosque & Green Nature -->
-        <div class="hero-slide-item absolute inset-0 w-full h-full opacity-100 z-10 transition-opacity duration-1000 ease-in-out">
-          <img
-            src="{{ asset('assets/images/hero-shailkupa.jpg') }}"
-            alt="ঐতিহাসিক শৈলকুপা শাহী মসজিদ ও প্রকৃতি"
-            class="w-full h-full object-cover object-center sm:object-right transition-transform duration-[6000ms] ease-out scale-100"
-          />
-        </div>
-        <!-- Slide 2 Image: Shaheed Minar & Education/Humanitarian -->
-        <div class="hero-slide-item absolute inset-0 w-full h-full opacity-0 pointer-events-none z-0 transition-opacity duration-1000 ease-in-out">
-          <img
-            src="{{ asset('assets/images/about-shaheed-minar.jpg') }}"
-            alt="শৈলকুপা কেন্দ্রীয় শহীদ মিনার ও ঐতিহ্য"
-            class="w-full h-full object-cover object-center sm:object-right transition-transform duration-[6000ms] ease-out scale-100"
-          />
-        </div>
-        <!-- Slide 3 Image: Green Roads & Infrastructure Development -->
-        <div class="hero-slide-item absolute inset-0 w-full h-full opacity-0 pointer-events-none z-0 transition-opacity duration-1000 ease-in-out">
-          <img
-            src="{{ asset('assets/images/project-road.jpg') }}"
-            alt="সবুজ ও সমৃদ্ধ শৈলকুপার উন্নয়ন প্রকল্প"
-            class="w-full h-full object-cover object-center sm:object-right transition-transform duration-[6000ms] ease-out scale-100"
-          />
-        </div>
+        @foreach($heroBanners as $idx => $banner)
+          <div class="hero-slide-item absolute inset-0 w-full h-full {{ $idx === 0 ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0' }} transition-opacity duration-1000 ease-in-out">
+            <img
+              src="{{ $banner->image_url }}"
+              alt="{{ $banner->title }}"
+              class="w-full h-full object-cover object-center"
+            />
+          </div>
+        @endforeach
       </div>
 
       <!-- Deep Forest Green Gradient Overlay -->
       <div class="hero-overlay absolute inset-0 z-10 pointer-events-none"></div>
 
-      <!-- Slider Left Arrow (Shows on Hover with Smooth Slide-in) -->
-      <button
-        type="button"
-        onclick="prevHeroSlide()"
-        aria-label="Previous Slide"
-        class="absolute left-2 sm:left-5 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-white/90 hover:bg-white text-[#c8102e] shadow-xl flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:-translate-x-3 sm:group-hover:translate-x-0 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
-      >
-        <i class="ri-arrow-left-s-line text-lg sm:text-2xl font-bold"></i>
-      </button>
+      <!-- Slider Arrows (Show only if more than 1 banner) -->
+      @if($heroBanners->count() > 1)
+        <!-- Slider Left Arrow -->
+        <button
+          type="button"
+          onclick="prevHeroSlide()"
+          aria-label="Previous Slide"
+          class="absolute left-2 sm:left-5 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-white/90 hover:bg-white text-[#c8102e] shadow-xl flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:-translate-x-3 sm:group-hover:translate-x-0 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
+        >
+          <i class="ri-arrow-left-s-line text-lg sm:text-2xl font-bold"></i>
+        </button>
 
-      <!-- Slider Right Arrow (Shows on Hover with Smooth Slide-in) -->
-      <button
-        type="button"
-        onclick="nextHeroSlide()"
-        aria-label="Next Slide"
-        class="absolute right-2 sm:right-5 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-white/90 hover:bg-white text-[#c8102e] shadow-xl flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:translate-x-3 sm:group-hover:translate-x-0 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
-      >
-        <i class="ri-arrow-right-s-line text-lg sm:text-2xl font-bold"></i>
-      </button>
+        <!-- Slider Right Arrow -->
+        <button
+          type="button"
+          onclick="nextHeroSlide()"
+          aria-label="Next Slide"
+          class="absolute right-2 sm:right-5 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-white/90 hover:bg-white text-[#c8102e] shadow-xl flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:translate-x-3 sm:group-hover:translate-x-0 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
+        >
+          <i class="ri-arrow-right-s-line text-lg sm:text-2xl font-bold"></i>
+        </button>
+      @endif
 
       <!-- Hero Content -->
       <div class="relative z-20 max-w-[1220px] mx-auto w-full px-7 sm:px-14 md:px-20 py-8 sm:py-12">
         <div id="hero-content-box" class="max-w-xl transition-all duration-300 ease-out">
           <h1 id="hero-title" class="text-white text-2xl sm:text-3xl md:text-[44px] font-extrabold tracking-tight leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-            আগামীর শৈলকুপা
+            {{ $heroBanners->first()->title }}
           </h1>
-          <p id="hero-subtitle" class="text-white/95 text-xs sm:text-base md:text-[20px] font-medium leading-relaxed mt-2.5 sm:mt-4 drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
-            শৈলকুপার উন্নয়ন, ঐতিহ্য ও মানুষের অগ্রযাত্রার<br class="hidden sm:inline" />
-            একটি স্বেচ্ছাসেবী সামাজিক উদ্যোগ
-          </p>
+          @if($heroBanners->first()->subtitle)
+            <p id="hero-subtitle" class="text-white/95 text-xs sm:text-base md:text-[20px] font-medium leading-relaxed mt-2.5 sm:mt-4 drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
+              {{ $heroBanners->first()->subtitle }}
+            </p>
+          @else
+            <p id="hero-subtitle" class="text-white/95 text-xs sm:text-base md:text-[20px] font-medium leading-relaxed mt-2.5 sm:mt-4 drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)] hidden"></p>
+          @endif
 
           <!-- Hero Action Buttons -->
           <div class="mt-5 sm:mt-7 flex flex-wrap items-center gap-2.5 sm:gap-3.5">
             <a
               id="hero-primary-btn"
-              href="#about-section"
+              href="{{ $heroBanners->first()->primary_button_link ?? '#about-section' }}"
               class="bg-[#c8102e] hover:bg-[#a30b24] text-white text-xs sm:text-sm md:text-[15px] font-semibold px-4 sm:px-6 py-2.5 rounded-full shadow-md inline-flex items-center gap-1.5 sm:gap-2 hover:shadow-lg transition cursor-pointer"
             >
-              <span id="hero-primary-btn-text">আমাদের সম্পর্কে জানুন</span>
+              <span id="hero-primary-btn-text">{{ $heroBanners->first()->primary_button_text }}</span>
               <i class="ri-arrow-right-line text-sm sm:text-base"></i>
             </a>
 
-            <button
-              type="button"
-              onclick="openVideoModal()"
-              class="border border-white/85 bg-[#06381a]/55 hover:bg-white/20 text-white text-xs sm:text-sm md:text-[15px] font-semibold px-3.5 sm:px-5 py-2.5 rounded-full inline-flex items-center gap-1.5 sm:gap-2 backdrop-blur-[2px] transition cursor-pointer"
-            >
-              <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-white text-[#c8102e] flex items-center justify-center">
-                <i class="fa-solid fa-play text-[8px] sm:text-[9px] ml-0.5"></i>
-              </span>
-              <span>ভিডিও দেখুন</span>
-            </button>
+            @if($heroBanners->first()->secondary_button_text)
+              <a
+                id="hero-secondary-btn"
+                href="{{ $heroBanners->first()->secondary_button_link ?? '#video' }}"
+                class="border border-white/85 bg-[#06381a]/55 hover:bg-white/20 text-white text-xs sm:text-sm md:text-[15px] font-semibold px-3.5 sm:px-5 py-2.5 rounded-full inline-flex items-center gap-1.5 sm:gap-2 backdrop-blur-[2px] transition cursor-pointer"
+              >
+                <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-white text-[#c8102e] flex items-center justify-center">
+                  <i class="fa-solid fa-play text-[8px] sm:text-[9px] ml-0.5"></i>
+                </span>
+                <span id="hero-secondary-btn-text">{{ $heroBanners->first()->secondary_button_text }}</span>
+              </a>
+            @else
+              <a
+                id="hero-secondary-btn"
+                href="#"
+                class="hidden border border-white/85 bg-[#06381a]/55 hover:bg-white/20 text-white text-xs sm:text-sm md:text-[15px] font-semibold px-3.5 sm:px-5 py-2.5 rounded-full inline-flex items-center gap-1.5 sm:gap-2 backdrop-blur-[2px] transition cursor-pointer"
+              >
+                <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-white text-[#c8102e] flex items-center justify-center">
+                  <i class="fa-solid fa-play text-[8px] sm:text-[9px] ml-0.5"></i>
+                </span>
+                <span id="hero-secondary-btn-text"></span>
+              </a>
+            @endif
           </div>
         </div>
       </div>
 
-      <!-- Slider Dots (Bottom Center - Active Pill Indicator) -->
-      <div class="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
-        <button type="button" onclick="goToHeroSlide(0)" aria-label="Slide 1" class="hero-dot h-2 sm:h-2.5 rounded-full transition-all duration-300 w-7 bg-[#c8102e] cursor-pointer"></button>
-        <button type="button" onclick="goToHeroSlide(1)" aria-label="Slide 2" class="hero-dot h-2 sm:h-2.5 rounded-full transition-all duration-300 w-2.5 bg-white/80 hover:bg-white cursor-pointer"></button>
-        <button type="button" onclick="goToHeroSlide(2)" aria-label="Slide 3" class="hero-dot h-2 sm:h-2.5 rounded-full transition-all duration-300 w-2.5 bg-white/80 hover:bg-white cursor-pointer"></button>
-      </div>
+      <!-- Slider Dots (Show only if more than 1 banner) -->
+      @if($heroBanners->count() > 1)
+        <div id="hero-dots-container" class="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+          @foreach($heroBanners as $idx => $banner)
+            <button type="button" onclick="goToHeroSlide({{ $idx }})" aria-label="Slide {{ $idx + 1 }}" class="hero-dot h-2 sm:h-2.5 rounded-full transition-all duration-300 {{ $idx === 0 ? 'w-7 bg-[#c8102e]' : 'w-2.5 bg-white/80 hover:bg-white' }} cursor-pointer"></button>
+          @endforeach
+        </div>
+      @endif
+
+      <!-- Pass Dynamic Hero Slides Data to JavaScript -->
+      <script>
+        window.dynamicHeroSlides = {!! json_encode($heroSlidesData, JSON_UNESCAPED_UNICODE) !!};
+      </script>
 
       <!-- Exact Bottom Red & Green Wave Sweeps -->
       <svg class="absolute bottom-0 left-0 w-full h-5 sm:h-10 pointer-events-none z-20" viewBox="0 0 1440 54" fill="none" preserveAspectRatio="none">
@@ -113,6 +129,11 @@
       </svg>
     </div>
   </section>
+  @else
+  <script>
+    window.dynamicHeroSlides = [];
+  </script>
+  @endif
 
   <!-- =====================================================================
        MAIN CONTENT CONTAINER
@@ -120,64 +141,79 @@
   <main class="max-w-[1220px] mx-auto px-3 sm:px-6 py-6 sm:py-10 space-y-7 sm:space-y-11 overflow-hidden">
 
     <!-- ===================================================================
-         4. STATS COUNTER BAR (5 ITEMS - RESPONSIVE)
+         4. STATS COUNTER BAR (DYNAMIC RESPONSIVE)
          =================================================================== -->
+    @php
+      $activeStats = isset($statCounters) && $statCounters->count() > 0 ? $statCounters : null;
+    @endphp
     <section aria-label="পরিসংখ্যান" class="ui-card px-3 sm:px-6 py-4 sm:py-6">
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-y-5 gap-x-3 lg:gap-x-0 lg:divide-x lg:divide-gray-200/80">
-        <!-- Stat 1 -->
-        <div class="flex items-center justify-center gap-2.5 sm:gap-3.5 px-1 sm:px-2">
-          <div class="text-[#c8102e] text-2xl sm:text-[34px] shrink-0">
-            <i class="fa-solid fa-people-group"></i>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-{{ $activeStats ? min($activeStats->count(), 5) : 5 }} gap-y-5 gap-x-3 lg:gap-x-0 lg:divide-x lg:divide-gray-200/80">
+        @if($activeStats)
+          @foreach($activeStats as $stat)
+            <div class="flex items-center justify-center gap-2.5 sm:gap-3.5 px-1 sm:px-2">
+              <div class="text-[#c8102e] text-2xl sm:text-[34px] shrink-0">
+                @if(str_starts_with($stat->icon, 'fa'))
+                  <i class="{{ $stat->icon }}"></i>
+                @elseif(str_starts_with($stat->icon, 'ri-'))
+                  <i class="{{ $stat->icon }}"></i>
+                @else
+                  <i class="ri-numbers-line"></i>
+                @endif
+              </div>
+              <div>
+                <div class="text-lg sm:text-2xl font-extrabold text-gray-900 leading-none">{{ $stat->count }}</div>
+                <div class="text-[11px] sm:text-[13.5px] font-medium text-gray-600 mt-1">{{ $stat->title }}</div>
+              </div>
+            </div>
+          @endforeach
+        @else
+          <!-- Fallback Static Stats if DB empty -->
+          <div class="flex items-center justify-center gap-2.5 sm:gap-3.5 px-1 sm:px-2">
+            <div class="text-[#c8102e] text-2xl sm:text-[34px] shrink-0">
+              <i class="fa-solid fa-people-group"></i>
+            </div>
+            <div>
+              <div class="text-lg sm:text-2xl font-extrabold text-gray-900 leading-none">৫০০+</div>
+              <div class="text-[11px] sm:text-[13.5px] font-medium text-gray-600 mt-1">সক্রিয় সদস্য</div>
+            </div>
           </div>
-          <div>
-            <div class="text-lg sm:text-2xl font-extrabold text-gray-900 leading-none">৫০০+</div>
-            <div class="text-[11px] sm:text-[13.5px] font-medium text-gray-600 mt-1">সক্রিয় সদস্য</div>
+          <div class="flex items-center justify-center gap-2.5 sm:gap-3.5 px-1 sm:px-2">
+            <div class="text-[#c8102e] text-2xl sm:text-[32px] shrink-0">
+              <i class="ri-book-open-line"></i>
+            </div>
+            <div>
+              <div class="text-lg sm:text-2xl font-extrabold text-gray-900 leading-none">২৫+</div>
+              <div class="text-[11px] sm:text-[13.5px] font-medium text-gray-600 mt-1">শিক্ষা প্রতিষ্ঠান</div>
+            </div>
           </div>
-        </div>
-
-        <!-- Stat 2 -->
-        <div class="flex items-center justify-center gap-2.5 sm:gap-3.5 px-1 sm:px-2">
-          <div class="text-[#c8102e] text-2xl sm:text-[32px] shrink-0">
-            <i class="ri-book-open-line"></i>
+          <div class="flex items-center justify-center gap-2.5 sm:gap-3.5 px-1 sm:px-2">
+            <div class="text-[#c8102e] text-2xl sm:text-[32px] shrink-0">
+              <i class="ri-stack-line"></i>
+            </div>
+            <div>
+              <div class="text-lg sm:text-2xl font-extrabold text-gray-900 leading-none">৩০+</div>
+              <div class="text-[11px] sm:text-[13.5px] font-medium text-gray-600 mt-1">উন্নয়ন প্রকল্প</div>
+            </div>
           </div>
-          <div>
-            <div class="text-lg sm:text-2xl font-extrabold text-gray-900 leading-none">২৫+</div>
-            <div class="text-[11px] sm:text-[13.5px] font-medium text-gray-600 mt-1">শিক্ষা প্রতিষ্ঠান</div>
+          <div class="flex items-center justify-center gap-2.5 sm:gap-3.5 px-1 sm:px-2">
+            <div class="text-[#c8102e] text-2xl sm:text-[32px] shrink-0">
+              <i class="ri-map-pin-line"></i>
+            </div>
+            <div>
+              <div class="text-lg sm:text-2xl font-extrabold text-gray-900 leading-none">২০+</div>
+              <div class="text-[11px] sm:text-[13.5px] font-medium text-gray-600 mt-1">দর্শনীয় স্থান</div>
+            </div>
           </div>
-        </div>
-
-        <!-- Stat 3 -->
-        <div class="flex items-center justify-center gap-2.5 sm:gap-3.5 px-1 sm:px-2">
-          <div class="text-[#c8102e] text-2xl sm:text-[32px] shrink-0">
-            <i class="ri-stack-line"></i>
+          <div class="col-span-2 sm:col-span-1 flex items-center justify-center gap-2.5 sm:gap-3.5 px-1 sm:px-2">
+            <div class="text-[#c8102e] text-2xl sm:text-[32px] shrink-0">
+              <i class="ri-calendar-todo-line"></i>
+            </div>
+            <div>
+              <div class="text-lg sm:text-2xl font-extrabold text-gray-900 leading-none">৫০+</div>
+              <div class="text-[11px] sm:text-[13.5px] font-medium text-gray-600 mt-1">আয়োজিত অনুষ্ঠান</div>
+            </div>
           </div>
-          <div>
-            <div class="text-lg sm:text-2xl font-extrabold text-gray-900 leading-none">৩০+</div>
-            <div class="text-[11px] sm:text-[13.5px] font-medium text-gray-600 mt-1">উন্নয়ন প্রকল্প</div>
-          </div>
-        </div>
-
-        <!-- Stat 4 -->
-        <div class="flex items-center justify-center gap-2.5 sm:gap-3.5 px-1 sm:px-2">
-          <div class="text-[#c8102e] text-2xl sm:text-[32px] shrink-0">
-            <i class="ri-map-pin-line"></i>
-          </div>
-          <div>
-            <div class="text-lg sm:text-2xl font-extrabold text-gray-900 leading-none">২০+</div>
-            <div class="text-[11px] sm:text-[13.5px] font-medium text-gray-600 mt-1">দর্শনীয় স্থান</div>
-          </div>
-        </div>
-
-        <!-- Stat 5 -->
-        <div class="col-span-2 sm:col-span-1 flex items-center justify-center gap-2.5 sm:gap-3.5 px-1 sm:px-2">
-          <div class="text-[#c8102e] text-2xl sm:text-[32px] shrink-0">
-            <i class="ri-calendar-todo-line"></i>
-          </div>
-          <div>
-            <div class="text-lg sm:text-2xl font-extrabold text-gray-900 leading-none">৫০+</div>
-            <div class="text-[11px] sm:text-[13.5px] font-medium text-gray-600 mt-1">আয়োজিত অনুষ্ঠান</div>
-          </div>
-        </div>
+        @endif
       </div>
     </section>
 
@@ -190,32 +226,31 @@
         <div class="w-full md:w-[52%] flex flex-col justify-between z-10">
           <div>
             <h2 class="text-xl sm:text-[25px] font-extrabold text-[#0b4622] leading-snug">
-              আমাদের সম্পর্কে
+              {{ $about->title ?? 'আমাদের সম্পর্কে' }}
             </h2>
             <div class="section-underline"></div>
             <p class="text-gray-700 text-xs sm:text-[15px] leading-relaxed font-medium">
-              আগামীর শৈলকুপা একটি অরাজনৈতিক সামাজিক উদ্যোগ, যা শৈলকুপার সার্বিক উন্নয়ন, শিক্ষা, স্বাস্থ্য, সামাজিক কল্যাণ ও ঐতিহ্য সংরক্ষণে কাজ করে যাচ্ছে।
+              {{ $about->short_description ?? 'আগামীর শৈলকুপা একটি অরাজনৈতিক সামাজিক উদ্যোগ, যা শৈলকুপার সার্বিক উন্নয়ন, শিক্ষা, স্বাস্থ্য, সামাজিক কল্যাণ ও ঐতিহ্য সংরক্ষণে কাজ করে যাচ্ছে।' }}
             </p>
           </div>
 
           <div class="mt-4 sm:mt-5">
-            <button
-              type="button"
-              onclick="openInfoModal('আমাদের সম্পর্কে — আগামীর শৈলকুপা', 'পরিচিতি ও লক্ষ্য', 'স্থাপিত: শৈলকুপা, ঝিনাইদহ', 'আগামীর শৈলকুপা একটি সম্পূর্ণ অরাজনৈতিক ও স্বেচ্ছাসেবী সামাজিক সংগঠন। শৈলকুপা উপজেলার শিক্ষা বিস্তার, দরিদ্র ও মেধাবী শিক্ষার্থীদের বৃত্তি প্রদান, বিনামূল্যে স্বাস্থ্যসেবা ও মেডিকেল ক্যাম্প পরিচালনা, বৃক্ষরোপণ এবং ঐতিহাসিক নিদর্শন সংরক্ষণে আমরা ঐক্যবদ্ধভাবে কাজ করছি।')"
-              class="bg-[#c8102e] hover:bg-[#a30b24] text-white text-xs sm:text-sm font-semibold px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg inline-flex items-center gap-1.5 shadow-sm transition"
+            <a
+              href="{{ route('about.us') }}"
+              class="bg-[#c8102e] hover:bg-[#a30b24] text-white text-xs sm:text-sm font-semibold px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg inline-flex items-center gap-1.5 shadow-sm transition cursor-pointer"
             >
-              <span>বিস্তারিত পড়ুন</span>
+              <span>{{ $about->button_text ?? 'বিস্তারিত পড়ুন' }}</span>
               <i class="ri-arrow-right-line text-sm sm:text-base"></i>
-            </button>
+            </a>
           </div>
         </div>
 
-        <!-- Right Photo: Shaheed Minar -->
+        <!-- Right Photo: Shaheed Minar / About Image -->
         <div class="w-full md:w-[48%] shrink-0">
           <div class="rounded-xl overflow-hidden shadow-sm border border-gray-100 aspect-[16/10] sm:aspect-[16/11]">
             <img
-              src="{{ asset('assets/images/about-shaheed-minar.jpg') }}"
-              alt="শৈলকুপা কেন্দ্রীয় শহীদ মিনার"
+              src="{{ isset($about) ? $about->image_url : asset('assets/images/about-shaheed-minar.jpg') }}"
+              alt="{{ $about->title ?? 'আমাদের সম্পর্কে' }}"
               class="w-full h-full object-cover hover:scale-105 transition duration-500"
             />
           </div>
@@ -223,13 +258,17 @@
       </div>
 
       <!-- Right: সভাপতির বাণী -->
-      <div id="president-section" class="lg:col-span-5 president-card-bg rounded-2xl p-4 sm:p-7 shadow-[0_3px_14px_rgba(15,23,42,0.045)] flex flex-col sm:flex-row items-center gap-4 sm:gap-5 text-center sm:text-left">
+      <a
+        id="president-section"
+        href="{{ route('chairman.message') }}"
+        class="lg:col-span-5 president-card-bg rounded-2xl p-4 sm:p-7 shadow-[0_3px_14px_rgba(15,23,42,0.045)] flex flex-col sm:flex-row items-center gap-4 sm:gap-5 text-center sm:text-left transition-all duration-300 hover:shadow-lg hover:-translate-y-1 block cursor-pointer group"
+      >
         <!-- President Circular Portrait -->
         <div class="shrink-0">
-          <div class="w-24 h-24 sm:w-[120px] sm:h-[120px] rounded-full overflow-hidden border-4 border-white shadow-md bg-gray-100">
+          <div class="w-24 h-24 sm:w-[120px] sm:h-[120px] rounded-full overflow-hidden border-4 border-white shadow-md bg-gray-100 group-hover:scale-105 transition duration-300">
             <img
-              src="{{ asset('assets/images/president.jpg') }}"
-              alt="মোঃ আব্দুল করিম — সভাপতি, আগামীর শৈলকুপা"
+              src="{{ isset($president) ? $president->image_url : asset('assets/images/president.jpg') }}"
+              alt="{{ $president->name ?? 'মোঃ আব্দুল করিম' }} — {{ $president->designation ?? 'সভাপতি, আগামীর শৈলকুপা' }}"
               class="w-full h-full object-cover"
             />
           </div>
@@ -237,27 +276,37 @@
 
         <!-- Quote & Designation -->
         <div class="flex-1">
-          <h2 class="text-xl sm:text-[24px] font-extrabold text-[#0b4622] leading-snug">
-            সভাপতির বাণী
-          </h2>
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl sm:text-[24px] font-extrabold text-[#0b4622] leading-snug group-hover:text-[#07381b] transition">
+              {{ $president->title ?? 'সভাপতির বাণী' }}
+            </h2>
+            <span class="text-xs text-[#0b4622] font-semibold opacity-0 group-hover:opacity-100 transition hidden sm:inline-flex items-center gap-1">
+              <span>বিস্তারিত</span> <i class="ri-arrow-right-line"></i>
+            </span>
+          </div>
           <div class="section-underline mx-auto sm:mx-0"></div>
 
           <div class="relative mt-1">
             <i class="fa-solid fa-quote-left text-[#c8102e] text-base sm:text-xl mr-1 align-top"></i>
             <span class="text-gray-800 text-xs sm:text-[14px] font-semibold italic leading-relaxed">
-              "শৈলকুপাকে একটি আধুনিক, শিক্ষিত, সমৃদ্ধ ও মানবিক জনপদে রূপ দিতে আমরা সবাই একসাথে কাজ করছি।"
+              "{{ $president->quote ?? 'শৈলকুপাকে একটি আধুনিক, শিক্ষিত, সমৃদ্ধ ও মানবিক জনপদে রূপ দিতে আমরা সবাই একসাথে কাজ করছি।' }}"
             </span>
             <div class="text-right -mt-1">
               <i class="fa-solid fa-quote-right text-[#c8102e] text-base sm:text-xl"></i>
             </div>
           </div>
 
-          <div class="mt-2 pt-1">
-            <h3 class="text-sm sm:text-[15.5px] font-extrabold text-gray-900">মোঃ আব্দুল করিম</h3>
-            <p class="text-[11px] sm:text-xs font-medium text-gray-600">সভাপতি, আগামীর শৈলকুপা</p>
+          <div class="mt-2 pt-1 flex items-center justify-between">
+            <div>
+              <h3 class="text-sm sm:text-[15.5px] font-extrabold text-gray-900">{{ $president->name ?? 'মোঃ আব্দুল করিম' }}</h3>
+              <p class="text-[11px] sm:text-xs font-medium text-gray-600">{{ $president->designation ?? 'সভাপতি, আগামীর শৈলকুপা' }}</p>
+            </div>
+            <span class="text-xs font-bold text-[#c8102e] sm:hidden inline-flex items-center gap-1">
+              বিস্তারিত <i class="ri-arrow-right-line"></i>
+            </span>
           </div>
         </div>
-      </div>
+      </a>
     </section>
 
     <!-- ===================================================================
@@ -274,98 +323,60 @@
             </span>
             <h2 class="text-base sm:text-[20px] font-extrabold text-gray-900">আসন্ন ও চলমান কার্যক্রম</h2>
           </div>
-          <button
-            type="button"
-            onclick="openInfoModal('আসন্ন ও চলমান কার্যক্রম তালিকা', 'ইভেন্ট ক্যালেন্ডার ২০২৬', 'শৈলকুপা উপজেলা', '১. শিক্ষা বৃত্তি বিতরণ অনুষ্ঠান (১৫ নভেম্বর, সকাল ১০:০০ - শৈলকুপা পাবলিক হল)\n২. বৃক্ষরোপণ কর্মসূচি (২০ নভেম্বর, সকাল ৯:০০ - শৈলকুপা উপজেলা এলাকা)\n৩. ফ্রি মেডিকেল ক্যাম্প (২৫ নভেম্বর, সকাল ৯:০০ - শৈলকুপা স্বাস্থ্য কমপ্লেক্স)')"
+          <a
+            href="{{ route('events.index') }}"
             class="text-[#c8102e] hover:text-[#a30b24] text-xs sm:text-[13.5px] font-bold inline-flex items-center gap-1 transition"
           >
             <span>সব দেখুন</span>
             <i class="ri-arrow-right-line"></i>
-          </button>
+          </a>
         </div>
 
-        <!-- 3 Event Cards Grid -->
+        <!-- Event Cards Grid (Dynamic from DB) -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-5">
-          <!-- Event Card 1 -->
-          <article
-            onclick="openInfoModal('শিক্ষা বৃত্তি বিতরণ অনুষ্ঠান', '১৫ নভেম্বর ২০২৬', 'শৈলকুপা পাবলিক হল | সকাল ১০:০০', 'শৈলকুপা উপজেলার বিভিন্ন স্কুল ও কলেজের মেধাবী ও অসচ্ছল শিক্ষার্থীদের মাঝে বার্ষিক শিক্ষাবৃত্তি ও শিক্ষা উপকরণ বিতরণ অনুষ্ঠান।')"
-            class="sub-card-hover cursor-pointer bg-white rounded-xl border border-gray-200/80 overflow-hidden flex flex-col"
-          >
-            <div class="relative aspect-[16/10] bg-gray-100 overflow-hidden">
-              <img src="{{ asset('assets/images/event-1.jpg') }}" alt="শিক্ষা বৃত্তি বিতরণ অনুষ্ঠান" class="w-full h-full object-cover" />
-              <!-- Red Date Badge -->
-              <div class="absolute top-2 left-2 bg-[#c8102e] text-white rounded-lg px-2 py-0.5 sm:py-1 text-center leading-tight shadow">
-                <span class="block text-xs sm:text-sm font-extrabold">১৫</span>
-                <span class="block text-[9px] sm:text-[10px] font-medium">নভেঃ</span>
+          @forelse($events as $eventItem)
+            <a
+              href="{{ route('events.details', $eventItem->id) }}"
+              class="sub-card-hover bg-white rounded-xl border border-gray-200/80 overflow-hidden flex flex-col group cursor-pointer"
+            >
+              <div class="relative aspect-[16/10] bg-gray-100 overflow-hidden">
+                <img
+                  src="{{ $eventItem->thumbnail_url }}"
+                  alt="{{ $eventItem->title }}"
+                  class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                  onerror="this.src='{{ asset('assets/images/event-1.jpg') }}'"
+                />
+                <!-- Red Date Badge -->
+                @if($eventItem->date)
+                  <div class="absolute top-2 left-2 bg-[#c8102e] text-white rounded-lg px-2 py-0.5 sm:py-1 text-center leading-tight shadow">
+                    <span class="block text-xs sm:text-sm font-extrabold">{{ $eventItem->bangla_day }}</span>
+                    <span class="block text-[9px] sm:text-[10px] font-medium">{{ $eventItem->bangla_month }}</span>
+                  </div>
+                @endif
               </div>
+              <div class="p-3 sm:p-3.5 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 class="text-sm sm:text-[15px] font-extrabold text-gray-900 group-hover:text-[#c8102e] transition line-clamp-1">
+                    {{ $eventItem->title }}
+                  </h3>
+                  @if($eventItem->location)
+                    <p class="text-xs text-gray-600 mt-0.5 sm:mt-1 truncate">{{ $eventItem->location }}</p>
+                  @endif
+                </div>
+                @if($eventItem->time)
+                  <div class="mt-2 pt-2 border-t border-gray-100 flex items-center gap-1 text-[11px] sm:text-xs text-gray-600 font-medium">
+                    <i class="ri-time-line text-[#c8102e]"></i>
+                    <span>{{ $eventItem->time }}</span>
+                  </div>
+                @endif
+              </div>
+            </a>
+          @empty
+            <div class="col-span-full py-8 text-center text-gray-500 text-xs">
+              <i class="ri-calendar-line text-2xl text-gray-300 block mb-1"></i>
+              বর্তমানে কোনো সক্রিয় ইভেন্ট বা কার্যক্রম নেই।
             </div>
-            <div class="p-3 sm:p-3.5 flex-1 flex flex-col justify-between">
-              <div>
-                <h3 class="text-sm sm:text-[15px] font-extrabold text-gray-900 hover:text-[#c8102e] transition line-clamp-1">
-                  শিক্ষা বৃত্তি বিতরণ অনুষ্ঠান
-                </h3>
-                <p class="text-xs text-gray-600 mt-0.5 sm:mt-1">শৈলকুপা পাবলিক হল</p>
-              </div>
-              <div class="mt-2 pt-2 border-t border-gray-100 flex items-center gap-1 text-[11px] sm:text-xs text-gray-600 font-medium">
-                <i class="ri-time-line text-[#c8102e]"></i>
-                <span>সকাল ১০:০০</span>
-              </div>
-            </div>
-          </article>
-
-          <!-- Event Card 2 -->
-          <article
-            onclick="openInfoModal('বৃক্ষরোপণ কর্মসূচি', '২০ নভেম্বর ২০২৬', 'শৈলকুপা উপজেলা এলাকা | সকাল ৯:০০', 'সবুজ ও পরিবেশবান্ধব শৈলকুপা গড়ার লক্ষ্যে উপজেলার প্রধান সড়ক ও শিক্ষাপ্রতিষ্ঠান প্রাঙ্গণে ফলজ, বনজ ও ঔষধি বৃক্ষরোপণ কর্মসূচি।')"
-            class="sub-card-hover cursor-pointer bg-white rounded-xl border border-gray-200/80 overflow-hidden flex flex-col"
-          >
-            <div class="relative aspect-[16/10] bg-gray-100 overflow-hidden">
-              <img src="{{ asset('assets/images/event-2.jpg') }}" alt="বৃক্ষরোপণ কর্মসূচি" class="w-full h-full object-cover" />
-              <!-- Red Date Badge -->
-              <div class="absolute top-2 left-2 bg-[#c8102e] text-white rounded-lg px-2 py-0.5 sm:py-1 text-center leading-tight shadow">
-                <span class="block text-xs sm:text-sm font-extrabold">২০</span>
-                <span class="block text-[9px] sm:text-[10px] font-medium">নভেঃ</span>
-              </div>
-            </div>
-            <div class="p-3 sm:p-3.5 flex-1 flex flex-col justify-between">
-              <div>
-                <h3 class="text-sm sm:text-[15px] font-extrabold text-gray-900 hover:text-[#c8102e] transition line-clamp-1">
-                  বৃক্ষরোপণ কর্মসূচি
-                </h3>
-                <p class="text-xs text-gray-600 mt-0.5 sm:mt-1">শৈলকুপা উপজেলা এলাকা</p>
-              </div>
-              <div class="mt-2 pt-2 border-t border-gray-100 flex items-center gap-1 text-[11px] sm:text-xs text-gray-600 font-medium">
-                <i class="ri-time-line text-[#c8102e]"></i>
-                <span>সকাল ৯:০০</span>
-              </div>
-            </div>
-          </article>
-
-          <!-- Event Card 3 -->
-          <article
-            onclick="openInfoModal('ফ্রি মেডিকেল ক্যাম্প', '২৫ নভেম্বর ২০২৬', 'শৈলকুপা স্বাস্থ্য কমপ্লেক্স | সকাল ৯:০০', 'বিশেষজ্ঞ চিকিৎসকদের সমন্বয়ে দিনব্যাপী বিনামূল্যে স্বাস্থ্য পরীক্ষা, ডায়াবেটিস ও চক্ষু স্ক্রিনিং এবং প্রয়োজনীয় ওষুধ বিতরণ ক্যাম্প।')"
-            class="sub-card-hover cursor-pointer bg-white rounded-xl border border-gray-200/80 overflow-hidden flex flex-col"
-          >
-            <div class="relative aspect-[16/10] bg-gray-100 overflow-hidden">
-              <img src="{{ asset('assets/images/event-3.jpg') }}" alt="ফ্রি মেডিকেল ক্যাম্প" class="w-full h-full object-cover" />
-              <!-- Red Date Badge -->
-              <div class="absolute top-2 left-2 bg-[#c8102e] text-white rounded-lg px-2 py-0.5 sm:py-1 text-center leading-tight shadow">
-                <span class="block text-xs sm:text-sm font-extrabold">২৫</span>
-                <span class="block text-[9px] sm:text-[10px] font-medium">নভেঃ</span>
-              </div>
-            </div>
-            <div class="p-3 sm:p-3.5 flex-1 flex flex-col justify-between">
-              <div>
-                <h3 class="text-sm sm:text-[15px] font-extrabold text-gray-900 hover:text-[#c8102e] transition line-clamp-1">
-                  ফ্রি মেডিকেল ক্যাম্প
-                </h3>
-                <p class="text-xs text-gray-600 mt-0.5 sm:mt-1">শৈলকুপা স্বাস্থ্য কমপ্লেক্স</p>
-              </div>
-              <div class="mt-2 pt-2 border-t border-gray-100 flex items-center gap-1 text-[11px] sm:text-xs text-gray-600 font-medium">
-                <i class="ri-time-line text-[#c8102e]"></i>
-                <span>সকাল ৯:০০</span>
-              </div>
-            </div>
-          </article>
+          @endforelse
         </div>
       </div>
 
@@ -380,144 +391,105 @@
               </span>
               <h2 class="text-base sm:text-[20px] font-extrabold text-gray-900">নোটিশ</h2>
             </div>
-            <button
-              type="button"
-              onclick="openInfoModal('সকল নোটিশ বোর্ড', 'অফিসিয়াল বিজ্ঞপ্তি', 'আগামীর শৈলকুপা দপ্তর', '১. বার্ষিক সাধারণ সভার নোটিশ (১০ নভেম্বর ২০২৫)\n২. সদস্য নবায়ন সংক্রান্ত বিজ্ঞপ্তি (০৮ নভেম্বর ২০২৫)\n৩. শিক্ষা বৃত্তির জন্য আবেদন আহ্বান (০৫ নভেম্বর ২০২৫)')"
+            <a
+              href="{{ route('notices.index') }}"
               class="text-[#c8102e] hover:text-[#a30b24] text-xs sm:text-[13.5px] font-bold inline-flex items-center gap-1 transition"
             >
               <span>সব দেখুন</span>
               <i class="ri-arrow-right-line"></i>
-            </button>
+            </a>
           </div>
 
-          <!-- Notice Items List -->
+          <!-- Notice Items List (Dynamic from DB) -->
           <div class="divide-y divide-gray-100">
-            <!-- Notice 1 -->
-            <div
-              onclick="openInfoModal('বার্ষিক সাধারণ সভার নোটিশ', 'নোটিশ বোর্ড', 'প্রকাশের তারিখ: ১০ নভেম্বর ২০২৫', 'আগামীর শৈলকুপা সংগঠনের সকল কার্যনির্বাহী ও সাধারণ সদস্যদের অবগতির জন্য জানানো যাচ্ছে যে, আগামী মাসের প্রথম শুক্রবার বার্ষিক সাধারণ সভা অনুষ্ঠিত হবে।')"
-              class="py-2.5 sm:py-3 first:pt-1 last:pb-1 flex items-start gap-3 cursor-pointer group"
-            >
-              <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-red-50 border border-red-100 text-[#c8102e] flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[#c8102e] group-hover:text-white transition">
-                <i class="ri-file-text-line text-base sm:text-lg"></i>
+            @forelse($notices as $noticeItem)
+              <a
+                href="{{ route('notices.details', $noticeItem->id) }}"
+                class="py-2.5 sm:py-3 first:pt-1 last:pb-1 flex items-start gap-3 group transition"
+              >
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-red-50 border border-red-100 text-[#c8102e] flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[#c8102e] group-hover:text-white transition">
+                  <i class="ri-file-text-line text-base sm:text-lg"></i>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    @if($noticeItem->status === 'pinned')
+                      <span class="text-[10px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded border border-red-200 shrink-0">
+                        জরুরি
+                      </span>
+                    @endif
+                    <h3 class="text-xs sm:text-[14.5px] font-extrabold text-gray-900 group-hover:text-[#c8102e] transition truncate">
+                      {{ $noticeItem->title }}
+                    </h3>
+                  </div>
+                  @if($noticeItem->date)
+                    <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5 flex items-center gap-1">
+                      <i class="ri-time-line text-[#c8102e]"></i>
+                      <span>{{ $noticeItem->bangla_formatted_date }}</span>
+                    </p>
+                  @endif
+                </div>
+              </a>
+            @empty
+              <div class="py-6 text-center text-xs text-gray-400">
+                <i class="ri-notification-badge-line text-2xl text-gray-300 block mb-1"></i>
+                বর্তমানে কোনো প্রকাশিত নোটিশ নেই।
               </div>
-              <div class="min-w-0">
-                <h3 class="text-xs sm:text-[14.5px] font-extrabold text-gray-900 group-hover:text-[#c8102e] transition truncate">
-                  বার্ষিক সাধারণ সভার নোটিশ
-                </h3>
-                <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5 flex items-center gap-1">
-                  <i class="ri-time-line text-[#c8102e]"></i>
-                  <span>১০ নভেম্বর ২০২৫</span>
-                </p>
-              </div>
-            </div>
-
-            <!-- Notice 2 -->
-            <div
-              onclick="openInfoModal('সদস্য নবায়ন সংক্রান্ত বিজ্ঞপ্তি', 'নোটিশ বোর্ড', 'প্রকাশের তারিখ: ০৮ নভেম্বর ২০২৫', 'সংগঠনের সকল নিবন্ধিত সদস্যদের ২০২৬-২০২৮ মেয়াদের জন্য সদস্যপদ নবায়ন ফরম পূরণ ও নির্ধারিত চাঁদা পরিশোধ করার জন্য অনুরোধ করা হচ্ছে।')"
-              class="py-2.5 sm:py-3 flex items-start gap-3 cursor-pointer group"
-            >
-              <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-red-50 border border-red-100 text-[#c8102e] flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[#c8102e] group-hover:text-white transition">
-                <i class="ri-file-text-line text-base sm:text-lg"></i>
-              </div>
-              <div class="min-w-0">
-                <h3 class="text-xs sm:text-[14.5px] font-extrabold text-gray-900 group-hover:text-[#c8102e] transition truncate">
-                  সদস্য নবায়ন সংক্রান্ত বিজ্ঞপ্তি
-                </h3>
-                <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5 flex items-center gap-1">
-                  <i class="ri-time-line text-[#c8102e]"></i>
-                  <span>০৮ নভেম্বর ২০২৫</span>
-                </p>
-              </div>
-            </div>
-
-            <!-- Notice 3 -->
-            <div
-              onclick="openInfoModal('শিক্ষা বৃত্তির জন্য আবেদন আহ্বান', 'নোটিশ বোর্ড', 'প্রকাশের তারিখ: ০৫ নভেম্বর ২০২৫', 'শৈলকুপা উপজেলার স্থায়ী বাসিন্দা ও মেধাবী শিক্ষার্থীদের কাছ থেকে ২০২৬ শিক্ষাবর্ষের শিক্ষাবৃত্তির জন্য নির্ধারিত ফরমে আবেদন আহ্বান করা যাচ্ছে।')"
-              class="py-2.5 sm:py-3 last:pb-1 flex items-start gap-3 cursor-pointer group"
-            >
-              <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-red-50 border border-red-100 text-[#c8102e] flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[#c8102e] group-hover:text-white transition">
-                <i class="ri-file-text-line text-base sm:text-lg"></i>
-              </div>
-              <div class="min-w-0">
-                <h3 class="text-xs sm:text-[14.5px] font-extrabold text-gray-900 group-hover:text-[#c8102e] transition truncate">
-                  শিক্ষা বৃত্তির জন্য আবেদন আহ্বান
-                </h3>
-                <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5 flex items-center gap-1">
-                  <i class="ri-time-line text-[#c8102e]"></i>
-                  <span>০৫ নভেম্বর ২০২৫</span>
-                </p>
-              </div>
-            </div>
+            @endforelse
           </div>
         </div>
       </div>
     </section>
 
     <!-- ===================================================================
-         7. ROW 3: সম্মানিত ব্যক্তিবর্গ (LEFT) & কমিটি (RIGHT)
+         7. ROW 3: কৃতি সন্তান (LEFT) & কমিটি (RIGHT)
          =================================================================== -->
     <section id="personalities-section" class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-stretch">
-      <!-- Left: সম্মানিত ব্যক্তিবর্গ (7 Cols) -->
+      <!-- Left: কৃতি সন্তান (7 Cols) -->
       <div class="lg:col-span-7 ui-card p-4 sm:p-6 flex flex-col justify-between">
         <!-- Header -->
         <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-4 sm:mb-5">
           <div class="flex items-center gap-2">
             <span class="text-[#c8102e] text-lg sm:text-xl flex items-center">
-              <i class="fa-solid fa-user-tie"></i>
+              <i class="ri-award-fill"></i>
             </span>
-            <h2 class="text-base sm:text-[20px] font-extrabold text-gray-900">সম্মানিত ব্যক্তিবর্গ</h2>
+            <h2 class="text-base sm:text-[20px] font-extrabold text-gray-900">কৃতি সন্তান</h2>
           </div>
-          <button
-            type="button"
-            onclick="openInfoModal('সম্মানিত ব্যক্তিবর্গ ও উপদেষ্টামণ্ডলী', 'গুণীজন তালিকা', 'শৈলকুপা ও জাতীয় পর্যায়ের ব্যক্তিবর্গ', 'শৈলকুপার সার্বিক উন্নয়ন ও মানবকল্যাণে যাঁরা নিরলস পরামর্শ, দিকনির্দেশনা ও পৃষ্ঠপোষকতা প্রদান করে যাচ্ছেন।')"
+          <a
+            href="{{ route('our.pride') }}"
             class="text-[#c8102e] hover:text-[#a30b24] text-xs sm:text-[13.5px] font-bold inline-flex items-center gap-1 transition"
           >
             <span>সবাই দেখুন</span>
             <i class="ri-arrow-right-line"></i>
-          </button>
+          </a>
         </div>
 
-        <!-- 4 Personalities Grid -->
+        <!-- 4 Prides Grid (Dynamic from DB) -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-2 sm:divide-x sm:divide-gray-100">
-          <!-- Person 1 -->
-          <div class="flex flex-col items-center text-center px-1 sm:px-2">
-            <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-[96px] md:h-[96px] rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shadow-sm mb-2">
-              <img src="{{ asset('assets/images/person-1.jpg') }}" alt="বেগম খালেদা জিয়া" class="w-full h-full object-cover" />
+          @forelse($prides as $prideItem)
+            <a
+              href="{{ route('our.pride.details', $prideItem->id) }}"
+              class="flex flex-col items-center text-center px-1 sm:px-2 group cursor-pointer block hover:no-underline"
+            >
+              <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-[96px] md:h-[96px] rounded-2xl overflow-hidden bg-gray-100 border border-gray-200 shadow-2xs mb-2 group-hover:border-[#0b4622]/60 group-hover:shadow-md transition duration-300">
+                <img
+                  src="{{ $prideItem->photo_url }}"
+                  alt="{{ $prideItem->name }}"
+                  class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                  onerror="this.src='https://placehold.co/400x400/0b4622/ffffff?text={{ urlencode($prideItem->name) }}'"
+                />
+              </div>
+              <h3 class="text-xs sm:text-[14px] font-extrabold text-gray-900 leading-snug group-hover:text-[#0b4622] transition line-clamp-1">
+                {{ $prideItem->name }}
+              </h3>
+              <p class="text-[10px] sm:text-[11.5px] text-gray-600 mt-0.5 line-clamp-2">
+                {{ $prideItem->designation }}
+              </p>
+            </a>
+          @empty
+            <div class="col-span-full py-6 text-center text-xs text-gray-400">
+              কোনো কৃতি সন্তানের তথ্য পাওয়া যায়নি।
             </div>
-            <h3 class="text-xs sm:text-[14px] font-extrabold text-gray-900 leading-snug">বেগম খালেদা জিয়া</h3>
-            <p class="text-[10px] sm:text-[11.5px] text-gray-600 mt-0.5">সাবেক প্রধানমন্ত্রী</p>
-            <p class="text-[9.5px] sm:text-[11px] text-gray-500">বিএনপি'র চেয়ারপারসন</p>
-          </div>
-
-          <!-- Person 2 -->
-          <div class="flex flex-col items-center text-center px-1 sm:px-2">
-            <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-[96px] md:h-[96px] rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shadow-sm mb-2">
-              <img src="{{ asset('assets/images/person-2.jpg') }}" alt="আসাদুজ্জামান খান" class="w-full h-full object-cover" />
-            </div>
-            <h3 class="text-xs sm:text-[14px] font-extrabold text-gray-900 leading-snug">আসাদুজ্জামান খান</h3>
-            <p class="text-[10px] sm:text-[11.5px] text-gray-600 mt-0.5">মাননীয় আইনমন্ত্রী</p>
-            <p class="text-[9.5px] sm:text-[11px] text-gray-500">বাংলাদেশ সরকার</p>
-          </div>
-
-          <!-- Person 3 -->
-          <div class="flex flex-col items-center text-center px-1 sm:px-2">
-            <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-[96px] md:h-[96px] rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shadow-sm mb-2">
-              <img src="{{ asset('assets/images/person-3.jpg') }}" alt="জনাব জয়" class="w-full h-full object-cover" />
-            </div>
-            <h3 class="text-xs sm:text-[14px] font-extrabold text-gray-900 leading-snug">জনাব জয়</h3>
-            <p class="text-[10px] sm:text-[11.5px] text-gray-600 mt-0.5">সংসদ সদস্য</p>
-            <p class="text-[9.5px] sm:text-[11px] text-gray-500">ঝিনাইদহ-২</p>
-          </div>
-
-          <!-- Person 4 -->
-          <div class="flex flex-col items-center text-center px-1 sm:px-2">
-            <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-[96px] md:h-[96px] rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shadow-sm mb-2">
-              <img src="{{ asset('assets/images/person-4.jpg') }}" alt="নিটুল ইসলাম" class="w-full h-full object-cover" />
-            </div>
-            <h3 class="text-xs sm:text-[14px] font-extrabold text-gray-900 leading-snug">নিটুল ইসলাম</h3>
-            <p class="text-[10px] sm:text-[11.5px] text-gray-600 mt-0.5">সহ-প্রতিষ্ঠাতা</p>
-            <p class="text-[9.5px] sm:text-[11px] text-gray-500">আগামীর শৈলকুপা</p>
-          </div>
+          @endforelse
         </div>
       </div>
 
@@ -573,14 +545,13 @@
           <p class="text-xs sm:text-[13px] text-gray-600 leading-relaxed mt-1 line-clamp-2">
             শৈলকুপার অবকাঠামো, শিক্ষা, স্বাস্থ্য ও সামাজিক উন্নয়নের চলমান প্রকল্পসমূহ।
           </p>
-          <button
-            type="button"
-            onclick="openInfoModal('উন্নয়ন প্রকল্পসমূহ', 'চলমান ৩০+ প্রকল্প', 'শৈলকুপা উপজেলা', 'গ্রামীণ সড়ক সংস্কার, বিশুদ্ধ পানির নলকূপ স্থাপন, ডিজিটাল পাঠাগার গড়ে তোলা এবং অসহায় পরিবারের আবাসন সহায়তা প্রকল্প চলমান রয়েছে।')"
-            class="mt-1.5 sm:mt-2 text-xs sm:text-[13px] font-extrabold text-gray-900 hover:text-[#c8102e] inline-flex items-center gap-1 transition"
+          <a
+            href="{{ route('projects.index') }}"
+            class="mt-1.5 sm:mt-2 text-xs sm:text-[13px] font-extrabold text-gray-900 hover:text-[#c8102e] inline-flex items-center gap-1 transition cursor-pointer"
           >
             <span>বিস্তারিত দেখুন</span>
             <i class="ri-arrow-right-line text-[#c8102e]"></i>
-          </button>
+          </a>
         </div>
       </div>
 
@@ -621,14 +592,13 @@
           <p class="text-xs sm:text-[13px] text-gray-600 leading-relaxed mt-1 line-clamp-2">
             আমাদের বিভিন্ন কার্যক্রম, অনুষ্ঠান ও মুহূর্তের ছবিসমূহ।
           </p>
-          <button
-            type="button"
-            onclick="openInfoModal('ফটো ও ভিডিও গ্যালারি', 'আর্কাইভ গ্যালারি', 'আগামীর শৈলকুপা', 'আমাদের শিক্ষাবৃত্তি প্রদান, বৃক্ষরোপণ অভিযান, ফ্রি মেডিকেল ক্যাম্প, শীতবস্ত্র বিতরণ ও সাংস্কৃতিক অনুষ্ঠানের সকল আলোকচিত্র সংরক্ষিত রয়েছে।')"
+          <a
+            href="{{ route('gallery') }}"
             class="mt-1.5 sm:mt-2 text-xs sm:text-[13px] font-extrabold text-gray-900 hover:text-[#c8102e] inline-flex items-center gap-1 transition"
           >
             <span>গ্যালারি দেখুন</span>
             <i class="ri-arrow-right-line text-[#c8102e]"></i>
-          </button>
+          </a>
         </div>
       </div>
     </section>

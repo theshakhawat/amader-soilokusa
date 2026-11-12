@@ -114,7 +114,7 @@
               </a>
 
               <!-- ড্যাশবোর্ডে যান -->
-              <a href="{{ route('home') }}" class="flex items-center gap-2.5 px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-[#0b4622] font-semibold transition">
+              <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-[#0b4622] font-semibold transition">
                 <i class="fa-solid fa-gauge text-base text-gray-400"></i>
                 <span>ড্যাশবোর্ডে যান</span>
               </a>
@@ -211,7 +211,7 @@
               <i class="fa-solid fa-key text-[#0b4622] text-sm"></i>
               <span>পাসওয়ার্ড পরিবর্তন</span>
             </a>
-            <a href="{{ route('home') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs sm:text-sm font-semibold text-gray-700 hover:bg-emerald-50 hover:text-[#0b4622] transition">
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs sm:text-sm font-semibold text-gray-700 hover:bg-emerald-50 hover:text-[#0b4622] transition">
               <i class="fa-solid fa-gauge text-[#0b4622] text-sm"></i>
               <span>ড্যাশবোর্ডে যান</span>
             </a>
