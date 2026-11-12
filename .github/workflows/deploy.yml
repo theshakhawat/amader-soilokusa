@@ -10,32 +10,104 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      DOMAIN: ${{ secrets.DOMAIN }}
+
     steps:
+
+      # ==========================================
       # 1. Deployment Started Notification
+      # ==========================================
+
       - name: Notify Deployment Started
         continue-on-error: true
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          MESSAGE="${{ secrets.DOMAIN || '' }} Deployment Started!
+          # Capture deployment start time
+          START_TIME=$(TZ='Asia/Dhaka' date '+%d %B %Y, %I:%M:%S %p')
+          START_EPOCH=$(date +%s)
 
+          # Save values for subsequent steps
+          echo "DEPLOYMENT_START_TIME=${START_TIME}" >> "$GITHUB_ENV"
+          echo "DEPLOYMENT_START_EPOCH=${START_EPOCH}" >> "$GITHUB_ENV"
+
+          MESSAGE="⛏ Deployment Started!
+
+          🕒 Start Time: ${START_TIME} (Asia/Dhaka)
+
+          Domain: ${DOMAIN}
           Repository: ${GITHUB_REPOSITORY}
           Branch: ${GITHUB_REF_NAME}
           Commit: ${GITHUB_SHA}"
+
+          curl --fail --silent --show-error \
+            --connect-timeout 10 \
+            --max-time 20 \
+            -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MESSAGE}"
+
+      # ==========================================
+      # 2. Checkout Code
+      # ==========================================
+
+      - name: Notify Code Checkout Starting
+        continue-on-error: true
+        run: |
+          MESSAGE="📂 Checking out repository code...
+
+          Repository: ${GITHUB_REPOSITORY}
+          Branch: ${GITHUB_REF_NAME}"
 
           curl --fail --silent --show-error \
             -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
             --data-urlencode "text=${MESSAGE}"
 
-      # 2. Checkout Code
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 3. Deploy via SSH
+      - name: Notify Code Checkout Completed
+        continue-on-error: true
+        run: |
+          MESSAGE="✅ Repository checkout completed successfully!"
+
+          curl --fail --silent --show-error \
+            -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MESSAGE}"
+
+      # ==========================================
+      # 3. Notify Before SSH Connection
+      # ==========================================
+
+      - name: Notify SSH Connection Starting
+        continue-on-error: true
+        run: |
+          MESSAGE="🔌 Connecting to Server via SSH...
+
+          Domain: ${DOMAIN}
+          Repository: ${GITHUB_REPOSITORY}"
+
+          curl --fail --silent --show-error \
+            -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MESSAGE}"
+
+      # ==========================================
+      # 4. Execute Deployment Commands via SSH
+      # ==========================================
+
       - name: Execute Deployment Commands via SSH
         uses: appleboy/ssh-action@v1.0.3
+
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+          DOMAIN: ${{ secrets.DOMAIN }}
+
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -43,83 +115,240 @@ jobs:
           port: 22
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
 
+          # Forward environment variables to remote server
+          envs: TELEGRAM_BOT_TOKEN,TELEGRAM_CHAT_ID,SSH_USERNAME,DOMAIN
+
           script: |
             set -e
 
-            cd /home/${{ secrets.SSH_USERNAME }}/${{ secrets.DOMAIN }}
+            # ======================================
+            # Telegram Notification Function
+            # ======================================
 
-            echo "Pulling latest code..."
-            git pull --ff-only origin main
+            notify() {
+              local message="$1"
 
-            echo "Installing Composer dependencies..."
-            composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader
+              curl --fail --silent --show-error \
+                --connect-timeout 10 \
+                --max-time 20 \
+                -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+                --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+                --data-urlencode "text=${message}" \
+                > /dev/null || true
+            }
 
-            echo "Clearing old caches..."
-            php artisan optimize:clear
+            # ======================================
+            # Run Command With Notification
+            # ======================================
 
-            echo "Running database migrations..."
-            php artisan migrate:fresh --seed
+            run_with_notify() {
+              local message="$1"
+              shift
 
-            # echo "Seeding the database..."
-            # php artisan db:seed --force
+              notify "$message"
 
-            echo "Creating storage link if missing..."
+              "$@"
+            }
+
+            # ======================================
+            # SSH Connection Established
+            # ======================================
+
+            notify "✅ SSH Connection Established!
+
+            Starting deployment process..."
+
+            # ======================================
+            # 1. Change Project Directory
+            # ======================================
+
+            run_with_notify "📂 Changing project directory..." \
+              cd "/home/${SSH_USERNAME}/${DOMAIN}"
+
+            # ======================================
+            # 2. Git Pull
+            # ======================================
+
+            run_with_notify "📥 Pulling latest code from GitHub..." \
+              git pull --ff-only origin main
+
+            # ======================================
+            # 3. Composer Install
+            # ======================================
+
+            run_with_notify "📦 Installing Composer dependencies..." \
+              composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader
+
+            # ======================================
+            # 4. Clear Application Cache
+            # ======================================
+
+            run_with_notify "🧹 Clearing old application caches..." \
+              php artisan optimize:clear
+
+            # ======================================
+            # 5. Database Migration
+            # ======================================
+
+            run_with_notify "🗄️ Running database migrations..." \
+              php artisan migrate --force
+
+            # ======================================
+            # 6. Database Seeder
+            # ======================================
+
+            run_with_notify "🌱 Running PageSeeder..." \
+              php artisan db:seed --class=PageSeeder --force
+
+            # ======================================
+            # 7. Storage Link
+            # ======================================
+
+            notify "🔗 Checking storage symbolic link..."
+
             if [ ! -e public/storage ] && [ ! -L public/storage ]; then
-              php artisan storage:link
+
+              run_with_notify "🔗 Creating storage symbolic link..." \
+                php artisan storage:link
+
+            else
+
+              notify "✅ Storage link already exists. Skipping..."
+
             fi
 
-            echo "Building application caches..."
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
+            # ======================================
+            # 8. Config Cache
+            # ======================================
 
-            echo "Deployment commands completed successfully!"
+            run_with_notify "⚙️ Building configuration cache..." \
+              php artisan config:cache
 
-       # Deployment Success Notification
+            # ======================================
+            # 9. Route Cache
+            # ======================================
+
+            run_with_notify "🛣️ Building route cache..." \
+              php artisan route:cache
+
+            # ======================================
+            # 10. View Cache
+            # ======================================
+
+            run_with_notify "🖼️ Building view cache..." \
+              php artisan view:cache
+
+            # ======================================
+            # Deployment Commands Completed
+            # ======================================
+
+            notify "✅ All deployment commands completed successfully!"
+
+      # ==========================================
+      # 5. Deployment Success Notification
+      # ==========================================
+
       - name: Notify Deployment Success
         if: success()
         continue-on-error: true
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          MESSAGE="✅ ${{ secrets.DOMAIN || '' }} Deployment Successful!
+          # Capture deployment end time
+          END_TIME=$(TZ='Asia/Dhaka' date '+%d %B %Y, %I:%M:%S %p')
+          END_EPOCH=$(date +%s)
 
-          Repository: ${GITHUB_REPOSITORY}
-          Branch: ${GITHUB_REF_NAME}
-          Commit: ${GITHUB_SHA}
+          # Calculate deployment duration
+          DURATION_SECONDS=$((END_EPOCH - DEPLOYMENT_START_EPOCH))
 
-          🌐 Website: https://${{ secrets.DOMAIN }}
+          DURATION_HOURS=$((DURATION_SECONDS / 3600))
+          DURATION_MINUTES=$(((DURATION_SECONDS % 3600) / 60))
+          REMAINING_SECONDS=$((DURATION_SECONDS % 60))
 
-          🎉 Deployment completed successfully!
+          # Calculate decimal minutes
+          DURATION_DECIMAL=$(awk -v s="$DURATION_SECONDS" \
+            'BEGIN { printf "%.2f", s / 60 }')
 
-          👉 Please visit your website and check if everything is working correctly."
+          MESSAGE="✅ Deployment Successful!
+
+          🕒 Deployment Started:
+          ${DEPLOYMENT_START_TIME}
+
+          🕒 Deployment Finished:
+          ${END_TIME}
+
+          ⏱ Total Duration:
+          ${DURATION_HOURS}h ${DURATION_MINUTES}m ${REMAINING_SECONDS}s
+
+          📊 Total Minutes: ${DURATION_DECIMAL} minutes
+
+          🌐 Domain: ${DOMAIN}
+          📁 Repository: ${GITHUB_REPOSITORY}
+          🌿 Branch: ${GITHUB_REF_NAME}
+          📝 Commit: ${GITHUB_SHA}
+
+          🔗 Website: https://${DOMAIN}
+
+          🎉 Deployment completed successfully!"
 
           curl --fail --silent --show-error \
+            --connect-timeout 10 \
+            --max-time 20 \
             -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
             --data-urlencode "text=${MESSAGE}"
 
-      # 5. Deployment Failed Notification
+      # ==========================================
+      # 6. Deployment Failed Notification
+      # ==========================================
+
       - name: Notify Deployment Failed
         if: failure()
         continue-on-error: true
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          MESSAGE="❌ ${{ secrets.DOMAIN || '' }} Deployment Failed!
+          # Capture failure time
+          END_TIME=$(TZ='Asia/Dhaka' date '+%d %B %Y, %I:%M:%S %p')
+          END_EPOCH=$(date +%s)
 
-          Repository: ${GITHUB_REPOSITORY}
-          Branch: ${GITHUB_REF_NAME}
-          Commit: ${GITHUB_SHA}
+          # Calculate elapsed time if start timestamp exists
+          if [ -n "${DEPLOYMENT_START_EPOCH:-}" ]; then
 
-          Please check the GitHub Actions logs for the error.
+            DURATION_SECONDS=$((END_EPOCH - DEPLOYMENT_START_EPOCH))
 
-          Logs:
+            DURATION_HOURS=$((DURATION_SECONDS / 3600))
+            DURATION_MINUTES=$(((DURATION_SECONDS % 3600) / 60))
+            REMAINING_SECONDS=$((DURATION_SECONDS % 60))
+
+          else
+
+            DURATION_HOURS=0
+            DURATION_MINUTES=0
+            REMAINING_SECONDS=0
+
+          fi
+
+          MESSAGE="❌ Deployment Failed!
+
+          🕒 Started:
+          ${DEPLOYMENT_START_TIME:-Not Recorded}
+
+          🕒 Failed At:
+          ${END_TIME}
+
+          ⏱ Elapsed Time:
+          ${DURATION_HOURS}h ${DURATION_MINUTES}m ${REMAINING_SECONDS}s
+
+          🌐 Domain: ${DOMAIN}
+          📁 Repository: ${GITHUB_REPOSITORY}
+          🌿 Branch: ${GITHUB_REF_NAME}
+          📝 Commit: ${GITHUB_SHA}
+
+          ⚠️ Please check GitHub Actions logs for the error.
+
+          🔍 Check Logs:
           ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
           curl --fail --silent --show-error \
+            --connect-timeout 10 \
+            --max-time 20 \
             -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
             --data-urlencode "text=${MESSAGE}"
