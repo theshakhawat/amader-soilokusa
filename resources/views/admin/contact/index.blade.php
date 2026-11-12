@@ -87,6 +87,26 @@
       @csrf
       @method('PUT')
 
+      <!-- Office Name -->
+      <div>
+        <label for="office_name" class="block text-xs font-bold text-gray-700 mb-1.5">
+          অফিসের নাম / প্রতিষ্ঠানের নাম <span class="text-gray-400 font-normal">(ঐচ্ছিক)</span>
+        </label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+            <i class="ri-building-line text-sm text-[#0b4622]"></i>
+          </span>
+          <input
+            type="text"
+            id="office_name"
+            name="office_name"
+            value="{{ old('office_name', $contact->office_name ?? 'আগামীর শৈলকুপা কেন্দ্রীয় কার্যালয়') }}"
+            placeholder="যেমন: আগামীর শৈলকুপা কেন্দ্রীয় কার্যালয়"
+            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50/40 text-xs sm:text-sm text-gray-900 focus:outline-none focus:border-[#0b4622] focus:bg-white transition"
+          />
+        </div>
+      </div>
+
       <!-- Location Input -->
       <div>
         <label for="location" class="block text-xs font-bold text-gray-700 mb-1.5">
@@ -200,6 +220,25 @@
             class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50/40 text-xs sm:text-sm text-gray-900 focus:outline-none focus:border-[#0b4622] focus:bg-white transition"
           >{{ old('address', $contact->address) }}</textarea>
         </div>
+      </div>
+
+      <!-- Google Map Iframe -->
+      <div>
+        <label for="map_iframe" class="block text-xs font-bold text-gray-700 mb-1.5">
+          গুগল ম্যাপ এমবেড কোড (Google Map Iframe Code) <span class="text-gray-400 font-normal">(ঐচ্ছিক)</span>
+        </label>
+        <div class="relative">
+          <textarea
+            id="map_iframe"
+            name="map_iframe"
+            rows="4"
+            placeholder='<iframe src="https://www.google.com/maps/embed?..." ...></iframe>'
+            class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50/40 text-xs font-mono text-gray-800 focus:outline-none focus:border-[#0b4622] focus:bg-white transition"
+          >{{ old('map_iframe', $contact->map_iframe) }}</textarea>
+        </div>
+        <p class="text-[11px] text-gray-400 mt-1">
+          Google Maps থেকে Share &gt; Embed a map-এর iframe কোডটি এখানে পেস্ট করুন। এটি /contact পেজের ডানপাশে ম্যাপ হিসেবে প্রদর্শিত হবে।
+        </p>
       </div>
 
       <!-- Action Button -->

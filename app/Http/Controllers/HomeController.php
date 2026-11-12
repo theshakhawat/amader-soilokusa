@@ -3,12 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\AboutSection;
+use App\Models\Committee;
+use App\Models\CommitteeMember;
+use App\Models\DonationSetting;
 use App\Models\Event;
 use App\Models\GalleryItem;
 use App\Models\HeroBanner;
 use App\Models\Notice;
 use App\Models\PresidentMessage;
 use App\Models\Pride;
+use App\Models\Place;
+use App\Models\Category;
+use App\Models\Post;
 use App\Models\Project;
 use App\Models\StatCounter;
 use Illuminate\Http\Request;
@@ -36,6 +42,13 @@ class HomeController extends Controller
             ->take(4)
             ->get();
 
+        $donation = DonationSetting::first();
+        $latestPosts = Post::with('category')
+            ->where('status', true)
+            ->orderBy('published', 'desc')
+            ->orderBy('id', 'desc')
+            ->take(3)
+            ->get();
         $prides = Pride::where('status', true)
             ->orderBy('order_index', 'asc')
             ->orderBy('id', 'asc')
@@ -55,7 +68,12 @@ class HomeController extends Controller
             ];
         })->values()->all();
 
-        return view('home', compact('heroBanners', 'statCounters', 'heroSlidesData', 'about', 'president', 'events', 'notices', 'prides'));
+        $committee = Committee::where('is_active', true)
+            ->orderBy('order', 'asc')
+            ->orderBy('id', 'desc')
+            ->first();
+
+        return view('home', compact('heroBanners', 'statCounters', 'heroSlidesData', 'about', 'president', 'events', 'notices', 'prides', 'donation', 'latestPosts', 'committee'));
     }
 
     /**
@@ -276,5 +294,156 @@ class HomeController extends Controller
             ->get();
 
         return view('pages.project-details', compact('project', 'otherProjects'));
+    }
+
+    /**
+     * Show Public Places list page (/places).
+     */
+    public function placesIndex(Request $request): View
+    {
+        $places = Place::where('status', true)
+            ->with('photos')
+            ->orderBy('order_index', 'asc')
+            ->orderBy('id', 'desc')
+            ->paginate(12)
+            ->withQueryString();
+
+        $totalCount = Place::where('status', true)->count();
+
+        return view('pages.places', compact('places', 'totalCount'));
+    }
+
+    /**
+     * Show Public Place Details page (/places/{place}).
+     */
+    public function placeDetails(Place $place): View
+    {
+        if (!$place->status) {
+            abort(404);
+        }
+
+        $place->load('photos');
+
+        $otherPlaces = Place::where('status', true)
+            ->where('id', '!=', $place->id)
+            ->orderBy('order_index', 'asc')
+            ->orderBy('id', 'desc')
+            ->take(4)
+            ->get();
+
+        return view('pages.place-details', compact('place', 'otherPlaces'));
+    }
+
+    /**
+     * Show Public Blogs list page (/blogs).
+     */
+    public function blogsIndex(Request $request): View
+    {
+        $query = Post::with('category')->where('status', true);
+
+        if ($request->filled('category')) {
+            $catSlug = $request->category;
+            $query->whereHas('category', function ($q) use ($catSlug) {
+                $q->where('slug', $catSlug);
+            });
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('content', 'like', "%{$search}%");
+            });
+        }
+
+        $posts = $query->orderBy('published', 'desc')
+            ->orderBy('id', 'desc')
+            ->paginate(9)
+            ->withQueryString();
+
+        $categories = Category::where('status', true)->withCount(['posts' => function ($q) {
+            $q->where('status', true);
+        }])->get();
+
+        $recentPosts = Post::where('status', true)
+            ->orderBy('published', 'desc')
+            ->orderBy('id', 'desc')
+            ->take(5)
+            ->get();
+
+        return view('pages.blogs', compact('posts', 'categories', 'recentPosts'));
+    }
+
+    /**
+     * Show Public Blog Details page (/blogs/{slug}).
+     */
+    public function blogDetails(string $slug): View
+    {
+        $post = Post::with('category')->where('slug', $slug)->firstOrFail();
+
+        if (!$post->status) {
+            abort(404);
+        }
+
+        $relatedPosts = Post::with('category')
+            ->where('status', true)
+            ->where('id', '!=', $post->id)
+            ->where('category_id', $post->category_id)
+            ->orderBy('published', 'desc')
+            ->take(4)
+            ->get();
+
+        if ($relatedPosts->isEmpty()) {
+            $relatedPosts = Post::with('category')
+                ->where('status', true)
+                ->where('id', '!=', $post->id)
+                ->orderBy('published', 'desc')
+                ->take(4)
+                ->get();
+        }
+
+        $categories = Category::where('status', true)->withCount(['posts' => function ($q) {
+            $q->where('status', true);
+        }])->get();
+
+        return view('pages.blog-details', compact('post', 'relatedPosts', 'categories'));
+    }
+
+    /**
+     * Public Committee Listing Page
+     */
+    public function committeeIndex(): View
+    {
+        $activeCommittee = Committee::where('is_active', true)
+            ->orderBy('order', 'asc')
+            ->orderBy('id', 'desc')
+            ->first();
+
+        $membersQuery = CommitteeMember::where('status', true);
+        if ($activeCommittee) {
+            $membersQuery->where(function ($q) use ($activeCommittee) {
+                $q->where('committee_id', $activeCommittee->id)
+                  ->orWhereNull('committee_id');
+            });
+        }
+
+        $allMembers = $membersQuery->orderBy('order', 'asc')->orderBy('id', 'asc')->get();
+
+        // Row 1: সভাপতি (Order = 1)
+        $president = $allMembers->firstWhere('order', 1);
+
+        // Row 2: দুই জন (Order = 2 এবং 3)
+        $secondRowMembers = $allMembers->filter(function ($m) {
+            return $m->order == 2 || $m->order == 3;
+        })->values();
+
+        // Row 3+: বাকি সদস্যরা (Order 4 বা তার বেশি)
+        $otherMembers = $allMembers->filter(function ($m) use ($president, $secondRowMembers) {
+            if ($president && $m->id === $president->id) return false;
+            if ($secondRowMembers->contains('id', $m->id)) return false;
+            return true;
+        })->values();
+
+        return view('pages.committee', compact('activeCommittee', 'president', 'secondRowMembers', 'otherMembers'));
     }
 }

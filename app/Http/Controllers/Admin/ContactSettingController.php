@@ -25,11 +25,13 @@ class ContactSettingController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $validated = $request->validate([
+            'office_name' => ['nullable', 'string', 'max:255'],
             'location' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'max:50'],
             'email' => ['required', 'email', 'max:255'],
             'alt_phone' => ['nullable', 'string', 'max:50'],
             'address' => ['nullable', 'string', 'max:500'],
+            'map_iframe' => ['nullable', 'string'],
         ], [
             'location.required' => 'লোকেশন বা এলাকার নাম প্রদান করুন (যেমন: শৈলকুপা)।',
             'phone.required' => 'প্রধান যোগাযোগের ফোন নম্বর প্রদান করুন।',
@@ -40,6 +42,6 @@ class ContactSettingController extends Controller
         $contact = ContactSetting::getSettings();
         $contact->update($validated);
 
-        return back()->with('success', 'যোগাযোগ সংক্রান্ত তথ্য সফলভাবে আপডেট করা হয়েছে!');
+        return back()->with('success', 'যোগাযোগ সংক্রান্ত তথ্য ও ম্যাপ সফলভাবে আপডেট করা হয়েছে!');
     }
 }

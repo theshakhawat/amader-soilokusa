@@ -494,6 +494,14 @@
       </div>
 
       <!-- Right: কমিটি (5 Cols) -->
+      @php
+        $committeeName = $committee ? $committee->name : 'কার্যনির্বাহী কমিটি';
+        $committeeSession = $committee ? $committee->session_duration : '২০২৬-২০২৮';
+        $committeeSubtitle = $committee && $committee->subtitle ? $committee->subtitle : 'আগামীর শৈলকুপা';
+        $committeeImg = $committee ? $committee->image_url : asset('assets/images/committee.jpg');
+        $committeeDesc = $committee && $committee->description ? $committee->description : "সভাপতি: মোঃ আব্দুল করিম\nসহ-প্রতিষ্ঠাতা: নিটুল ইসলাম\nসাধারণ সম্পাদক ও অন্যান্য সম্পাদকমণ্ডলীর পূর্ণাঙ্গ তালিকা অফিসে সংরক্ষিত রয়েছে।";
+        $committeeTitleFull = $committeeName . ' (' . $committeeSession . ')';
+      @endphp
       <div id="committee-section" class="lg:col-span-5 ui-card p-4 sm:p-6 flex flex-col justify-between">
         <!-- Header -->
         <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-3 sm:mb-4">
@@ -503,28 +511,30 @@
             </span>
             <h2 class="text-base sm:text-[20px] font-extrabold text-gray-900">কমিটি</h2>
           </div>
-          <button
-            type="button"
-            onclick="openInfoModal('কার্যনির্বাহী কমিটি (২০২৬-২০২৮)', 'কমিটি তালিকা', 'আগামীর শৈলকুপা কেন্দ্রীয় সংসদ', 'সভাপতি: মোঃ আব্দুল করিম\nসহ-প্রতিষ্ঠাতা: নিটুল ইসলাম\nসাধারণ সম্পাদক ও অন্যান্য সম্পাদকমণ্ডলীর পূর্ণাঙ্গ তালিকা অফিসে সংরক্ষিত রয়েছে।')"
-            class="text-[#c8102e] hover:text-[#a30b24] text-xs sm:text-[13.5px] font-bold inline-flex items-center gap-1 transition"
+          <a
+            href="{{ route('committee.index') }}"
+            class="text-[#c8102e] hover:text-[#a30b24] text-xs sm:text-[13.5px] font-bold inline-flex items-center gap-1 transition cursor-pointer"
           >
             <span>সবাই দেখুন</span>
             <i class="ri-arrow-right-line"></i>
-          </button>
+          </a>
         </div>
 
         <!-- Committee Photo & Caption -->
-        <div class="flex flex-col items-center text-center">
+        <a
+          href="{{ route('committee.index') }}"
+          class="flex flex-col items-center text-center cursor-pointer group block"
+        >
           <div class="w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm aspect-[16/8] sm:aspect-[16/6.2] bg-gray-100">
-            <img src="{{ asset('assets/images/committee.jpg') }}" alt="কার্যনির্বাহী কমিটি (২০২৬-২০২৮)" class="w-full h-full object-cover" />
+            <img src="{{ $committeeImg }}" alt="{{ $committeeTitleFull }}" class="w-full h-full object-cover group-hover:scale-102 transition duration-300" />
           </div>
-          <h3 class="text-sm sm:text-base font-extrabold text-gray-900 mt-2.5 sm:mt-3">
-            কার্যনির্বাহী কমিটি (২০২৬-২০২৮)
+          <h3 class="text-sm sm:text-base font-extrabold text-gray-900 group-hover:text-[#c8102e] transition mt-2.5 sm:mt-3">
+            {{ $committeeTitleFull }}
           </h3>
           <p class="text-[11px] sm:text-xs font-medium text-gray-600 mt-0.5">
-            আগামীর শৈলকুপা
+            {{ $committeeSubtitle }}
           </p>
-        </div>
+        </a>
       </div>
     </section>
 
@@ -533,74 +543,80 @@
          =================================================================== -->
     <section id="projects-section" class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-7">
       <!-- Feature Card 1: উন্নয়ন প্রকল্পসমূহ -->
-      <div class="ui-card feature-card-watermark p-3.5 sm:p-5 flex items-center gap-3.5 sm:gap-4 sub-card-hover">
+      <a
+        href="{{ route('projects.index') }}"
+        class="ui-card feature-card-watermark p-3.5 sm:p-5 flex items-center gap-3.5 sm:gap-4 sub-card-hover block cursor-pointer group"
+      >
         <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-[100px] md:h-[100px] rounded-xl overflow-hidden shrink-0 border border-gray-100 shadow-sm">
-          <img src="{{ asset('assets/images/project-road.jpg') }}" alt="উন্নয়ন প্রকল্পসমূহ" class="w-full h-full object-cover" />
+          <img src="{{ asset('assets/images/project-road.jpg') }}" alt="উন্নয়ন প্রকল্পসমূহ" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
         </div>
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-1.5 sm:gap-2">
             <i class="ri-stack-line text-[#c8102e] text-base sm:text-lg"></i>
-            <h3 class="text-base sm:text-[18px] font-extrabold text-[#0b4622] truncate">উন্নয়ন প্রকল্পসমূহ</h3>
+            <h3 class="text-base sm:text-[18px] font-extrabold text-[#0b4622] group-hover:text-[#c8102e] transition truncate">উন্নয়ন প্রকল্পসমূহ</h3>
           </div>
           <p class="text-xs sm:text-[13px] text-gray-600 leading-relaxed mt-1 line-clamp-2">
             শৈলকুপার অবকাঠামো, শিক্ষা, স্বাস্থ্য ও সামাজিক উন্নয়নের চলমান প্রকল্পসমূহ।
           </p>
-          <a
-            href="{{ route('projects.index') }}"
-            class="mt-1.5 sm:mt-2 text-xs sm:text-[13px] font-extrabold text-gray-900 hover:text-[#c8102e] inline-flex items-center gap-1 transition cursor-pointer"
+          <div
+            class="mt-1.5 sm:mt-2 text-xs sm:text-[13px] font-extrabold text-gray-900 group-hover:text-[#c8102e] inline-flex items-center gap-1 transition"
           >
             <span>বিস্তারিত দেখুন</span>
-            <i class="ri-arrow-right-line text-[#c8102e]"></i>
-          </a>
+            <i class="ri-arrow-right-line text-[#c8102e] group-hover:translate-x-1 transition-transform"></i>
+          </div>
         </div>
-      </div>
+      </a>
 
       <!-- Feature Card 2: দর্শনীয় স্থান -->
-      <div class="ui-card feature-card-watermark p-3.5 sm:p-5 flex items-center gap-3.5 sm:gap-4 sub-card-hover">
+      <a
+        href="{{ route('places.index') }}"
+        class="ui-card feature-card-watermark p-3.5 sm:p-5 flex items-center gap-3.5 sm:gap-4 sub-card-hover block cursor-pointer group"
+      >
         <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-[100px] md:h-[100px] rounded-xl overflow-hidden shrink-0 border border-gray-100 shadow-sm">
-          <img src="{{ asset('assets/images/place-mosque.jpg') }}" alt="দর্শনীয় স্থান" class="w-full h-full object-cover" />
+          <img src="{{ asset('assets/images/place-mosque.jpg') }}" alt="দর্শনীয় স্থান" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
         </div>
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-1.5 sm:gap-2">
             <i class="ri-map-pin-line text-[#c8102e] text-base sm:text-lg"></i>
-            <h3 class="text-base sm:text-[18px] font-extrabold text-[#0b4622] truncate">দর্শনীয় স্থান</h3>
+            <h3 class="text-base sm:text-[18px] font-extrabold text-[#0b4622] group-hover:text-[#c8102e] transition truncate">দর্শনীয় স্থান</h3>
           </div>
           <p class="text-xs sm:text-[13px] text-gray-600 leading-relaxed mt-1 line-clamp-2">
             শৈলকুপার ঐতিহাসিক, প্রাকৃতিক ও সাংস্কৃতিক দর্শনীয় স্থানসমূহ।
           </p>
-          <button
-            type="button"
-            onclick="openInfoModal('শৈলকুপার ঐতিহাসিক দর্শনীয় স্থান', '২০+ ঐতিহাসিক ও প্রাকৃতিক স্থান', 'শৈলকুপা, ঝিনাইদহ', 'সুলতানি আমলের ঐতিহাসিক শৈলকুপা শাহী মসজিদ, গড়াই ও কুমার নদীর তীর, হরিহর রাজার গড় এবং কবিরপুর জমিদার বাড়িসহ নানা ঐতিহ্যবাহী স্থান।')"
-            class="mt-1.5 sm:mt-2 text-xs sm:text-[13px] font-extrabold text-gray-900 hover:text-[#c8102e] inline-flex items-center gap-1 transition"
+          <div
+            class="mt-1.5 sm:mt-2 text-xs sm:text-[13px] font-extrabold text-gray-900 group-hover:text-[#c8102e] inline-flex items-center gap-1 transition"
           >
             <span>বিস্তারিত দেখুন</span>
-            <i class="ri-arrow-right-line text-[#c8102e]"></i>
-          </button>
+            <i class="ri-arrow-right-line text-[#c8102e] group-hover:translate-x-1 transition-transform"></i>
+          </div>
         </div>
-      </div>
+      </a>
 
       <!-- Feature Card 3: গ্যালারি -->
-      <div id="gallery-section" class="ui-card feature-card-watermark p-3.5 sm:p-5 flex items-center gap-3.5 sm:gap-4 sub-card-hover">
+      <a
+        href="{{ route('gallery') }}"
+        id="gallery-section"
+        class="ui-card feature-card-watermark p-3.5 sm:p-5 flex items-center gap-3.5 sm:gap-4 sub-card-hover block cursor-pointer group"
+      >
         <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-[100px] md:h-[100px] rounded-xl overflow-hidden shrink-0 border border-gray-100 shadow-sm">
-          <img src="{{ asset('assets/images/gallery-event.jpg') }}" alt="গ্যালারি" class="w-full h-full object-cover" />
+          <img src="{{ asset('assets/images/gallery-event.jpg') }}" alt="গ্যালারি" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
         </div>
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-1.5 sm:gap-2">
             <i class="ri-image-line text-[#c8102e] text-base sm:text-lg"></i>
-            <h3 class="text-base sm:text-[18px] font-extrabold text-[#0b4622] truncate">গ্যালারি</h3>
+            <h3 class="text-base sm:text-[18px] font-extrabold text-[#0b4622] group-hover:text-[#c8102e] transition truncate">গ্যালারি</h3>
           </div>
           <p class="text-xs sm:text-[13px] text-gray-600 leading-relaxed mt-1 line-clamp-2">
             আমাদের বিভিন্ন কার্যক্রম, অনুষ্ঠান ও মুহূর্তের ছবিসমূহ।
           </p>
-          <a
-            href="{{ route('gallery') }}"
-            class="mt-1.5 sm:mt-2 text-xs sm:text-[13px] font-extrabold text-gray-900 hover:text-[#c8102e] inline-flex items-center gap-1 transition"
+          <div
+            class="mt-1.5 sm:mt-2 text-xs sm:text-[13px] font-extrabold text-gray-900 group-hover:text-[#c8102e] inline-flex items-center gap-1 transition"
           >
             <span>গ্যালারি দেখুন</span>
-            <i class="ri-arrow-right-line text-[#c8102e]"></i>
-          </a>
+            <i class="ri-arrow-right-line text-[#c8102e] group-hover:translate-x-1 transition-transform"></i>
+          </div>
         </div>
-      </div>
+      </a>
     </section>
 
     <!-- ===================================================================
@@ -617,113 +633,124 @@
             </span>
             <h2 class="text-base sm:text-[20px] font-extrabold text-gray-900">ব্লগ ও আপডেট</h2>
           </div>
-          <button
-            type="button"
-            onclick="openInfoModal('ব্লগ ও আপডেট সমূহ', 'প্রবন্ধ ও সংবাদ', 'আগামীর শৈলকুপা প্রকাশনা', 'শৈলকুপার কৃষি, শিক্ষা, সংস্কৃতি, পরিবেশ ও আর্থ-সামাজিক উন্নয়ন বিষয়ক নিয়মিত প্রবন্ধ ও সংবাদ আপডেট।')"
-            class="text-[#c8102e] hover:text-[#a30b24] text-xs sm:text-[13.5px] font-bold inline-flex items-center gap-1 transition"
+          <a
+            href="{{ route('blogs.index') }}"
+            class="text-[#c8102e] hover:text-[#a30b24] text-xs sm:text-[13.5px] font-bold inline-flex items-center gap-1 transition cursor-pointer"
           >
             <span>সব দেখুন</span>
             <i class="ri-arrow-right-line"></i>
-          </button>
+          </a>
         </div>
 
-        <!-- 3 Blog Cards Grid -->
+        <!-- 3 Blog Cards Grid (Dynamic from Database) -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
-          <!-- Blog 1 -->
-          <article
-            onclick="openInfoModal('শৈলকুপার সম্ভাবনা ও উন্নয়নের রূপকল্প', 'ব্লগ ও উন্নয়ন ভাবনা', 'প্রকাশিত: ০১ নভেম্বর ২০২৬', 'কৃষিপ্রধান শৈলকুপা উপজেলার গ্রামীণ অর্থনীতি, ক্ষুদ্র শিল্প ও তরুণ সমাজের কর্মসংস্থান বৃদ্ধির মাধ্যমে একটি আধুনিক জনপদ গড়ে তোলার দীর্ঘমেয়াদী রূপকল্প।')"
-            class="sub-card-hover cursor-pointer bg-white rounded-xl border border-gray-200/80 overflow-hidden flex flex-col"
-          >
-            <div class="aspect-[16/10] bg-gray-100 overflow-hidden">
-              <img src="{{ asset('assets/images/blog-1.jpg') }}" alt="শৈলকুপার সম্ভাবনা ও উন্নয়নের রূপকল্প" class="w-full h-full object-cover" />
-            </div>
-            <div class="p-3 flex-1 flex flex-col justify-between">
-              <h3 class="text-xs sm:text-[14px] font-extrabold text-gray-900 hover:text-[#c8102e] leading-snug transition line-clamp-2">
-                শৈলকুপার সম্ভাবনা ও উন্নয়নের রূপকল্প
-              </h3>
-              <p class="text-[11px] text-gray-500 mt-2 flex items-center gap-1">
-                <i class="ri-time-line text-[#c8102e]"></i>
-                <span>০১ নভেম্বর ২০২৬</span>
-              </p>
-            </div>
-          </article>
+          @forelse($latestPosts ?? [] as $postItem)
+            <a
+              href="{{ route('blogs.details', $postItem->slug) }}"
+              class="sub-card-hover cursor-pointer bg-white rounded-xl border border-gray-200/80 overflow-hidden flex flex-col group justify-between"
+            >
+              <div>
+                <!-- Thumbnail -->
+                <div class="aspect-[16/10] bg-gray-100 overflow-hidden">
+                  <img
+                    src="{{ $postItem->thumbnail_url }}"
+                    alt="{{ $postItem->title }}"
+                    class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                    onerror="this.src='https://placehold.co/400x250/0b4622/ffffff?text={{ urlencode($postItem->title) }}'"
+                  />
+                </div>
+                <!-- Content -->
+                <div class="p-3">
+                  <h3 class="text-xs sm:text-[14px] font-extrabold text-gray-900 group-hover:text-[#c8102e] leading-snug transition line-clamp-2">
+                    {{ $postItem->title }}
+                  </h3>
+                </div>
+              </div>
 
-          <!-- Blog 2 -->
-          <article
-            onclick="openInfoModal('শিক্ষার মানোন্নয়নে আমাদের পরিকল্পনা', 'শিক্ষা ও গবেষণা', 'প্রকাশিত: ২৮ অক্টোবর ২০২৬', 'উপজেলার প্রতিটি বিদ্যালয়ে মানসম্মত শিক্ষা নিশ্চিতকরণ, ডিজিটাল ল্যাব সুবিধা বৃদ্ধি এবং ঝরে পড়া শিক্ষার্থীদের বিদ্যালয়মুখী করার সমন্বিত উদ্যোগ।')"
-            class="sub-card-hover cursor-pointer bg-white rounded-xl border border-gray-200/80 overflow-hidden flex flex-col"
-          >
-            <div class="aspect-[16/10] bg-gray-100 overflow-hidden">
-              <img src="{{ asset('assets/images/blog-2.jpg') }}" alt="শিক্ষার মানোন্নয়নে আমাদের পরিকল্পনা" class="w-full h-full object-cover" />
+              <!-- Category & Date below title -->
+              <div class="px-3 pb-3 pt-0 space-y-1.5 border-t border-gray-50 mt-1">
+                @if($postItem->category)
+                  <div class="text-[11px] font-bold text-[#0b4622] flex items-center gap-1">
+                    <i class="ri-price-tag-3-line text-[10px]"></i>
+                    <span class="truncate">{{ $postItem->category->name }}</span>
+                  </div>
+                @endif
+                <p class="text-[11px] text-gray-500 flex items-center gap-1">
+                  <i class="ri-time-line text-[#c8102e]"></i>
+                  <span>{{ $postItem->published ? $postItem->published->format('d M, Y') : $postItem->created_at->format('d M, Y') }}</span>
+                </p>
+              </div>
+            </a>
+          @empty
+            <div class="col-span-3 py-8 text-center text-xs text-gray-400">
+              বর্তমানে কোনো ব্লগ আপডেট নেই।
             </div>
-            <div class="p-3 flex-1 flex flex-col justify-between">
-              <h3 class="text-xs sm:text-[14px] font-extrabold text-gray-900 hover:text-[#c8102e] leading-snug transition line-clamp-2">
-                শিক্ষার মানোন্নয়নে আমাদের পরিকল্পনা
-              </h3>
-              <p class="text-[11px] text-gray-500 mt-2 flex items-center gap-1">
-                <i class="ri-time-line text-[#c8102e]"></i>
-                <span>২৮ অক্টোবর ২০২৬</span>
-              </p>
-            </div>
-          </article>
-
-          <!-- Blog 3 -->
-          <article
-            onclick="openInfoModal('শৈলকুপার ঐতিহ্য, প্রকৃতি ও সংস্কৃতি', 'ঐতিহ্য ও সংস্কৃতি', 'প্রকাশিত: ২০ অক্টোবর ২০২৬', 'গড়াই ও কুমার বিধৌত শৈলকুপার লোকজ সংস্কৃতি, বাউল গান, প্রাচীন স্থাপত্য ও প্রাকৃতিক সৌন্দর্য নতুন প্রজন্মের কাছে তুলে ধরার বিশেষ প্রতিবেদন।')"
-            class="sub-card-hover cursor-pointer bg-white rounded-xl border border-gray-200/80 overflow-hidden flex flex-col"
-          >
-            <div class="aspect-[16/10] bg-gray-100 overflow-hidden">
-              <img src="{{ asset('assets/images/blog-3.jpg') }}" alt="শৈলকুপার ঐতিহ্য, প্রকৃতি ও সংস্কৃতি" class="w-full h-full object-cover" />
-            </div>
-            <div class="p-3 flex-1 flex flex-col justify-between">
-              <h3 class="text-xs sm:text-[14px] font-extrabold text-gray-900 hover:text-[#c8102e] leading-snug transition line-clamp-2">
-                শৈলকুপার ঐতিহ্য, প্রকৃতি ও সংস্কৃতি
-              </h3>
-              <p class="text-[11px] text-gray-500 mt-2 flex items-center gap-1">
-                <i class="ri-time-line text-[#c8102e]"></i>
-                <span>২০ অক্টোবর ২০২৬</span>
-              </p>
-            </div>
-          </article>
+          @endforelse
         </div>
       </div>
 
-      <!-- Right: Donation CTA Banner (Fully Responsive) -->
-      <div class="lg:col-span-5 donation-banner-bg rounded-2xl overflow-hidden shadow-md relative flex flex-col sm:flex-row items-center justify-between p-5 sm:p-7 text-white gap-5 sm:gap-4">
-        <!-- Left Text & Button -->
-        <div class="relative z-10 w-full sm:max-w-[62%] text-center sm:text-left flex flex-col items-center sm:items-start">
-          <div class="flex items-center sm:items-start gap-2.5 sm:gap-3">
-            <div class="text-white text-2xl sm:text-4xl shrink-0 mt-0.5">
-              <i class="fa-solid fa-hand-holding-heart"></i>
+      <!-- Right: Donation CTA Banner (Fully Responsive & Admin Controlled) -->
+      @php
+        $donationBanner = $donation ?? \App\Models\DonationSetting::first();
+      @endphp
+      @if(!$donationBanner || $donationBanner->status)
+        <div
+          class="lg:col-span-5 rounded-2xl overflow-hidden shadow-md relative flex flex-col sm:flex-row items-center justify-between p-5 sm:p-7 gap-5 sm:gap-4 transition-all duration-300"
+          style="background: {{ ($donationBanner && $donationBanner->background_gradient) ? $donationBanner->background_gradient : 'radial-gradient(circle at 78% 45%, #d92638 0%, #7d0615 100%)' }}; color: {{ ($donationBanner && $donationBanner->text_color) ? $donationBanner->text_color : '#ffffff' }};"
+        >
+          <!-- Left Text & Button -->
+          <div class="relative z-10 w-full sm:max-w-[62%] text-center sm:text-left flex flex-col items-center sm:items-start">
+            <div class="flex items-center sm:items-start gap-2.5 sm:gap-3">
+              <div class="text-2xl sm:text-4xl shrink-0 mt-0.5">
+                <i class="{{ ($donationBanner && $donationBanner->icon) ? $donationBanner->icon : 'fa-solid fa-hand-holding-heart' }}"></i>
+              </div>
+              <h2 class="text-lg sm:text-[24px] font-extrabold leading-tight">
+                {!! nl2br(e($donationBanner->title ?? "শৈলকুপার উন্নয়নে\nআপনিও অংশ নিন")) !!}
+              </h2>
             </div>
-            <h2 class="text-lg sm:text-[24px] font-extrabold leading-tight">
-              শৈলকুপার উন্নয়নে<br class="hidden sm:inline" /> আপনিও অংশ নিন
-            </h2>
+
+            <p class="text-xs sm:text-[13.5px] leading-relaxed mt-2.5 sm:mt-3.5 font-medium opacity-90">
+              {{ $donationBanner->description ?? 'শিক্ষা, স্বাস্থ্য, সামাজিক উন্নয়ন ও মানবকল্যাণমূলক কার্যক্রমে আপনার অনুদান আমাদের প্রেরণা।' }}
+            </p>
+
+            @php
+              $btnBg = ($donationBanner && $donationBanner->button_bg_color) ? $donationBanner->button_bg_color : '#ffffff';
+              $btnTextColor = ($donationBanner && $donationBanner->button_text_color) ? $donationBanner->button_text_color : '#111827';
+              $btnIconColor = ($donationBanner && $donationBanner->bg_color_start) ? $donationBanner->bg_color_start : '#c8102e';
+            @endphp
+
+            @if($donationBanner && !empty($donationBanner->button_link) && $donationBanner->button_link !== '#')
+              <a
+                href="{{ $donationBanner->button_link }}"
+                class="mt-4 sm:mt-5 text-xs sm:text-sm font-extrabold px-5 py-2.5 rounded-full shadow inline-flex items-center gap-2 transition cursor-pointer hover:opacity-95"
+                style="background-color: {{ $btnBg }}; color: {{ $btnTextColor }};"
+              >
+                <span>{{ $donationBanner->button_text ?? 'অনুদান দিন এখনই' }}</span>
+                <i class="ri-arrow-right-line font-bold" style="color: {{ $btnIconColor }};"></i>
+              </a>
+            @else
+              <button
+                type="button"
+                onclick="openDonateModal()"
+                class="mt-4 sm:mt-5 text-xs sm:text-sm font-extrabold px-5 py-2.5 rounded-full shadow inline-flex items-center gap-2 transition cursor-pointer hover:opacity-95"
+                style="background-color: {{ $btnBg }}; color: {{ $btnTextColor }};"
+              >
+                <span>{{ $donationBanner->button_text ?? 'অনুদান দিন এখনই' }}</span>
+                <i class="ri-arrow-right-line font-bold" style="color: {{ $btnIconColor }};"></i>
+              </button>
+            @endif
           </div>
 
-          <p class="text-white/90 text-xs sm:text-[13.5px] leading-relaxed mt-2.5 sm:mt-3.5 font-medium">
-            শিক্ষা, স্বাস্থ্য, সামাজিক উন্নয়ন ও মানবকল্যাণমূলক কার্যক্রমে আপনার অনুদান আমাদের প্রেরণা।
-          </p>
-
-          <button
-            type="button"
-            onclick="openDonateModal()"
-            class="mt-4 sm:mt-5 bg-white hover:bg-gray-100 text-gray-900 text-xs sm:text-sm font-extrabold px-5 py-2.5 rounded-full shadow inline-flex items-center gap-2 transition"
-          >
-            <span>অনুদান দিন এখনই</span>
-            <i class="ri-arrow-right-line text-[#c8102e] font-bold"></i>
-          </button>
+          <!-- Right Sapling Image -->
+          <div class="w-32 sm:w-36 md:w-44 h-32 sm:h-40 md:h-48 flex items-center justify-center shrink-0">
+            <img
+              src="{{ $donationBanner ? $donationBanner->image_url : asset('assets/images/donate-sapling.jpg') }}"
+              alt="অনুদান প্রতীক"
+              class="w-full h-full object-cover rounded-xl"
+            />
+          </div>
         </div>
-
-        <!-- Right Sapling Image -->
-        <div class="w-32 sm:w-36 md:w-44 h-32 sm:h-40 md:h-48 flex items-center justify-center shrink-0">
-          <img
-            src="{{ asset('assets/images/donate-sapling.jpg') }}"
-            alt="অনুদান প্রতীক"
-            class="w-full h-full object-cover rounded-xl "
-          />
-        </div>
-      </div>
+      @endif
     </section>
 
   </main>

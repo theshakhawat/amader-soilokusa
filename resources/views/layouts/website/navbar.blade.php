@@ -3,16 +3,24 @@
      ===================================================================== -->
 <header class="bg-white sticky top-0 z-40 shadow-[0_2px_10px_rgba(0,0,0,0.06)]">
   <div class="max-w-[1220px] mx-auto px-3 sm:px-6 h-[64px] sm:h-[76px] flex items-center justify-between gap-2 sm:gap-4">
+    @php
+      $navBranding = \App\Models\SiteSetting::first();
+      $navLogo = $navBranding ? $navBranding->header_logo_url : asset('assets/images/logo-icon.png');
+      $navTitle = $navBranding ? $navBranding->site_title : 'আগামীর শৈলকুপা';
+      $navTagline = $navBranding ? $navBranding->site_tagline : 'শৈলকুপার উন্নয়নে আমরা এক পরিবার';
+    @endphp
     <!-- Brand Logo -->
     <a href="{{ route('home') }}" class="flex items-center gap-2 sm:gap-3 group shrink-0 py-1">
-      <img src="{{ asset('assets/images/logo-icon.png') }}" alt="আগামীর শৈলকুপা লোগো" class="w-9 h-9 sm:w-12 sm:h-12 object-contain shrink-0" />
+      <img src="{{ $navLogo }}" alt="{{ $navTitle }} লোগো" class="w-9 h-9 sm:w-12 sm:h-12 object-contain shrink-0" />
       <div class="flex flex-col justify-center py-0.5">
         <span class="block text-[19px] sm:text-[23px] md:text-[26px] font-extrabold text-[#b91c1c] tracking-normal leading-[1.3] pt-0.5">
-          আগামীর শৈলকুপা
+          {{ $navTitle }}
         </span>
-        <span class="hidden sm:block text-[11px] sm:text-[12.5px] font-semibold text-[#0b4622] leading-tight mt-0.5">
-          শৈলকুপার উন্নয়নে আমরা এক পরিবার
-        </span>
+        @if($navTagline)
+          <span class="hidden sm:block text-[11px] sm:text-[12.5px] font-semibold text-[#0b4622] leading-tight mt-0.5">
+            {{ $navTagline }}
+          </span>
+        @endif
       </div>
     </a>
 
@@ -47,7 +55,7 @@
       <a href="{{ route('home') }}#events-section" class="px-3.5 py-1.5 rounded-[6px] hover:text-[#c8102e] transition">
         কার্যক্রম
       </a>
-      <a href="{{ route('home') }}#footer-section" class="px-3.5 py-1.5 rounded-[6px] hover:text-[#c8102e] transition">
+      <a href="{{ route('contact.index') }}" class="px-3.5 py-1.5 rounded-[6px] hover:text-[#c8102e] transition {{ request()->routeIs('contact*') ? 'text-[#c8102e] font-extrabold' : '' }}">
         যোগাযোগ
       </a>
     </nav>
@@ -161,7 +169,7 @@
       <a href="{{ route('home') }}#notice-section" class="mobile-nav-link px-4 py-2.5 rounded-lg hover:bg-gray-50">নোটিশ</a>
       <a href="{{ route('home') }}#gallery-section" class="mobile-nav-link px-4 py-2.5 rounded-lg hover:bg-gray-50">গ্যালারি</a>
       <a href="{{ route('home') }}#events-section" class="mobile-nav-link px-4 py-2.5 rounded-lg hover:bg-gray-50">কার্যক্রম</a>
-      <a href="{{ route('home') }}#footer-section" class="mobile-nav-link px-4 py-2.5 rounded-lg hover:bg-gray-50">যোগাযোগ</a>
+      <a href="{{ route('contact.index') }}" class="mobile-nav-link px-4 py-2.5 rounded-lg hover:bg-gray-50 {{ request()->routeIs('contact*') ? 'text-[#c8102e] font-extrabold bg-red-50/50' : '' }}">যোগাযোগ</a>
     </div>
 
     <!-- Mobile Auth Section: Always Placed Below 'যোগাযোগ' (Contact) -->

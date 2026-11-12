@@ -1,0 +1,125 @@
+
+name: Deploy Laravel to cPanel via SSH
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Deployment Started Notification
+      - name: Notify Deployment Started
+        continue-on-error: true
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          MESSAGE="${{ secrets.DOMAIN || '' }} Deployment Started!
+
+          Repository: ${GITHUB_REPOSITORY}
+          Branch: ${GITHUB_REF_NAME}
+          Commit: ${GITHUB_SHA}"
+
+          curl --fail --silent --show-error \
+            -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MESSAGE}"
+
+      # 2. Checkout Code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 3. Deploy via SSH
+      - name: Execute Deployment Commands via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+
+          script: |
+            set -e
+
+            cd /home/${{ secrets.SSH_USERNAME }}/${{ secrets.DOMAIN }}
+
+            echo "Pulling latest code..."
+            git pull --ff-only origin main
+
+            echo "Installing Composer dependencies..."
+            composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader
+
+            echo "Clearing old caches..."
+            php artisan optimize:clear
+
+            echo "Running database migrations..."
+            php artisan migrate --force
+
+            echo "Seeding Database"
+            php artisan db:seed
+
+            echo "Creating storage link if missing..."
+            if [ ! -e public/storage ] && [ ! -L public/storage ]; then
+              php artisan storage:link
+            fi
+
+            echo "Building application caches..."
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+
+            echo "Deployment commands completed successfully!"
+
+       # Deployment Success Notification
+      - name: Notify Deployment Success
+        if: success()
+        continue-on-error: true
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          MESSAGE="✅ ${{ secrets.DOMAIN || '' }} Deployment Successful!
+
+          Repository: ${GITHUB_REPOSITORY}
+          Branch: ${GITHUB_REF_NAME}
+          Commit: ${GITHUB_SHA}
+
+          🌐 Website: https://${{ secrets.DOMAIN }}
+
+          🎉 Deployment completed successfully!
+
+          👉 Please visit your website and check if everything is working correctly."
+
+          curl --fail --silent --show-error \
+            -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MESSAGE}"
+
+      # 5. Deployment Failed Notification
+      - name: Notify Deployment Failed
+        if: failure()
+        continue-on-error: true
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          MESSAGE="❌ ${{ secrets.DOMAIN || '' }} Deployment Failed!
+
+          Repository: ${GITHUB_REPOSITORY}
+          Branch: ${GITHUB_REF_NAME}
+          Commit: ${GITHUB_SHA}
+
+          Please check the GitHub Actions logs for the error.
+
+          Logs:
+          ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+          curl --fail --silent --show-error \
+            -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MESSAGE}"

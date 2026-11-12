@@ -35,11 +35,12 @@
   <!-- Navigation Menu List with Custom Scrollbar -->
   <nav class="flex-1 overflow-y-auto px-3.5 py-4 space-y-1.5 text-sm custom-scrollbar">
 
+    <!-- ==================== ওভারভিউ / Overview ==================== -->
     <div class="px-3 pt-1 pb-1.5">
       <span class="text-[10px] font-extrabold uppercase tracking-wider text-gray-400">ওভারভিউ / Overview</span>
     </div>
 
-    <!-- ড্যাশবোর্ড -->
+    <!-- ১. ড্যাশবোর্ড -->
     <a
       href="{{ route('admin.dashboard') }}"
       class="flex items-center justify-between px-3.5 py-2.5 rounded-xl font-bold transition {{ request()->routeIs('admin.dashboard') ? 'bg-[#0b4622] text-white shadow-sm' : 'text-gray-700 hover:bg-gray-50 hover:text-[#0b4622]' }}"
@@ -51,67 +52,7 @@
       <i class="ri-arrow-right-s-line text-sm {{ request()->routeIs('admin.dashboard') ? 'text-white/80' : 'text-gray-400' }}"></i>
     </a>
 
-    <!-- আমার প্রোফাইল -->
-    @php
-      $isProfileActive = request()->routeIs('admin.profile*');
-    @endphp
-    <div class="sidebar-dropdown-group">
-      <button
-        type="button"
-        onclick="toggleSidebarDropdown('menu-my-profile', this)"
-        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium transition cursor-pointer focus:outline-none {{ $isProfileActive ? 'bg-gray-100/70 text-[#0b4622] font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
-      >
-        <div class="flex items-center gap-3">
-          <i class="ri-user-smile-line text-base w-5 text-center {{ $isProfileActive ? 'text-[#0b4622]' : 'text-gray-400' }}"></i>
-          <span>আমার প্রোফাইল</span>
-        </div>
-        <i class="ri-arrow-down-s-line text-sm transition-transform duration-300 dropdown-arrow {{ $isProfileActive ? 'rotate-180 text-[#0b4622]' : 'text-gray-400' }}"></i>
-      </button>
-
-      <!-- Submenu container with distinct Off-White background -->
-      <div
-        id="menu-my-profile"
-        class="sidebar-submenu overflow-hidden transition-all duration-300 ease-in-out {{ $isProfileActive ? 'max-h-96 opacity-100 mt-1.5' : 'max-h-0 opacity-0' }}"
-      >
-        <div class="bg-[#f8fafc] border border-gray-100/90 rounded-xl p-1.5 space-y-1 ml-2 border-l-2 border-l-[#0b4622]/30 shadow-2xs">
-          <!-- প্রোফাইল আপডেট -->
-          <a
-            href="{{ route('admin.profile') }}"
-            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.profile') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
-          >
-            <i class="ri-user-settings-line text-sm {{ request()->routeIs('admin.profile') ? 'text-white' : 'text-gray-400' }}"></i>
-            <span>প্রোফাইল আপডেট</span>
-          </a>
-
-          <!-- পাসওয়ার্ড পরিবর্তন -->
-          <a
-            href="{{ route('admin.profile.password') }}"
-            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.profile.password') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
-          >
-            <i class="ri-lock-password-line text-sm {{ request()->routeIs('admin.profile.password') ? 'text-white' : 'text-gray-400' }}"></i>
-            <span>পাসওয়ার্ড পরিবর্তন</span>
-          </a>
-
-          <!-- লগআউট -->
-          <form action="{{ route('logout') }}" method="POST">
-            @csrf
-            <button
-              type="submit"
-              class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold text-[#c8102e] hover:bg-red-50 transition cursor-pointer"
-            >
-              <i class="ri-logout-box-r-line text-sm"></i>
-              <span>লগআউট করুন</span>
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <div class="px-3 pt-3 pb-1.5">
-      <span class="text-[10px] font-extrabold uppercase tracking-wider text-gray-400">কাস্টমাইজেশন ও সেটিংস</span>
-    </div>
-
-    <!-- কাস্টমাইজেশন (Customization Dropdown) -->
+    <!-- ২. কাস্টমাইজেশন (Customization Dropdown) -->
     @php
       $isCustomizationActive = request()->routeIs('admin.social-media*') || request()->routeIs('admin.customization*') || request()->routeIs('admin.hero-banners*') || request()->routeIs('admin.stat-counters*');
     @endphp
@@ -133,7 +74,7 @@
         class="sidebar-submenu overflow-hidden transition-all duration-300 ease-in-out {{ $isCustomizationActive ? 'max-h-[1000px] opacity-100 mt-1.5' : 'max-h-0 opacity-0' }}"
       >
         <div class="bg-[#f8fafc] border border-gray-100/90 rounded-xl p-1.5 space-y-1 ml-2 border-l-2 border-l-[#0b4622]/40 shadow-2xs">
-          <!-- যোগাযোগ (Contact Information: Location, Phone, Email) -->
+          <!-- যোগাযোগ (Contact Info) -->
           <a
             href="{{ route('admin.customization.contact') }}"
             class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.customization.contact*') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
@@ -142,7 +83,7 @@
             <span>যোগাযোগ (Contact Info)</span>
           </a>
 
-          <!-- সোশ্যাল মিডিয়া লিংক (Active Link) -->
+          <!-- সোশ্যাল মিডিয়া লিংক -->
           <a
             href="{{ route('admin.social-media.index') }}"
             class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.social-media*') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
@@ -161,15 +102,12 @@
           </a>
 
           <!-- লোগো ও ব্র্যান্ডিং -->
-          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-gray-600 hover:bg-white hover:text-[#0b4622] transition">
-            <i class="ri-pantone-line text-sm text-gray-400"></i>
+          <a
+            href="{{ route('admin.customization.branding') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.customization.branding*') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-pantone-line text-sm {{ request()->routeIs('admin.customization.branding*') ? 'text-white' : 'text-gray-400' }}"></i>
             <span>লোগো ও ব্র্যান্ডিং</span>
-          </a>
-
-          <!-- থিম ও কালার স্কিম -->
-          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-gray-600 hover:bg-white hover:text-[#0b4622] transition">
-            <i class="ri-palette-line text-sm text-gray-400"></i>
-            <span>থিম ও কালার প্যালেট</span>
           </a>
 
           <!-- হোম স্লাইডার ও ব্যানার -->
@@ -181,7 +119,7 @@
             <span>হোম হিরো স্লাইডার</span>
           </a>
 
-          <!-- হোম পরিসংখ্যান কাউন্টার (Stat Counter Bar) -->
+          <!-- হোম পরিসংখ্যান কাউন্টার বার -->
           <a
             href="{{ route('admin.stat-counters.index') }}"
             class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.stat-counters*') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
@@ -208,7 +146,16 @@
             <span>সভাপতির বাণী</span>
           </a>
 
-          <!-- ফুটার কাস্টমাইজেশন -->
+          <!-- অনুদান ব্যানার সেটিংস -->
+          <a
+            href="{{ route('admin.customization.donation') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.customization.donation*') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-heart-add-line text-sm {{ request()->routeIs('admin.customization.donation*') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>অনুদান ব্যানার সেটিংস</span>
+          </a>
+
+          <!-- ফুটার কন্টেন্ট ও কপিরাইট -->
           <a
             href="{{ route('admin.customization.footer') }}"
             class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.customization.footer*') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
@@ -220,46 +167,67 @@
       </div>
     </div>
 
-    <div class="px-3 pt-3 pb-1.5">
-      <span class="text-[10px] font-extrabold uppercase tracking-wider text-gray-400">কন্টেন্ট ও ব্যবস্থাপনা</span>
-    </div>
-
-    <!-- 1. ব্যবহারকারী তালিকা -->
+    <!-- ৩. ব্যবহারকারী তালিকা -->
+    @php
+      $isUsersActive = request()->routeIs('admin.users*') || request()->routeIs('admin.roles*');
+    @endphp
     <div class="sidebar-dropdown-group">
       <button
         type="button"
         onclick="toggleSidebarDropdown('menu-users', this)"
-        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition font-medium group cursor-pointer focus:outline-none"
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium transition cursor-pointer focus:outline-none {{ $isUsersActive ? 'bg-gray-100/70 text-[#0b4622] font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
       >
         <div class="flex items-center gap-3">
-          <i class="ri-user-settings-line text-base w-5 text-center text-gray-400 group-hover:text-[#0b4622] transition"></i>
+          <i class="ri-user-settings-line text-base w-5 text-center {{ $isUsersActive ? 'text-[#0b4622]' : 'text-gray-400' }}"></i>
           <span>ব্যবহারকারী তালিকা</span>
         </div>
-        <i class="ri-arrow-down-s-line text-sm text-gray-400 transition-transform duration-300 dropdown-arrow"></i>
+        <i class="ri-arrow-down-s-line text-sm transition-transform duration-300 dropdown-arrow {{ $isUsersActive ? 'rotate-180 text-[#0b4622]' : 'text-gray-400' }}"></i>
       </button>
-      <div id="menu-users" class="sidebar-submenu overflow-hidden max-h-0 opacity-0 transition-all duration-300 ease-in-out">
-        <div class="bg-[#f8fafc] border border-gray-100/90 rounded-xl p-1.5 space-y-1 ml-2 border-l-2 border-l-emerald-600/30 shadow-2xs mt-1.5">
-          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-gray-600 hover:bg-white hover:text-[#0b4622] transition">
-            <i class="ri-team-line text-sm text-gray-400"></i>
+      <div
+        id="menu-users"
+        class="sidebar-submenu overflow-hidden transition-all duration-300 ease-in-out {{ $isUsersActive ? 'max-h-[500px] opacity-100 mt-1.5' : 'max-h-0 opacity-0' }}"
+      >
+        <div class="bg-[#f8fafc] border border-gray-100/90 rounded-xl p-1.5 space-y-1 ml-2 border-l-2 border-l-[#0b4622]/40 shadow-2xs">
+          <!-- সকল ব্যবহারকারী -->
+          <a
+            href="{{ route('admin.users.index', ['filter' => 'all']) }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.users*') && (request('filter') === 'all' || !request()->has('filter')) ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-team-line text-sm {{ request()->routeIs('admin.users*') && (request('filter') === 'all' || !request()->has('filter')) ? 'text-white' : 'text-gray-400' }}"></i>
             <span>সকল ব্যবহারকারী</span>
           </a>
-          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-gray-600 hover:bg-white hover:text-[#0b4622] transition">
-            <i class="ri-user-follow-line text-sm text-gray-400"></i>
+
+          <!-- সক্রিয় সদস্য -->
+          <a
+            href="{{ route('admin.users.index', ['filter' => 'members']) }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.users*') && request('filter') === 'members' ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-user-follow-line text-sm {{ request()->routeIs('admin.users*') && request('filter') === 'members' ? 'text-white' : 'text-gray-400' }}"></i>
             <span>সক্রিয় সদস্য</span>
           </a>
-          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-gray-600 hover:bg-white hover:text-[#0b4622] transition">
-            <i class="ri-user-shared-line text-sm text-gray-400"></i>
+
+          <!-- অপেক্ষমাণ আবেদন -->
+          <a
+            href="{{ route('admin.users.index', ['filter' => 'pending']) }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.users*') && request('filter') === 'pending' ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-user-shared-line text-sm {{ request()->routeIs('admin.users*') && request('filter') === 'pending' ? 'text-white' : 'text-gray-400' }}"></i>
             <span>অপেক্ষমাণ আবেদন</span>
           </a>
-          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-gray-600 hover:bg-white hover:text-[#0b4622] transition">
-            <i class="ri-shield-user-line text-sm text-gray-400"></i>
+
+          <!-- ভূমিকা ও পারমিশন -->
+          <a
+            href="{{ route('admin.roles.index') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.roles*') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-shield-user-line text-sm {{ request()->routeIs('admin.roles*') ? 'text-white' : 'text-gray-400' }}"></i>
             <span>ভূমিকা ও পারমিশন</span>
           </a>
         </div>
       </div>
     </div>
 
-    <!-- 2. অনুদান সংগ্রহ -->
+    <!-- ৪. অনুদান সংগ্রহ -->
     <div class="sidebar-dropdown-group">
       <button
         type="button"
@@ -290,7 +258,13 @@
       </div>
     </div>
 
-    <!-- 3. নোটিশ ও বিজ্ঞপ্তি -->
+
+    <!-- ==================== কন্টেন্ট ও ব্যবস্থাপনা ==================== -->
+    <div class="px-3 pt-3 pb-1.5">
+      <span class="text-[10px] font-extrabold uppercase tracking-wider text-gray-400">কন্টেন্ট ও ব্যবস্থাপনা</span>
+    </div>
+
+    <!-- ১. নোটিশ ও বিজ্ঞপ্তি -->
     @php
       $isNoticesActive = request()->routeIs('admin.notices*');
     @endphp
@@ -332,7 +306,7 @@
       </div>
     </div>
 
-    <!-- 4. কার্যক্রম ও ইভেন্ট -->
+    <!-- ২. কার্যক্রম ও ইভেন্ট -->
     @php
       $isEventsActive = request()->routeIs('admin.events*');
     @endphp
@@ -374,7 +348,7 @@
       </div>
     </div>
 
-    <!-- 5. কৃতি সন্তান (Our Pride) -->
+    <!-- ৩. কৃতি সন্তান (Our Pride) -->
     @php
       $isPridesActive = request()->routeIs('admin.prides*');
     @endphp
@@ -416,7 +390,67 @@
       </div>
     </div>
 
-    <!-- 6. গ্যালারি (Gallery Management) -->
+    <!-- ৪. কমিটি (Committee Management) -->
+    @php
+      $isCommitteeActive = request()->routeIs('admin.committees*') || request()->routeIs('admin.committee-members*');
+    @endphp
+    <div class="sidebar-dropdown-group">
+      <button
+        type="button"
+        onclick="toggleSidebarDropdown('menu-committees', this)"
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium transition cursor-pointer focus:outline-none {{ $isCommitteeActive ? 'bg-gray-100/70 text-[#0b4622] font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
+      >
+        <div class="flex items-center gap-3">
+          <i class="ri-team-line text-base w-5 text-center {{ $isCommitteeActive ? 'text-[#0b4622]' : 'text-gray-400' }}"></i>
+          <span>কমিটি (Committees)</span>
+        </div>
+        <i class="ri-arrow-down-s-line text-sm transition-transform duration-300 dropdown-arrow {{ $isCommitteeActive ? 'rotate-180 text-[#0b4622]' : 'text-gray-400' }}"></i>
+      </button>
+      <div
+        id="menu-committees"
+        class="sidebar-submenu overflow-hidden transition-all duration-300 ease-in-out {{ $isCommitteeActive ? 'max-h-[500px] opacity-100 mt-1.5' : 'max-h-0 opacity-0' }}"
+      >
+        <div class="bg-[#f8fafc] border border-gray-100/90 rounded-xl p-1.5 space-y-1 ml-2 border-l-2 border-l-[#0b4622]/40 shadow-2xs">
+          <!-- সকল কমিটি -->
+          <a
+            href="{{ route('admin.committees.index') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.committees.index') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-list-check-3 text-sm {{ request()->routeIs('admin.committees.index') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>সকল কমিটি তালিকা</span>
+          </a>
+
+          <!-- কমিটি সদস্যবৃন্দ -->
+          <a
+            href="{{ route('admin.committee-members.index') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.committee-members.*') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-user-star-line text-sm {{ request()->routeIs('admin.committee-members.*') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>কমিটি সদস্যবৃন্দ</span>
+          </a>
+
+          <!-- নতুন কমিটি যোগ করুন -->
+          <a
+            href="{{ route('admin.committees.create') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.committees.create') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-add-circle-line text-sm {{ request()->routeIs('admin.committees.create') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>নতুন কমিটি যোগ করুন</span>
+          </a>
+
+          <!-- নতুন সদস্য যোগ করুন -->
+          <a
+            href="{{ route('admin.committee-members.create') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.committee-members.create') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-user-add-line text-sm {{ request()->routeIs('admin.committee-members.create') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>নতুন সদস্য যোগ করুন</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ৪. গ্যালারি (Gallery Management) -->
     @php
       $isGalleryActive = request()->routeIs('admin.gallery*');
     @endphp
@@ -467,7 +501,7 @@
       </div>
     </div>
 
-    <!-- 7. উন্নয়ন প্রকল্পসমূহ (Projects Management) -->
+    <!-- ৫. উন্নয়ন প্রকল্পসমূহ (Projects Management) -->
     @php
       $isProjectsActive = request()->routeIs('admin.projects*');
     @endphp
@@ -518,36 +552,206 @@
       </div>
     </div>
 
-    <!-- 6. সাধারণ সেটিংস -->
+    <!-- ৬. দর্শনীয় স্থান (Places Management) -->
+    @php
+      $isPlacesActive = request()->routeIs('admin.places*');
+    @endphp
+    <div class="sidebar-dropdown-group">
+      <button
+        type="button"
+        onclick="toggleSidebarDropdown('menu-places', this)"
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium transition cursor-pointer focus:outline-none {{ $isPlacesActive ? 'bg-gray-100/70 text-[#0b4622] font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
+      >
+        <div class="flex items-center gap-3">
+          <i class="ri-map-pin-2-line text-base w-5 text-center {{ $isPlacesActive ? 'text-[#0b4622]' : 'text-gray-400' }}"></i>
+          <span>দর্শনীয় স্থান</span>
+        </div>
+        <i class="ri-arrow-down-s-line text-sm transition-transform duration-300 dropdown-arrow {{ $isPlacesActive ? 'rotate-180 text-[#0b4622]' : 'text-gray-400' }}"></i>
+      </button>
+      <div
+        id="menu-places"
+        class="sidebar-submenu overflow-hidden transition-all duration-300 ease-in-out {{ $isPlacesActive ? 'max-h-[500px] opacity-100 mt-1.5' : 'max-h-0 opacity-0' }}"
+      >
+        <div class="bg-[#f8fafc] border border-gray-100/90 rounded-xl p-1.5 space-y-1 ml-2 border-l-2 border-l-[#0b4622]/40 shadow-2xs">
+          <!-- সকল দর্শনীয় স্থান -->
+          <a
+            href="{{ route('admin.places.index') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.places.index') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-list-check-2 text-sm {{ request()->routeIs('admin.places.index') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>সকল দর্শনীয় স্থান</span>
+          </a>
+
+          <!-- নতুন স্থান যোগ করুন -->
+          <a
+            href="{{ route('admin.places.create') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.places.create') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-add-line text-sm {{ request()->routeIs('admin.places.create') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>নতুন স্থান যোগ করুন</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ৭. ব্লগ ও আপডেট (Blog & Updates Management) -->
+    @php
+      $isBlogActive = request()->routeIs('admin.categories*') || request()->routeIs('admin.posts*');
+    @endphp
+    <div class="sidebar-dropdown-group">
+      <button
+        type="button"
+        onclick="toggleSidebarDropdown('menu-blogs', this)"
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium transition cursor-pointer focus:outline-none {{ $isBlogActive ? 'bg-gray-100/70 text-[#0b4622] font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
+      >
+        <div class="flex items-center gap-3">
+          <i class="ri-article-line text-base w-5 text-center {{ $isBlogActive ? 'text-[#0b4622]' : 'text-gray-400' }}"></i>
+          <span>ব্লগ ও আপডেট</span>
+        </div>
+        <i class="ri-arrow-down-s-line text-sm transition-transform duration-300 dropdown-arrow {{ $isBlogActive ? 'rotate-180 text-[#0b4622]' : 'text-gray-400' }}"></i>
+      </button>
+      <div
+        id="menu-blogs"
+        class="sidebar-submenu overflow-hidden transition-all duration-300 ease-in-out {{ $isBlogActive ? 'max-h-[500px] opacity-100 mt-1.5' : 'max-h-0 opacity-0' }}"
+      >
+        <div class="bg-[#f8fafc] border border-gray-100/90 rounded-xl p-1.5 space-y-1 ml-2 border-l-2 border-l-[#0b4622]/40 shadow-2xs">
+          <!-- সকল ব্লগ পোস্ট -->
+          <a
+            href="{{ route('admin.posts.index') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.posts.index') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-list-check-2 text-sm {{ request()->routeIs('admin.posts.index') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>সকল ব্লগ পোস্ট</span>
+          </a>
+
+          <!-- নতুন পোস্ট লিখুন -->
+          <a
+            href="{{ route('admin.posts.create') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.posts.create') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-add-line text-sm {{ request()->routeIs('admin.posts.create') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>নতুন পোস্ট লিখুন</span>
+          </a>
+
+          <!-- ক্যাটাগরি ব্যবস্থাপনা -->
+          <a
+            href="{{ route('admin.categories.index') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.categories.*') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-price-tag-3-line text-sm {{ request()->routeIs('admin.categories.*') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>ক্যাটাগরি সমূহ</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ৮. যোগাযোগের বার্তা (Contact Messages) -->
+    @php
+      $isContactMsgActive = request()->routeIs('admin.contact-messages*');
+      $unreadMsgBadge = \App\Models\ContactMessage::where('is_read', false)->count();
+    @endphp
+    <a
+      href="{{ route('admin.contact-messages.index') }}"
+      class="flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium transition cursor-pointer {{ $isContactMsgActive ? 'bg-gray-100/70 text-[#0b4622] font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
+    >
+      <div class="flex items-center gap-3">
+        <i class="ri-mail-unread-line text-base w-5 text-center {{ $isContactMsgActive ? 'text-[#0b4622]' : 'text-gray-400' }}"></i>
+        <span>যোগাযোগের বার্তা</span>
+      </div>
+      @if($unreadMsgBadge > 0)
+        <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#c8102e] text-white">
+          {{ $unreadMsgBadge }}
+        </span>
+      @else
+        <i class="ri-arrow-right-s-line text-sm text-gray-400"></i>
+      @endif
+    </a>
+
+    <!-- ৯. সাধারণ সেটিংস -->
+    @php
+      $isSettingsActive = request()->routeIs('admin.settings.mail*');
+    @endphp
     <div class="sidebar-dropdown-group">
       <button
         type="button"
         onclick="toggleSidebarDropdown('menu-settings', this)"
-        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition font-medium group cursor-pointer focus:outline-none"
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition font-medium cursor-pointer focus:outline-none {{ $isSettingsActive ? 'bg-gray-100/70 text-[#0b4622] font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
       >
         <div class="flex items-center gap-3">
-          <i class="ri-settings-4-line text-base w-5 text-center text-gray-400 group-hover:text-gray-800 transition"></i>
+          <i class="ri-settings-4-line text-base w-5 text-center {{ $isSettingsActive ? 'text-[#0b4622]' : 'text-gray-400' }}"></i>
           <span>সাধারণ সেটিংস</span>
         </div>
-        <i class="ri-arrow-down-s-line text-sm text-gray-400 transition-transform duration-300 dropdown-arrow"></i>
+        <i class="ri-arrow-down-s-line text-sm transition-transform duration-300 dropdown-arrow {{ $isSettingsActive ? 'rotate-180 text-[#0b4622]' : 'text-gray-400' }}"></i>
       </button>
-      <div id="menu-settings" class="sidebar-submenu overflow-hidden max-h-0 opacity-0 transition-all duration-300 ease-in-out">
-        <div class="bg-[#f8fafc] border border-gray-100/90 rounded-xl p-1.5 space-y-1 ml-2 border-l-2 border-l-gray-400/30 shadow-2xs mt-1.5">
-          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-gray-600 hover:bg-white hover:text-[#0b4622] transition">
-            <i class="ri-global-line text-sm text-gray-400"></i>
-            <span>ওয়েবসাইট সেটিংস</span>
-          </a>
-          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-gray-600 hover:bg-white hover:text-[#0b4622] transition">
-            <i class="ri-layout-top-line text-sm text-gray-400"></i>
-            <span>হেডার ও ফুটার</span>
-          </a>
-          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-gray-600 hover:bg-white hover:text-[#0b4622] transition">
-            <i class="ri-mail-settings-line text-sm text-gray-400"></i>
+      <div id="menu-settings" class="sidebar-submenu overflow-hidden transition-all duration-300 ease-in-out {{ $isSettingsActive ? 'max-h-[200px] opacity-100 mt-1.5' : 'max-h-0 opacity-0' }}">
+        <div class="bg-[#f8fafc] border border-gray-100/90 rounded-xl p-1.5 space-y-1 ml-2 border-l-2 border-l-[#0b4622]/40 shadow-2xs">
+          <a
+            href="{{ route('admin.settings.mail') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.settings.mail*') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-mail-settings-line text-sm {{ request()->routeIs('admin.settings.mail*') ? 'text-white' : 'text-gray-400' }}"></i>
             <span>ইমেইল কনফিগারেশন</span>
           </a>
         </div>
       </div>
     </div>
+
+    <!-- ৯. আমার প্রোফাইল (কন্টেন্ট ও ব্যবস্থাপনার একদম নিচে) -->
+    @php
+      $isProfileActive = request()->routeIs('admin.profile*');
+    @endphp
+    <div class="sidebar-dropdown-group pt-1">
+      <button
+        type="button"
+        onclick="toggleSidebarDropdown('menu-my-profile', this)"
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium transition cursor-pointer focus:outline-none {{ $isProfileActive ? 'bg-gray-100/70 text-[#0b4622] font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
+      >
+        <div class="flex items-center gap-3">
+          <i class="ri-user-smile-line text-base w-5 text-center {{ $isProfileActive ? 'text-[#0b4622]' : 'text-gray-400' }}"></i>
+          <span>আমার প্রোফাইল</span>
+        </div>
+        <i class="ri-arrow-down-s-line text-sm transition-transform duration-300 dropdown-arrow {{ $isProfileActive ? 'rotate-180 text-[#0b4622]' : 'text-gray-400' }}"></i>
+      </button>
+
+      <!-- Submenu container -->
+      <div
+        id="menu-my-profile"
+        class="sidebar-submenu overflow-hidden transition-all duration-300 ease-in-out {{ $isProfileActive ? 'max-h-96 opacity-100 mt-1.5' : 'max-h-0 opacity-0' }}"
+      >
+        <div class="bg-[#f8fafc] border border-gray-100/90 rounded-xl p-1.5 space-y-1 ml-2 border-l-2 border-l-[#0b4622]/40 shadow-2xs">
+          <!-- প্রোফাইল আপডেট -->
+          <a
+            href="{{ route('admin.profile') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.profile') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-user-settings-line text-sm {{ request()->routeIs('admin.profile') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>প্রোফাইল আপডেট</span>
+          </a>
+
+          <!-- পাসওয়ার্ড পরিবর্তন -->
+          <a
+            href="{{ route('admin.profile.password') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.profile.password') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-lock-password-line text-sm {{ request()->routeIs('admin.profile.password') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>পাসওয়ার্ড পরিবর্তন</span>
+          </a>
+
+          <!-- লগআউট -->
+          <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button
+              type="submit"
+              class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold text-[#c8102e] hover:bg-red-50 transition cursor-pointer"
+            >
+              <i class="ri-logout-box-r-line text-sm"></i>
+              <span>লগআউট করুন</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
   </nav>
 
   <!-- Sidebar Footer: Visit Live Website Button -->

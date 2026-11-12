@@ -3,7 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <title>@yield('title', 'আগামীর শৈলকুপা — শৈলকুপার উন্নয়নে আমরা এক পরিবার')</title>
+  @php
+    $siteSetting = \App\Models\SiteSetting::first();
+    $defaultTitle = ($siteSetting && $siteSetting->site_title) ? ($siteSetting->site_title . ' — ' . ($siteSetting->site_tagline ?? 'শৈলকুপার উন্নয়নে আমরা এক পরিবার')) : 'আগামীর শৈলকুপা — শৈলকুপার উন্নয়নে আমরা এক পরিবার';
+  @endphp
+  <title>@yield('title', $defaultTitle)</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="{{ $siteSetting ? $siteSetting->favicon_url : asset('assets/images/logo-icon.png') }}" />
+  <link rel="shortcut icon" href="{{ $siteSetting ? $siteSetting->favicon_url : asset('assets/images/logo-icon.png') }}" />
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
