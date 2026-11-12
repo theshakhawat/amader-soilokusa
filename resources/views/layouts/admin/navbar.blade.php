@@ -68,6 +68,10 @@
       </div>
 
       <!-- Notification Bell -->
+      @php
+        $unreadContactMessages = \App\Models\ContactMessage::where('is_read', false)->latest()->take(5)->get();
+        $unreadContactCount = \App\Models\ContactMessage::where('is_read', false)->count();
+      @endphp
       <div class="relative" id="admin-notification-container">
         <button
           type="button"
@@ -76,8 +80,12 @@
           aria-label="Notifications"
         >
           <i class="ri-notification-3-line text-base"></i>
-          <!-- Small Red Indicator Dot -->
-          <span class="absolute top-2 right-2 w-2 h-2 bg-[#c8102e] rounded-full ring-2 ring-white"></span>
+          @if($unreadContactCount > 0)
+            <!-- Red Badge with Count -->
+            <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-[#c8102e] text-white text-[10px] font-extrabold rounded-full flex items-center justify-center ring-2 ring-white">
+              {{ $unreadContactCount > 9 ? '৯+' : $unreadContactCount }}
+            </span>
+          @endif
         </button>
 
         <!-- Notification Popover -->
@@ -86,19 +94,37 @@
           class="hidden absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 animate-fadeIn"
         >
           <div class="px-4 py-2.5 border-b border-gray-100 flex items-center justify-between">
-            <h4 class="text-xs font-extrabold text-gray-800">বিজ্ঞপ্তি (Notifications)</h4>
-            <span class="text-[10px] bg-red-50 text-[#c8102e] px-2 py-0.5 rounded-full font-bold">২টি নতুন</span>
+            <h4 class="text-xs font-extrabold text-gray-800 flex items-center gap-1.5">
+              <i class="ri-mail-line text-[#0b4622]"></i>
+              <span>যোগাযোগ বিজ্ঞপ্তি</span>
+            </h4>
+            @if($unreadContactCount > 0)
+              <span class="text-[10px] bg-red-50 text-[#c8102e] px-2 py-0.5 rounded-full font-bold">
+                {{ $unreadContactCount }}টি নতুন
+              </span>
+            @else
+              <span class="text-[10px] text-gray-400 font-semibold">কোনো নতুন বার্তা নেই</span>
+            @endif
           </div>
-          <div class="divide-y divide-gray-50 text-xs max-h-60 overflow-y-auto custom-scrollbar">
-            <a href="#" class="block px-4 py-2.5 hover:bg-gray-50 transition">
-              <p class="font-bold text-gray-800 truncate">নতুন সদস্য নিবন্ধন</p>
-              <p class="text-[11px] text-gray-500 mt-0.5">নতুন সদস্য রেজিস্ট্রেশন করেছেন।</p>
-              <span class="text-[10px] text-gray-400 mt-1 block">১০ মিনিট আগে</span>
-            </a>
-            <a href="#" class="block px-4 py-2.5 hover:bg-gray-50 transition">
-              <p class="font-bold text-gray-800 truncate">অনুদানের ভাউচার তৈরি</p>
-              <p class="text-[11px] text-gray-500 mt-0.5">বিকাশ ট্রান্সফার কনফার্ম হয়েছে।</p>
-              <span class="text-[10px] text-gray-400 mt-1 block">১ ঘণ্টা আগে</span>
+          <div class="divide-y divide-gray-50 text-xs max-h-64 overflow-y-auto custom-scrollbar">
+            @forelse($unreadContactMessages as $notifMsg)
+              <a href="{{ route('admin.contact-messages.show', $notifMsg) }}" class="block px-4 py-2.5 hover:bg-emerald-50/40 transition">
+                <div class="flex items-center justify-between">
+                  <p class="font-extrabold text-gray-900 truncate">{{ $notifMsg->name }}</p>
+                  <span class="text-[10px] text-gray-400">{{ $notifMsg->created_at->diffForHumans() }}</span>
+                </div>
+                <p class="text-[11px] text-gray-600 mt-0.5 truncate">{{ $notifMsg->subject ?: $notifMsg->message }}</p>
+              </a>
+            @empty
+              <div class="px-4 py-6 text-center text-gray-400 text-xs">
+                <i class="ri-mail-check-line text-2xl block mb-1 text-gray-300"></i>
+                নতুন কোনো অপঠিত বার্তা নেই।
+              </div>
+            @endforelse
+          </div>
+          <div class="px-3 pt-2 pb-1 border-t border-gray-100 text-center">
+            <a href="{{ route('admin.contact-messages.index') }}" class="text-xs font-bold text-[#0b4622] hover:underline block py-1">
+              সকল বার্তা দেখুন &rarr;
             </a>
           </div>
         </div>

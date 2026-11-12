@@ -41,26 +41,25 @@
   <div class="max-w-[1220px] mx-auto px-4 sm:px-6 pt-8 pb-7 sm:pt-11 sm:pb-8 relative z-10">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6 sm:gap-8">
 
+            @php
+        $siteBranding = \App\Models\SiteSetting::first();
+        $footerLogoUrl = $siteBranding ? $siteBranding->footer_logo_url : asset('assets/images/logo-icon.png');
+        $footerBrandTitle = ($siteBranding && $siteBranding->site_title) ? $siteBranding->site_title : $brandTitle;
+        $footerBrandSubtitle = ($siteBranding && $siteBranding->site_tagline) ? $siteBranding->site_tagline : $brandSubtitle;
+      @endphp
       <!-- Col 1: Brand Info (4 Cols) -->
       <div class="lg:col-span-4">
         <a href="#hero-section" class="flex items-center gap-2.5 sm:gap-3 py-1">
-          <!-- White Emblem SVG matching Logo -->
-          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
-            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" viewBox="0 0 64 64" fill="currentColor">
-              <circle cx="32" cy="14" r="6" />
-              <path d="M32 22 C24 22, 18 28, 18 36 C23 36, 28 32, 32 26 C36 32, 41 36, 46 36 C46 28, 40 22, 32 22 Z" />
-              <path d="M10 34 C10 46, 20 54, 32 54 C44 54, 54 46, 54 34 C48 38, 40 42, 32 42 C24 42, 16 38, 10 34 Z" />
-            </svg>
+          <div class="w-11 h-11 rounded-xl bg-white/10 border border-white/20 p-1 flex items-center justify-center shrink-0 overflow-hidden">
+            <img src="{{ $footerLogoUrl }}" alt="{{ $footerBrandTitle }} লোগো" class="max-w-full max-h-full object-contain" />
           </div>
-          <div class="flex flex-col justify-center">
-            <span class="block text-lg sm:text-[23px] font-extrabold text-white leading-normal pt-0.5">
-              {{ $brandTitle }}
+          <div class="flex flex-col">
+            <span class="text-xl sm:text-2xl font-black text-white tracking-tight leading-tight">
+              {{ $footerBrandTitle }}
             </span>
-            @if(!empty($brandSubtitle))
-            <span class="block text-[11px] sm:text-[11.5px] text-emerald-200/90 mt-0.5">
-              {{ $brandSubtitle }}
+            <span class="text-[11px] sm:text-xs text-white/70 font-medium">
+              {{ $footerBrandSubtitle }}
             </span>
-            @endif
           </div>
         </a>
 
