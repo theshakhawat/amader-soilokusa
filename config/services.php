@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'dgepay' => [
+        'base_url' => env('DGEPAY_BASE_URL', 'https://api-uat.dgepay.net/dipon/v3'),
+        'client_id' => env('DGEPAY_CLIENT_ID'),
+        'client_secret' => env('DGEPAY_CLIENT_SECRET'),
+        'client_api_key' => env('DGEPAY_CLIENT_API_KEY'),
+    ],
+
 ];

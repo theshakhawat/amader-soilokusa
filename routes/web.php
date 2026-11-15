@@ -99,6 +99,10 @@ Route::get('/office/{slug}', function ($slug) {
     return redirect()->route('offices.detail', $slug);
 });
 
+// Public Donation Routes (ডিজি পে / DGePay অনুদান গেটওয়ে)
+Route::post('/donations/initiate', [\App\Http\Controllers\DonationController::class, 'initiate'])->name('donations.initiate');
+Route::match(['get', 'post'], '/donations/callback', [\App\Http\Controllers\DonationController::class, 'callback'])->name('donations.callback');
+
 // Public Dynamic Pages
 Route::get('/page/{slug}', [HomeController::class, 'customPage'])->name('custom-page.show');
 // Authentication Routes (Guest Only)
@@ -266,4 +270,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     // Offices Management (অফিস সমূহ ব্যবস্থাপনা)
     Route::patch('offices/{office}/status', [\App\Http\Controllers\Admin\OfficeController::class, 'toggleStatus'])->name('offices.status');
     Route::resource('offices', \App\Http\Controllers\Admin\OfficeController::class)->names('offices')->except(['show']);
+
+    // Donation Collection Management (অনুদান সংগ্রহ ও তালিকা)
+    Route::resource('donations', \App\Http\Controllers\Admin\DonationController::class)->names('donations')->except(['edit', 'update']);
 });

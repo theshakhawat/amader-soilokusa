@@ -209,6 +209,11 @@ function openDonateModal() {
   if (!modal) return;
   modal.classList.remove('hidden');
   modal.classList.add('flex');
+
+  const amountInput = document.getElementById('donate-amount-input');
+  if (amountInput && !amountInput.value) {
+    amountInput.value = '1000';
+  }
 }
 
 function closeDonateModal() {
@@ -218,33 +223,33 @@ function closeDonateModal() {
   modal.classList.remove('flex');
 }
 
-function selectDonateAmount(amount, btnEl) {
-  const amountInput = document.getElementById('donate-amount-input');
-  if (amountInput) amountInput.value = amount;
-  document.querySelectorAll('.donate-preset-btn').forEach((btn) => {
-    btn.classList.remove('bg-[#c8102e]', 'text-white', 'border-[#c8102e]');
-    btn.classList.add('bg-gray-50', 'text-gray-700', 'border-gray-200');
-  });
-  if (btnEl) {
-    btnEl.classList.remove('bg-gray-50', 'text-gray-700', 'border-gray-200');
-    btnEl.classList.add('bg-[#c8102e]', 'text-white', 'border-[#c8102e]');
+function handleDonationSubmit(event) {
+  const submitBtn = document.getElementById('donation-submit-btn');
+  const btnText = document.getElementById('donation-btn-text');
+  const btnIcon = document.getElementById('donation-btn-icon');
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+  }
+  if (btnIcon) {
+    btnIcon.className = 'ri-loader-4-line text-lg animate-spin';
+  }
+  if (btnText) {
+    btnText.textContent = 'গেটওয়েতে নেওয়া হচ্ছে...';
   }
 }
 
-function submitDonationForm(event) {
-  if (event) event.preventDefault();
-  const name = document.getElementById('donor-name')?.value || 'শুভানুধ্যায়ী সদস্য';
-  const amount = document.getElementById('donate-amount-input')?.value || '১০০০';
-  const method = document.getElementById('donate-method')?.value || 'bKash';
-  const feedback = document.getElementById('donate-feedback');
-  if (feedback) {
-    feedback.textContent = `ধন্যবাদ ${name}! আপনার ৳${amount} (${method}) অনুদানের অনুরোধ সফলভাবে গৃহীত হয়েছে।`;
-    feedback.classList.remove('hidden');
+function closeDonationResultModal() {
+  const modal = document.getElementById('donation-result-modal');
+  if (modal) {
+    modal.remove();
   }
-  setTimeout(() => {
-    if (feedback) feedback.classList.add('hidden');
-    closeDonateModal();
-  }, 2400);
+}
+
+function retryDonation() {
+  closeDonationResultModal();
+  openDonateModal();
 }
 
 // Video Modal Controller (Plays Live Video & Stops on Close)

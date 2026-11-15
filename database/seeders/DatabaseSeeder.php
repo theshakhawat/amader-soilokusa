@@ -34,8 +34,7 @@ class DatabaseSeeder extends Seeder
             PersonMessageSeeder::class,
             InstitutionSeeder::class,
             OfficeSeeder::class,
-            InstitutionSeeder::class,
-            OfficeSeeder::class,
+            DonationSeeder::class,
         ]);
 
         // 2. Create Default Super Admin

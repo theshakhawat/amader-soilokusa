@@ -246,31 +246,30 @@
     </div>
 
     <!-- ৪. অনুদান সংগ্রহ -->
+    @php
+      $isDonationsActive = request()->routeIs('admin.donations*');
+    @endphp
     <div class="sidebar-dropdown-group">
       <button
         type="button"
         onclick="toggleSidebarDropdown('menu-donations', this)"
-        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition font-medium group cursor-pointer focus:outline-none"
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium transition cursor-pointer focus:outline-none {{ $isDonationsActive ? 'bg-gray-100/70 text-[#0b4622] font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
       >
         <div class="flex items-center gap-3">
-          <i class="ri-heart-3-line text-base w-5 text-center text-gray-400 group-hover:text-[#c8102e] transition"></i>
+          <i class="ri-heart-3-line text-base w-5 text-center {{ $isDonationsActive ? 'text-[#c8102e]' : 'text-gray-400 group-hover:text-[#c8102e]' }} transition"></i>
           <span>অনুদান সংগ্রহ</span>
         </div>
-        <i class="ri-arrow-down-s-line text-sm text-gray-400 transition-transform duration-300 dropdown-arrow"></i>
+        <i class="ri-arrow-down-s-line text-sm transition-transform duration-300 dropdown-arrow {{ $isDonationsActive ? 'rotate-180 text-[#0b4622]' : 'text-gray-400' }}"></i>
       </button>
-      <div id="menu-donations" class="sidebar-submenu overflow-hidden max-h-0 opacity-0 transition-all duration-300 ease-in-out">
+      <div id="menu-donations" class="sidebar-submenu overflow-hidden {{ $isDonationsActive ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0' }} transition-all duration-300 ease-in-out">
         <div class="bg-[#f8fafc] border border-gray-100/90 rounded-xl p-1.5 space-y-1 ml-2 border-l-2 border-l-red-500/30 shadow-2xs mt-1.5">
-          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-gray-600 hover:bg-white hover:text-[#0b4622] transition">
-            <i class="ri-file-list-3-line text-sm text-gray-400"></i>
+          <a href="{{ route('admin.donations.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.donations.index') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}">
+            <i class="ri-file-list-3-line text-sm {{ request()->routeIs('admin.donations.index') ? 'text-white' : 'text-gray-400' }}"></i>
             <span>অনুদানের তালিকা</span>
           </a>
-          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-gray-600 hover:bg-white hover:text-[#0b4622] transition">
-            <i class="ri-add-circle-line text-sm text-gray-400"></i>
+          <a href="{{ route('admin.donations.create') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.donations.create') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}">
+            <i class="ri-add-circle-line text-sm {{ request()->routeIs('admin.donations.create') ? 'text-white' : 'text-gray-400' }}"></i>
             <span>নতুন অনুদান এন্ট্রি</span>
-          </a>
-          <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-gray-600 hover:bg-white hover:text-[#0b4622] transition">
-            <i class="ri-bank-card-line text-sm text-gray-400"></i>
-            <span>পেমেন্ট গেটওয়ে সেটিংস</span>
           </a>
         </div>
       </div>

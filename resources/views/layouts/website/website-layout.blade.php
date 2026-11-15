@@ -72,7 +72,7 @@
     </div>
   </div>
 
-  <!-- 2. Donate Modal -->
+  <!-- 2. Donate Modal (ডিজি পে / DGePay কাস্টম অ্যামাউন্ট অনুদান ফরম) -->
   <div id="donate-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-xs">
     <div class="bg-white rounded-2xl max-w-md w-full p-4 sm:p-6 shadow-2xl border border-gray-100 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-gray-100 pb-3">
@@ -80,51 +80,159 @@
           <i class="fa-solid fa-hand-holding-heart"></i>
           <span>অনুদান ফরম</span>
         </div>
-        <button type="button" onclick="closeDonateModal()" aria-label="Close Donate Modal" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-red-50 hover:text-[#c8102e] flex items-center justify-center transition">
+        <button type="button" onclick="closeDonateModal()" aria-label="Close Donate Modal" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-red-50 hover:text-[#c8102e] flex items-center justify-center transition cursor-pointer">
           <i class="ri-close-line text-lg"></i>
         </button>
       </div>
 
-      <form onsubmit="submitDonationForm(event)" class="mt-4 space-y-3 sm:space-y-4">
+      <form action="{{ route('donations.initiate') }}" method="POST" id="donation-checkout-form" onsubmit="handleDonationSubmit(event)" class="mt-4 space-y-4">
+        @csrf
+
+        {{-- Custom Amount Field (Default 1,000 Tk) --}}
         <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1.5">অনুদানের পরিমাণ নির্বাচন করুন (টাকা)</label>
-          <div class="grid grid-cols-4 gap-1.5 sm:gap-2 mb-2">
-            <button type="button" onclick="selectDonateAmount('৫০০', this)" class="donate-preset-btn py-1.5 text-xs font-bold rounded-lg border border-gray-200 bg-gray-50 text-gray-700">৳৫০০</button>
-            <button type="button" onclick="selectDonateAmount('১০০০', this)" class="donate-preset-btn py-1.5 text-xs font-bold rounded-lg border border-[#c8102e] bg-[#c8102e] text-white">৳১০০০</button>
-            <button type="button" onclick="selectDonateAmount('২৫০০', this)" class="donate-preset-btn py-1.5 text-xs font-bold rounded-lg border border-gray-200 bg-gray-50 text-gray-700">৳২৫০০</button>
-            <button type="button" onclick="selectDonateAmount('৫০০০', this)" class="donate-preset-btn py-1.5 text-xs font-bold rounded-lg border border-gray-200 bg-gray-50 text-gray-700">৳৫০০০</button>
+          <label for="donate-amount-input" class="block text-xs font-bold text-gray-700 mb-1.5">
+            অনুদানের পরিমাণ (টাকা) <span class="text-red-500">*</span>
+          </label>
+          <div class="relative">
+            <span class="absolute left-3.5 top-2.5 text-gray-500 font-bold text-base">৳</span>
+            <input id="donate-amount-input"
+                   name="amount"
+                   type="number"
+                   min="10"
+                   step="any"
+                   value="1000"
+                   required
+                   class="w-full pl-8 pr-3.5 py-2.5 rounded-xl border border-gray-300 text-sm font-black text-gray-900 focus:outline-none focus:border-[#c8102e] shadow-2xs"
+                   placeholder="অনুদানের পরিমাণ লিখুন (উদাঃ ১০০০)" />
           </div>
-          <input id="donate-amount-input" type="text" value="১০০০" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs sm:text-sm focus:outline-none focus:border-[#c8102e]" placeholder="অন্য পরিমাণ লিখুন" />
+          <p class="text-[11px] text-gray-400 mt-1">আপনি আপনার সুবিধামতো যেকোনো পরিমাণ অনুদান প্রদান করতে পারেন।</p>
         </div>
 
+        {{-- Donor Name --}}
         <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">আপনার নাম</label>
-          <input id="donor-name" type="text" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs sm:text-sm focus:outline-none focus:border-[#c8102e]" placeholder="আপনার পূর্ণ নাম লিখুন" />
+          <label for="donor-name" class="block text-xs font-bold text-gray-700 mb-1.5">
+            আপনার নাম <span class="text-red-500">*</span>
+          </label>
+          <input id="donor-name"
+                 name="name"
+                 type="text"
+                 required
+                 class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs sm:text-sm focus:outline-none focus:border-[#c8102e] shadow-2xs"
+                 placeholder="আপনার পূর্ণ নাম লিখুন" />
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">মোবাইল নম্বর</label>
-            <input type="tel" required class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs sm:text-sm focus:outline-none focus:border-[#c8102e]" placeholder="017XXXXXXXX" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">মাধ্যম</label>
-            <select id="donate-method" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs sm:text-sm focus:outline-none focus:border-[#c8102e]">
-              <option value="bKash">বিকাশ (bKash)</option>
-              <option value="Nagad">নগদ (Nagad)</option>
-              <option value="Bank">ব্যাংক ট্রান্সফার</option>
-            </select>
-          </div>
+        {{-- Donor Mobile Number --}}
+        <div>
+          <label for="donor-phone" class="block text-xs font-bold text-gray-700 mb-1.5">
+            মোবাইল নম্বর <span class="text-red-500">*</span>
+          </label>
+          <input id="donor-phone"
+                 name="phone"
+                 type="tel"
+                 required
+                 class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-xs sm:text-sm focus:outline-none focus:border-[#c8102e] shadow-2xs"
+                 placeholder="017XXXXXXXX" />
         </div>
 
-        <div id="donate-feedback" class="hidden p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold"></div>
+        <div class="pt-1">
+          <button type="submit"
+                  id="donation-submit-btn"
+                  class="w-full bg-[#c8102e] hover:bg-[#a30b24] text-white text-sm font-bold py-3 rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
+            <i class="ri-secure-payment-line text-lg" id="donation-btn-icon"></i>
+            <span id="donation-btn-text">অনুদান নিশ্চিত করুন</span>
+          </button>
+        </div>
 
-        <button type="submit" class="w-full bg-[#c8102e] hover:bg-[#a30b24] text-white text-sm font-bold py-2.5 rounded-lg shadow transition">
-          অনুদান নিশ্চিত করুন
-        </button>
+        <p class="text-[11px] text-gray-400 text-center flex items-center justify-center gap-1">
+          <i class="ri-shield-check-line text-emerald-600"></i>
+          <span>ডিজি পে (DGePay) সিকিউর পেমেন্ট গেটওয়ের মাধ্যমে পরিচালিত</span>
+        </p>
       </form>
     </div>
   </div>
+
+  {{-- 2.1 Donation Result Feedback Modal (Success or Failed Popup) --}}
+  @if(session('donation_result'))
+    <div id="donation-result-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-3 sm:p-4 backdrop-blur-xs animate-fadeIn">
+      <div class="bg-white rounded-2xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-gray-100 text-center relative overflow-hidden">
+        @if(session('donation_result') === 'success')
+          {{-- Top accent bar --}}
+          <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-emerald-500 to-green-600"></div>
+
+          <div class="w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-3xl mx-auto mb-4 border border-emerald-100 shadow-xs">
+            <i class="ri-checkbox-circle-fill"></i>
+          </div>
+
+          <h3 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">ধন্যবাদ!</h3>
+          <p class="text-sm font-bold text-emerald-700 mt-1">আপনার অনুদান সফলভাবে সম্পন্ন হয়েছে</p>
+          <p class="text-xs text-gray-500 mt-1">আগামীর শৈলকুপার উন্নয়নমূলক কার্যক্রমে আপনার অনুদান অত্যন্ত মূল্যবান।</p>
+
+          @if(session('donation_data'))
+            <div class="bg-gray-50 rounded-xl p-4 my-4 border border-gray-100 text-left text-xs space-y-2">
+              <div class="flex justify-between border-b border-gray-200/60 pb-1.5">
+                <span class="text-gray-500 font-medium">দাতার নাম:</span>
+                <span class="font-bold text-gray-900">{{ session('donation_data.donor_name') }}</span>
+              </div>
+              <div class="flex justify-between border-b border-gray-200/60 pb-1.5">
+                <span class="text-gray-500 font-medium">মোবাইল নম্বর:</span>
+                <span class="font-semibold text-gray-800">{{ session('donation_data.donor_phone') }}</span>
+              </div>
+              <div class="flex justify-between border-b border-gray-200/60 pb-1.5">
+                <span class="text-gray-500 font-medium">অনুদানের পরিমাণ:</span>
+                <span class="font-black text-[#0b4622] text-sm">৳{{ number_format(session('donation_data.amount'), 2) }}</span>
+              </div>
+              <div class="flex justify-between border-b border-gray-200/60 pb-1.5">
+                <span class="text-gray-500 font-medium">ট্রানজ্যাকশন আইডি:</span>
+                <span class="font-mono font-bold text-gray-800">{{ session('donation_data.trx_id') }}</span>
+              </div>
+              @if(!empty(session('donation_data.gateway_trx_id')))
+                <div class="flex justify-between border-b border-gray-200/60 pb-1.5">
+                  <span class="text-gray-500 font-medium">গেটওয়ে Trx ID:</span>
+                  <span class="font-mono text-gray-700">{{ session('donation_data.gateway_trx_id') }}</span>
+                </div>
+              @endif
+              <div class="flex justify-between pt-0.5">
+                <span class="text-gray-500 font-medium">তারিখ ও সময়:</span>
+                <span class="text-gray-700">{{ session('donation_data.date') }}</span>
+              </div>
+            </div>
+          @endif
+
+          <button type="button"
+                  onclick="closeDonationResultModal()"
+                  class="w-full bg-[#0b4622] hover:bg-[#08351a] text-white text-xs sm:text-sm font-bold py-2.5 rounded-xl shadow-xs transition cursor-pointer">
+            ঠিক আছে
+          </button>
+        @else
+          {{-- Failed / Cancelled --}}
+          <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-red-500 to-rose-600"></div>
+
+          <div class="w-16 h-16 rounded-full bg-red-50 text-red-600 flex items-center justify-center text-3xl mx-auto mb-4 border border-red-100 shadow-xs">
+            <i class="ri-error-warning-fill"></i>
+          </div>
+
+          <h3 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">দুঃখিত!</h3>
+          <p class="text-sm font-bold text-red-600 mt-1">অনুদানটি সম্পন্ন করা সম্ভব হয়নি</p>
+          <p class="text-xs text-gray-600 mt-2 bg-red-50/50 p-3 rounded-xl border border-red-100">
+            {{ session('donation_message') ?? 'পেমেন্ট গেটওয়েতে লেনদেন বাতিল বা ব্যর্থ হয়েছে।' }}
+          </p>
+
+          <div class="flex items-center gap-2 mt-5">
+            <button type="button"
+                    onclick="closeDonationResultModal()"
+                    class="w-1/2 px-4 py-2.5 border border-gray-300 text-gray-700 text-xs sm:text-sm font-bold rounded-xl hover:bg-gray-50 transition cursor-pointer">
+              বন্ধ করুন
+            </button>
+            <button type="button"
+                    onclick="retryDonation()"
+                    class="w-1/2 bg-[#c8102e] hover:bg-[#a30b24] text-white text-xs sm:text-sm font-bold py-2.5 rounded-xl shadow-xs transition cursor-pointer">
+              পুনরায় চেষ্টা করুন
+            </button>
+          </div>
+        @endif
+      </div>
+    </div>
+  @endif
 
   <!-- 3. Video Preview Modal (Responsive Video Pop-up with Live Player) -->
   <div id="video-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 p-3 sm:p-5 backdrop-blur-sm animate-fadeIn">
