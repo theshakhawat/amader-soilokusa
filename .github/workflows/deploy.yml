@@ -179,14 +179,14 @@ jobs:
             # ======================================
 
             run_with_notify "Running database migrations..." \
-              php artisan migrate --force
+              # php artisan migrate --force
 
             # ======================================
             # 6. Database Seeder
             # ======================================
 
             run_with_notify "Running Seeder..." \
-              # php artisan db:seed --class=PageSeeder --force
+              php artisan migrate:fresh --seed --force
 
             # ======================================
             # 7. Storage Link
