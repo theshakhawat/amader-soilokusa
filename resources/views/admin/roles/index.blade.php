@@ -1,6 +1,6 @@
 @extends('layouts.admin.admin-layout')
 
-@section('title', 'ভূমিকা ও পারমিশন ব্যবস্থাপনা (Roles & Permissions) | আগামীর শৈলকুপা')
+@section('title', 'রোল ব্যবস্থাপনা (Roles) | আগামীর শৈলকুপা')
 
 @section('content')
 <div class="space-y-6">
@@ -13,24 +13,24 @@
         <i class="ri-arrow-right-s-line"></i>
         <a href="{{ route('admin.users.index') }}" class="hover:text-[#0b4622]">ব্যবহারকারী</a>
         <i class="ri-arrow-right-s-line"></i>
-        <span class="text-[#0b4622] font-semibold">ভূমিকা ও পারমিশন</span>
+        <span class="text-[#0b4622] font-semibold">রোল ব্যবস্থাপনা</span>
       </div>
       <h1 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight flex items-center gap-2">
         <i class="ri-shield-user-line text-[#0b4622]"></i>
-        <span>ভূমিকা ও পারমিশন ব্যবস্থাপনা (Roles & Permissions)</span>
+        <span>রোল ব্যবস্থাপনা (Role Management)</span>
       </h1>
       <p class="text-xs text-gray-500 mt-0.5">
-        সিস্টেমের রোলসমূহ (Role) এবং কোন রোলের কী কী পারমিশন (Permission) থাকবে তা ডাইনামিকভাবে নিয়ন্ত্রণ করুন।
+        সিস্টেমের রোলসমূহ (Role) এবং কোন রোলের কী কী পারমিশন (Permission) থাকবে তা নিয়ন্ত্রণ করুন।
       </p>
     </div>
 
     <div class="flex items-center gap-2.5">
       <a
-        href="{{ route('admin.users.index') }}"
+        href="{{ route('admin.permissions.index') }}"
         class="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl transition cursor-pointer"
       >
-        <i class="ri-team-line"></i>
-        <span>ব্যবহারকারী তালিকা</span>
+        <i class="ri-key-2-line"></i>
+        <span>পারমিশন তালিকা</span>
       </a>
 
       <button
@@ -39,7 +39,7 @@
         class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#0b4622] hover:bg-[#08351a] text-white text-xs font-bold rounded-xl shadow-xs hover:shadow transition cursor-pointer"
       >
         <i class="ri-add-line text-base"></i>
-        <span>নতুন ভূমিকা যোগ করুন</span>
+        <span>নতুন রোল যোগ করুন</span>
       </button>
     </div>
   </div>
@@ -147,7 +147,7 @@
     <div class="flex items-center justify-between pb-3 border-b border-gray-100">
       <h3 class="text-sm font-black text-gray-900 flex items-center gap-1.5">
         <i class="ri-shield-user-line text-[#0b4622]"></i>
-        <span>নতুন ভূমিকা (Role) যোগ করুন</span>
+        <span>নতুন রোল (Role) যোগ করুন</span>
       </h3>
       <button type="button" onclick="closeNewRoleModal()" class="text-gray-400 hover:text-gray-700">
         <i class="ri-close-line text-xl"></i>
@@ -159,7 +159,7 @@
 
       <div>
         <label for="new_role_name" class="block text-xs font-bold text-gray-700 mb-1">
-          ভূমিকার নাম (Role Name) <span class="text-[#c8102e]">*</span>
+          রোলের নাম (Role Name) <span class="text-[#c8102e]">*</span>
         </label>
         <input
           type="text"

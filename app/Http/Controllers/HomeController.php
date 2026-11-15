@@ -13,10 +13,15 @@ use App\Models\Notice;
 use App\Models\Page;
 use App\Models\PresidentMessage;
 use App\Models\Pride;
+use App\Models\PersonMessage;
+use App\Models\Page;
 use App\Models\Place;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Project;
+use App\Models\Institution;
+use App\Models\InstitutionCategory;
+use App\Models\Office;
 use App\Models\StatCounter;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -449,14 +454,127 @@ class HomeController extends Controller
     }
 
     /**
-     * Public Dynamic Custom Page View
+     * Public Custom Page View
      */
     public function customPage(string $slug): View
     {
         $page = Page::where('slug', $slug)
             ->where('status', true)
-            ->firstOrFail();
+            ->first();
+
+        if (!$page) {
+            // Friendly fallback if page hasn't been written in admin panel yet
+            $title = ucwords(str_replace('-', ' ', $slug));
+            $page = new Page([
+                'title'   => $title,
+                'slug'    => $slug,
+                'content' => '<p class="text-gray-600">এই পেজের তথ্য শীঘ্রই হালনাগাদ করা হবে। অ্যাডমিন প্যানেল থেকে এই পেজের কন্টেন্ট পরিবর্তন করা যাবে।</p>',
+                'status'  => true,
+            ]);
+            $page->updated_at = now();
+        }
 
         return view('pages.custom-page', compact('page'));
+    }
+
+    /**
+     * Public Person Message View (উপদেষ্টা / পৃষ্ঠপোষক / সভাপতি / কার্যনির্বাহী বাণী বা যেকোনো কাস্টম ক্যাটাগরি)
+     */
+    public function personMessage(string $type): View
+    {
+        $decodedType = trim(urldecode($type));
+        $types = PersonMessage::typeLabels();
+
+        $messages = PersonMessage::where(function ($q) use ($decodedType) {
+                $q->where('type', $decodedType)
+                  ->orWhere('slug', $decodedType);
+            })
+            ->where('status', true)
+            ->orderBy('order', 'asc')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $primaryMessage = $messages->first();
+
+        $title = $primaryMessage?->typeLabel
+            ?? ($types[$decodedType] ?? (mb_strlen($decodedType) > 0 ? $decodedType : 'সম্মানিত ব্যক্তিবর্গের বাণী'));
+
+        return view('pages.person-message', compact('messages', 'title', 'type', 'primaryMessage'));
+    }
+
+    /**
+     * Public: Institution Categories Home (প্রতিষ্ঠানের ক্যাটাগরি তালিকা)
+     */
+    public function institutionsHome(): View
+    {
+        $categories = InstitutionCategory::withCount(['institutions' => function ($q) {
+                $q->where('status', true);
+            }])
+            ->where('status', true)
+            ->get();
+
+        return view('pages.institutions.home', compact('categories'));
+    }
+
+    /**
+     * Public: Institutions by Category (ক্যাটাগরি অনুযায়ী প্রতিষ্ঠান কার্ড তালিকা)
+     */
+    public function institutionsByCategory(string $categorySlug): View
+    {
+        $category = InstitutionCategory::where('slug', $categorySlug)
+            ->where('status', true)
+            ->firstOrFail();
+
+        $institutions = Institution::with(['images'])
+            ->where('institution_category_id', $category->id)
+            ->where('status', true)
+            ->get();
+
+        return view('pages.institutions.by-category', compact('category', 'institutions'));
+    }
+
+    /**
+     * Public: Institution Detail (প্রতিষ্ঠান বিস্তারিত পেজ)
+     */
+    public function institutionDetail(string $categorySlug, string $institutionSlug): View
+    {
+        $category = InstitutionCategory::where('slug', $categorySlug)
+            ->where('status', true)
+            ->firstOrFail();
+
+        $institution = Institution::with(['images', 'members'])
+            ->where('slug', $institutionSlug)
+            ->where('institution_category_id', $category->id)
+            ->where('status', true)
+            ->firstOrFail();
+
+        return view('pages.institutions.detail', compact('category', 'institution'));
+    }
+
+    /**
+     * Public: Offices List (সকল অফিস তালিকা)
+     */
+    public function officesIndex(): View
+    {
+        $offices = Office::withCount('members')
+            ->where('status', true)
+            ->orderBy('order', 'asc')
+            ->latest('id')
+            ->get();
+
+        return view('pages.offices.index', compact('offices'));
+    }
+
+    /**
+     * Public: Office Detail (অফিস বিস্তারিত পেজ)
+     */
+    public function officeDetail(string $slug): View
+    {
+        $office = Office::with('members')
+            ->where('slug', $slug)
+            ->where('status', true)
+            ->firstOrFail();
+
+        return view('pages.offices.detail', compact('office'));
     }
 }

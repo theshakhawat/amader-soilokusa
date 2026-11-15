@@ -1,6 +1,6 @@
 @extends('layouts.website.website-layout')
 
-@section('title', $page->title . ' - আগামীর শৈলকূপা')
+@section('title', $page->title . ' - আগামীর শৈলকুপা')
 
 @push('meta')
     <meta name="description" content="{{ Str::limit(strip_tags($page->content), 160) }}">
@@ -70,13 +70,6 @@
         .custom-page-content a:hover {
             color: #08351a;
         }
-        .custom-page-content pre,
-        .custom-page-content code {
-            background-color: #f3f4f6;
-            border-radius: 0.375rem;
-            padding: 0.2em 0.4em;
-            font-size: 0.9em;
-        }
     </style>
 @endpush
 
@@ -94,10 +87,10 @@
 
         <!-- Main Card -->
         <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <!-- Header Header -->
+            <!-- Header -->
             <div class="p-6 sm:p-8 lg:p-10 border-b border-gray-100 bg-gradient-to-r from-emerald-50/50 via-white to-transparent">
                 <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-[#0b4622] bg-[#0b4622]/10 mb-4">
-                    <i class="ri-pages-line"></i> সাধারণ তথ্য
+                    <i class="ri-pages-line"></i> তথ্য বিবরণী
                 </div>
                 <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight leading-snug">
                     {{ $page->title }}

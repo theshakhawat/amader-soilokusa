@@ -137,17 +137,14 @@
                 }
             });
 
-            // If old content exists, restore it
             const oldContent = @json(old('content', ''));
             if (oldContent) {
                 quill.root.innerHTML = oldContent;
             }
 
-            // Sync with hidden input on submit
             const form = document.getElementById('page-form');
             form.addEventListener('submit', function () {
                 const hiddenInput = document.getElementById('content');
-                // If editor is empty (e.g. <p><br></p>), treat as empty
                 if (quill.getText().trim().length === 0 && !quill.root.innerHTML.includes('<img')) {
                     hiddenInput.value = '';
                 } else {

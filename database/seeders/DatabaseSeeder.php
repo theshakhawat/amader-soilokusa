@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         // 1. Seed Roles and Permissions
         $this->call([
             RoleAndPermissionSeeder::class,
+            NavItemSeeder::class,
             TopbarSeeder::class,
             HeroBannerSeeder::class,
             SiteCustomizationSeeder::class,
@@ -30,6 +31,11 @@ class DatabaseSeeder extends Seeder
             PrideSeeder::class,
             ProjectSeeder::class,
             PageSeeder::class,
+            PersonMessageSeeder::class,
+            InstitutionSeeder::class,
+            OfficeSeeder::class,
+            InstitutionSeeder::class,
+            OfficeSeeder::class,
         ]);
 
         // 2. Create Default Super Admin
@@ -43,7 +49,7 @@ class DatabaseSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
-        $superAdmin->syncRoles(['super-admin']);
+        $superAdmin->syncRoles(['admin']);
 
         // 3. Create Default Member
         $member = User::firstOrCreate(

@@ -147,13 +147,11 @@
                 }
             });
 
-            // Restore content
             const initialContent = @json(old('content', $page->content ?? ''));
             if (initialContent) {
                 quill.root.innerHTML = initialContent;
             }
 
-            // Sync with hidden input on submit
             const form = document.getElementById('page-form');
             form.addEventListener('submit', function () {
                 const hiddenInput = document.getElementById('content');

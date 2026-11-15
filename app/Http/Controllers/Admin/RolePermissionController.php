@@ -15,7 +15,11 @@ class RolePermissionController extends Controller
      */
     public function index()
     {
-        $roles = Role::with('permissions')->withCount('users')->get();
+        // Hide super-admin role from regular admin view
+        $roles = Role::where('name', '!=', 'super-admin')
+            ->with('permissions')
+            ->withCount('users')
+            ->get();
         $permissions = Permission::all();
 
         return view('admin.roles.index', compact('roles', 'permissions'));
@@ -33,6 +37,12 @@ class RolePermissionController extends Controller
         ]);
 
         $roleName = Str::slug($validated['name']);
+
+        // Prevent creating or spoofing super-admin
+        if ($roleName === 'super-admin') {
+            return redirect()->back()->with('error', 'এই রোলটি তৈরি করার অনুমতি নেই!');
+        }
+
         if (Role::where('name', $roleName)->exists()) {
             return redirect()->back()->with('error', 'এই নামের রোল ইতিমধ্যে বিদ্যমান!');
         }
@@ -46,7 +56,7 @@ class RolePermissionController extends Controller
             $role->syncPermissions($validated['permissions']);
         }
 
-        return redirect()->route('admin.roles.index')->with('success', 'নতুন ভূমিকা (Role) সফলভাবে তৈরি করা হয়েছে!');
+        return redirect()->route('admin.roles.index')->with('success', 'নতুন রোল (Role) সফলভাবে তৈরি করা হয়েছে!');
     }
 
     /**
@@ -54,6 +64,10 @@ class RolePermissionController extends Controller
      */
     public function updateRolePermissions(Request $request, Role $role)
     {
+        if ($role->name === 'super-admin') {
+            abort(403, 'সুপার-এডমিন রোলের পারমিশন পরিবর্তন করা যাবে না।');
+        }
+
         $validated = $request->validate([
             'permissions'   => 'nullable|array',
             'permissions.*' => 'exists:permissions,name',
@@ -79,7 +93,7 @@ class RolePermissionController extends Controller
 
         $role->delete();
 
-        return redirect()->route('admin.roles.index')->with('success', 'ভূমিকা সফলভাবে মুছে ফেলা হয়েছে!');
+        return redirect()->route('admin.roles.index')->with('success', 'রোল সফলভাবে মুছে ফেলা হয়েছে!');
     }
 }
 

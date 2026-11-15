@@ -51,7 +51,8 @@ class UserController extends Controller
         }
 
         $users = $query->paginate(15)->withQueryString();
-        $roles = Role::all();
+        // Hide super-admin role from regular admin view
+        $roles = Role::where('name', '!=', 'super-admin')->get();
 
         $totalUsers = User::count();
         $activeMembers = User::whereHas('roles', function ($q) {
@@ -69,7 +70,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = Role::all();
+        $roles = Role::where('name', '!=', 'super-admin')->get();
         return view('admin.users.create', compact('roles'));
     }
 
@@ -83,9 +84,11 @@ class UserController extends Controller
             'email'    => 'required|email|max:255|unique:users,email',
             'phone'    => 'nullable|string|max:20',
             'password' => 'required|string|min:6',
-            'role'     => 'required|exists:roles,name',
+            'role'     => 'required|exists:roles,name|not_in:super-admin',
             'status'   => 'required|in:active,inactive,pending',
             'photo'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ], [
+            'role.not_in' => 'এই রোলটি বরাদ্দ করার অনুমতি নেই।',
         ]);
 
         $data = [
@@ -111,7 +114,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        $roles = Role::all();
+        $roles = Role::where('name', '!=', 'super-admin')->get();
         $user->load('roles');
         return view('admin.users.edit', compact('user', 'roles'));
     }
@@ -126,9 +129,11 @@ class UserController extends Controller
             'email'    => 'required|email|max:255|unique:users,email,' . $user->id,
             'phone'    => 'nullable|string|max:20',
             'password' => 'nullable|string|min:6',
-            'role'     => 'required|exists:roles,name',
+            'role'     => 'required|exists:roles,name|not_in:super-admin',
             'status'   => 'required|in:active,inactive,pending',
             'photo'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ], [
+            'role.not_in' => 'এই রোলটি বরাদ্দ করার অনুমতি নেই।',
         ]);
 
         $data = [

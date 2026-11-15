@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AboutSettingController;
 use App\Http\Controllers\Admin\BrandingSettingController;
 use App\Http\Controllers\Admin\MailSettingController;
 use App\Http\Controllers\Admin\RolePermissionController;
+use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ContactSettingController;
 use App\Http\Controllers\Admin\DonationSettingController;
@@ -37,13 +38,18 @@ Route::get('/page/aboutme', function () {
     return redirect()->route('about.us');
 });
 
+// Public Page: Person Messages (উপদেষ্টা / পৃষ্ঠপোষক / সভাপতি / কার্যনির্বাহী বাণী)
+Route::get('/message/{type}', [HomeController::class, 'personMessage'])->name('person-message.show');
+
 // Public Page: President / Chairman Message (সভাপতির বাণী বিস্তারিত পেজ)
-Route::get('/page/chairman', [HomeController::class, 'chairmanMessage'])->name('chairman.message');
+Route::get('/page/chairman', function () {
+    return redirect()->route('person-message.show', 'president');
+})->name('chairman.message');
 Route::get('/page/chairmen', function () {
-    return redirect()->route('chairman.message');
+    return redirect()->route('person-message.show', 'president');
 });
 Route::get('/page/president', function () {
-    return redirect()->route('chairman.message');
+    return redirect()->route('person-message.show', 'president');
 });
 
 // Public Page: Events (ইভেন্ট তালিকা ও বিস্তারিত পেজ)
@@ -81,7 +87,19 @@ Route::get('/committee', [HomeController::class, 'committeeIndex'])->name('commi
 Route::get('/contact', [\App\Http\Controllers\ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [\App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
 
-// Public Dynamic Page (কাস্টম পেজ ভিউ)
+// Public Page: Institutions (প্রতিষ্ঠান সমূহ - ক্যাটাগরি তালিকা, প্রতিষ্ঠান কার্ড তালিকা, বিস্তারিত)
+Route::get('/institutions', [HomeController::class, 'institutionsHome'])->name('institutions.home');
+Route::get('/institutions/{categorySlug}', [HomeController::class, 'institutionsByCategory'])->name('institutions.by-category');
+Route::get('/institutions/{categorySlug}/{institutionSlug}', [HomeController::class, 'institutionDetail'])->name('institutions.detail');
+
+// Public Page: Offices (অফিস সমূহ - তালিকা ও বিস্তারিত)
+Route::get('/offices', [HomeController::class, 'officesIndex'])->name('offices.index');
+Route::get('/offices/{slug}', [HomeController::class, 'officeDetail'])->name('offices.detail');
+Route::get('/office/{slug}', function ($slug) {
+    return redirect()->route('offices.detail', $slug);
+});
+
+// Public Dynamic Pages
 Route::get('/page/{slug}', [HomeController::class, 'customPage'])->name('custom-page.show');
 // Authentication Routes (Guest Only)
 Route::middleware('guest')->group(function () {
@@ -123,6 +141,14 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::put('/customization/topbar', [TopbarSettingController::class, 'update'])->name('customization.topbar.update');
     Route::patch('/customization/topbar/status', [TopbarSettingController::class, 'toggleStatus'])->name('customization.topbar.status');
 
+    // Customization: Navbar Settings (নেভবার সেটিংস - ড্র্যাগ অ্যান্ড ড্রপ মেন্যু)
+    Route::get('/customization/navbar', [\App\Http\Controllers\Admin\NavbarSettingController::class, 'index'])->name('customization.navbar');
+    Route::post('/customization/navbar', [\App\Http\Controllers\Admin\NavbarSettingController::class, 'store'])->name('customization.navbar.store');
+    Route::put('/customization/navbar/{navItem}', [\App\Http\Controllers\Admin\NavbarSettingController::class, 'update'])->name('customization.navbar.update');
+    Route::delete('/customization/navbar/{navItem}', [\App\Http\Controllers\Admin\NavbarSettingController::class, 'destroy'])->name('customization.navbar.destroy');
+    Route::patch('/customization/navbar/{navItem}/status', [\App\Http\Controllers\Admin\NavbarSettingController::class, 'toggleStatus'])->name('customization.navbar.status');
+    Route::post('/customization/navbar/update-order', [\App\Http\Controllers\Admin\NavbarSettingController::class, 'updateOrder'])->name('customization.navbar.order');
+
     // Customization: Social Media CRUD Routes
     Route::resource('social-media', SocialLinkController::class)->names('social-media');
     Route::patch('social-media/{socialMedium}/status', [SocialLinkController::class, 'toggleStatus'])->name('social-media.status');
@@ -136,11 +162,16 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::resource('users', UserController::class)->names('users')->except(['show']);
     Route::patch('users/{user}/status', [UserController::class, 'toggleStatus'])->name('users.status');
 
-    // Role & Permission Management (ভূমিকা ও পারমিশন)
-    Route::get('/roles-permissions', [RolePermissionController::class, 'index'])->name('roles.index');
+    // Role Management (রোল ব্যবস্থাপনা)
+    Route::get('/roles', [RolePermissionController::class, 'index'])->name('roles.index');
     Route::post('/roles', [RolePermissionController::class, 'storeRole'])->name('roles.store');
     Route::put('/roles/{role}/permissions', [RolePermissionController::class, 'updateRolePermissions'])->name('roles.permissions.update');
     Route::delete('/roles/{role}', [RolePermissionController::class, 'destroyRole'])->name('roles.destroy');
+
+    // Permission Management (পারমিশন ব্যবস্থাপনা)
+    Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index');
+    Route::post('/permissions', [PermissionController::class, 'store'])->name('permissions.store');
+    Route::delete('/permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
     // Customization: Logo & Branding (লোগো ও ব্র্যান্ডিং)
     Route::get('/customization/branding', [BrandingSettingController::class, 'index'])->name('customization.branding');
     Route::put('/customization/branding', [BrandingSettingController::class, 'update'])->name('customization.branding.update');
@@ -218,7 +249,21 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::resource('contact-messages', \App\Http\Controllers\Admin\ContactMessageController::class)->names('contact-messages')->except(['create', 'store', 'edit', 'update']);
     Route::patch('contact-messages/{contactMessage}/toggle-read', [\App\Http\Controllers\Admin\ContactMessageController::class, 'toggleRead'])->name('contact-messages.toggle-read');
 
-    // Pages Management (পেজ ব্যবস্থাপনা)
-    Route::resource('pages', PageController::class)->names('pages')->except(['show']);
-    Route::patch('pages/{page}/status', [PageController::class, 'toggleStatus'])->name('pages.status');
+    // Dynamic Pages Management (পেজ ব্যবস্থাপনা)
+    Route::resource('pages', \App\Http\Controllers\Admin\PageController::class)->names('pages')->except(['show']);
+    Route::patch('pages/{page}/status', [\App\Http\Controllers\Admin\PageController::class, 'toggleStatus'])->name('pages.status');
+
+    // Person Messages Management (ব্যক্তিবর্গের বাণী ব্যবস্থাপনা)
+    Route::resource('person-messages', \App\Http\Controllers\Admin\PersonMessageController::class)->names('person-messages')->except(['show']);
+    Route::patch('person-messages/{personMessage}/status', [\App\Http\Controllers\Admin\PersonMessageController::class, 'toggleStatus'])->name('person-messages.status');
+
+    // Institutions Management (প্রতিষ্ঠান সমূহ ও ক্যাটাগরি ব্যবস্থাপনা)
+    Route::patch('institutions/categories/{category}/status', [\App\Http\Controllers\Admin\InstitutionCategoryController::class, 'toggleStatus'])->name('institutions.categories.status');
+    Route::resource('institutions/categories', \App\Http\Controllers\Admin\InstitutionCategoryController::class)->names('institutions.categories')->except(['show', 'create', 'edit']);
+    Route::patch('institutions/{institution}/status', [\App\Http\Controllers\Admin\InstitutionController::class, 'toggleStatus'])->name('institutions.status');
+    Route::resource('institutions', \App\Http\Controllers\Admin\InstitutionController::class)->names('institutions')->except(['show']);
+
+    // Offices Management (অফিস সমূহ ব্যবস্থাপনা)
+    Route::patch('offices/{office}/status', [\App\Http\Controllers\Admin\OfficeController::class, 'toggleStatus'])->name('offices.status');
+    Route::resource('offices', \App\Http\Controllers\Admin\OfficeController::class)->names('offices')->except(['show']);
 });

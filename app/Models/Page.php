@@ -32,9 +32,9 @@ class Page extends Model
                     $baseSlug = 'page-' . time();
                 }
                 $slug = $baseSlug;
-                $count = 1;
+                $counter = 1;
                 while (static::where('slug', $slug)->exists()) {
-                    $slug = $baseSlug . '-' . $count++;
+                    $slug = $baseSlug . '-' . $counter++;
                 }
                 $page->slug = $slug;
             }
@@ -47,12 +47,13 @@ class Page extends Model
                     $baseSlug = 'page-' . time();
                 }
                 $slug = $baseSlug;
-                $count = 1;
+                $counter = 1;
                 while (static::where('slug', $slug)->where('id', '!=', $page->id)->exists()) {
-                    $slug = $baseSlug . '-' . $count++;
+                    $slug = $baseSlug . '-' . $counter++;
                 }
                 $page->slug = $slug;
             }
         });
     }
 }
+

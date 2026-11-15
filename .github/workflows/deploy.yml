@@ -32,14 +32,8 @@ jobs:
           echo "DEPLOYMENT_START_TIME=${START_TIME}" >> "$GITHUB_ENV"
           echo "DEPLOYMENT_START_EPOCH=${START_EPOCH}" >> "$GITHUB_ENV"
 
-          MESSAGE="⛏ Deployment Started!
-
-          🕒 Start Time: ${START_TIME} (Asia/Dhaka)
-
-          Domain: ${DOMAIN}
-          Repository: ${GITHUB_REPOSITORY}
-          Branch: ${GITHUB_REF_NAME}
-          Commit: ${GITHUB_SHA}"
+          MESSAGE="Deployment Starting...
+          🕒 Time: ${START_TIME}"
 
           curl --fail --silent --show-error \
             --connect-timeout 10 \
@@ -55,10 +49,7 @@ jobs:
       - name: Notify Code Checkout Starting
         continue-on-error: true
         run: |
-          MESSAGE="📂 Checking out repository code...
-
-          Repository: ${GITHUB_REPOSITORY}
-          Branch: ${GITHUB_REF_NAME}"
+          MESSAGE="Checking out repository code..."
 
           curl --fail --silent --show-error \
             -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
@@ -71,7 +62,7 @@ jobs:
       - name: Notify Code Checkout Completed
         continue-on-error: true
         run: |
-          MESSAGE="✅ Repository checkout completed successfully!"
+          MESSAGE="✅Repository checkout complete"
 
           curl --fail --silent --show-error \
             -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
@@ -85,10 +76,7 @@ jobs:
       - name: Notify SSH Connection Starting
         continue-on-error: true
         run: |
-          MESSAGE="🔌 Connecting to Server via SSH...
-
-          Domain: ${DOMAIN}
-          Repository: ${GITHUB_REPOSITORY}"
+          MESSAGE="Connecting to Server via SSH..."
 
           curl --fail --silent --show-error \
             -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
@@ -154,66 +142,66 @@ jobs:
             # SSH Connection Established
             # ======================================
 
-            notify "✅ SSH Connection Established!
+            notify "✅ Connection Established!"
+            notify "Retrieving project directory..."
 
-            Starting deployment process..."
 
             # ======================================
             # 1. Change Project Directory
             # ======================================
 
-            run_with_notify "📂 Changing project directory..." \
+            run_with_notify "Project directory found..." \
               cd "/home/${SSH_USERNAME}/${DOMAIN}"
 
             # ======================================
             # 2. Git Pull
             # ======================================
 
-            run_with_notify "📥 Pulling latest code from GitHub..." \
+            run_with_notify "Pulling latest code from GitHub..." \
               git pull --ff-only origin main
 
             # ======================================
             # 3. Composer Install
             # ======================================
 
-            run_with_notify "📦 Installing Composer dependencies..." \
+            run_with_notify "Installing Composer dependencies..." \
               composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader
 
             # ======================================
             # 4. Clear Application Cache
             # ======================================
 
-            run_with_notify "🧹 Clearing old application caches..." \
+            run_with_notify "Clearing old application caches..." \
               php artisan optimize:clear
 
             # ======================================
             # 5. Database Migration
             # ======================================
 
-            run_with_notify "🗄️ Running database migrations..." \
+            run_with_notify "Running database migrations..." \
               php artisan migrate --force
 
             # ======================================
             # 6. Database Seeder
             # ======================================
 
-            run_with_notify "🌱 Running PageSeeder..." \
-              php artisan db:seed --class=PageSeeder --force
+            run_with_notify "Running Seeder..." \
+              # php artisan db:seed --class=PageSeeder --force
 
             # ======================================
             # 7. Storage Link
             # ======================================
 
-            notify "🔗 Checking storage symbolic link..."
+            notify "Checking storage symbolic link..."
 
             if [ ! -e public/storage ] && [ ! -L public/storage ]; then
 
-              run_with_notify "🔗 Creating storage symbolic link..." \
+              run_with_notify "Creating storage symbolic link..." \
                 php artisan storage:link
 
             else
 
-              notify "✅ Storage link already exists. Skipping..."
+              notify "✅Storage link already exists. Skipping..."
 
             fi
 
@@ -221,28 +209,28 @@ jobs:
             # 8. Config Cache
             # ======================================
 
-            run_with_notify "⚙️ Building configuration cache..." \
+            run_with_notify "Building configuration cache..." \
               php artisan config:cache
 
             # ======================================
             # 9. Route Cache
             # ======================================
 
-            run_with_notify "🛣️ Building route cache..." \
+            run_with_notify "Building route cache..." \
               php artisan route:cache
 
             # ======================================
             # 10. View Cache
             # ======================================
 
-            run_with_notify "🖼️ Building view cache..." \
+            run_with_notify "Building view cache..." \
               php artisan view:cache
 
             # ======================================
             # Deployment Commands Completed
             # ======================================
 
-            notify "✅ All deployment commands completed successfully!"
+            notify "✅ Deployment completed!"
 
       # ==========================================
       # 5. Deployment Success Notification
@@ -269,16 +257,9 @@ jobs:
 
           MESSAGE="✅ Deployment Successful!
 
-          🕒 Deployment Started:
-          ${DEPLOYMENT_START_TIME}
-
-          🕒 Deployment Finished:
-          ${END_TIME}
-
-          ⏱ Total Duration:
-          ${DURATION_HOURS}h ${DURATION_MINUTES}m ${REMAINING_SECONDS}s
-
-          📊 Total Minutes: ${DURATION_DECIMAL} minutes
+          🕒Started: ${DEPLOYMENT_START_TIME}
+          🕒Finished: ${END_TIME}
+          ⏱ Total Duration: ${DURATION_HOURS}h ${DURATION_MINUTES}m ${REMAINING_SECONDS}s
 
           🌐 Domain: ${DOMAIN}
           📁 Repository: ${GITHUB_REPOSITORY}
