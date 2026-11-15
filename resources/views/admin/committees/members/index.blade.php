@@ -141,8 +141,16 @@
               </td>
 
               <!-- Name -->
-              <td class="py-3.5 px-4 font-extrabold text-gray-900">
-                {{ $m->name }}
+              <td class="py-3.5 px-4">
+                <div class="flex flex-col">
+                  <span class="font-extrabold text-gray-900">{{ $m->name }}</span>
+                  @if($m->phone)
+                    <span class="text-xs text-gray-500 font-mono flex items-center gap-1 mt-0.5">
+                      <i class="ri-phone-line text-[#0b4622] text-[11px]"></i>
+                      <a href="tel:{{ $m->phone }}" class="hover:underline">{{ $m->phone }}</a>
+                    </span>
+                  @endif
+                </div>
               </td>
 
               <!-- Title -->

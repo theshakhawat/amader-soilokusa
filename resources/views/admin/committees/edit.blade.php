@@ -57,6 +57,23 @@
         />
       </div>
 
+      <!-- কমিটির স্লাগ (Slug) -->
+      <div>
+        <label for="slug" class="block text-xs sm:text-sm font-bold text-gray-700 mb-2">
+          কমিটির স্লাগ (URL Slug) <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          id="slug"
+          name="slug"
+          value="{{ old('slug', $committee->slug) }}"
+          placeholder="যেমন: executive বা agriculture-committee"
+          required
+          class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0b4622] text-sm"
+        />
+        <span class="text-[11px] text-gray-500 mt-1 block">কমিটি পেজের লিঙ্ক: <strong>/committee/{{ $committee->slug }}</strong></span>
+      </div>
+
       <!-- মেয়াদকাল / সেশন -->
       <div>
         <label for="session_duration" class="block text-xs sm:text-sm font-bold text-gray-700 mb-2">
@@ -72,6 +89,23 @@
           class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0b4622] text-sm"
         />
         <span class="text-[11px] text-gray-500 mt-1 block">কমিটির নামের পাশে বন্ধনীর মধ্যে দেখাবে: <strong>নাম (মেয়াদকাল)</strong></span>
+      </div>
+
+      <!-- ২য় সারির শীর্ষ নেতৃত্ব সদস্য সংখ্যা (Second Row Count) -->
+      <div>
+        <label for="second_row_count" class="block text-xs sm:text-sm font-bold text-gray-700 mb-2">
+          ২য় সারিতে সদস্য সংখ্যা (Second Row Count) <span class="text-red-500">*</span>
+        </label>
+        <select
+          id="second_row_count"
+          name="second_row_count"
+          class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0b4622] text-sm text-gray-700"
+        >
+          <option value="2" {{ old('second_row_count', $committee->second_row_count ?? 2) == 2 ? 'selected' : '' }}>২ জন (ডিফল্ট - যেমন: সহ-সভাপতি ও সাধারণ সম্পাদক)</option>
+          <option value="3" {{ old('second_row_count', $committee->second_row_count ?? 2) == 3 ? 'selected' : '' }}>৩ জন (যেমন: সহ-সভাপতিদ্বয় ও সাধারণ সম্পাদক)</option>
+          <option value="4" {{ old('second_row_count', $committee->second_row_count ?? 2) == 4 ? 'selected' : '' }}>৪ জন</option>
+        </select>
+        <span class="text-[11px] text-gray-500 mt-1 block">১ম সারিতে শুধু সভাপতি থাকবে। এরপরের সারিতে কতজন থাকবে তা নির্ধারণ করুন।</span>
       </div>
 
       <!-- উপ-শিরোনাম (Subtitle) -->

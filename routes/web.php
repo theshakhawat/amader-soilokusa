@@ -80,8 +80,10 @@ Route::get('/places/{place}', [HomeController::class, 'placeDetails'])->name('pl
 Route::get('/blogs', [HomeController::class, 'blogsIndex'])->name('blogs.index');
 Route::get('/blogs/{slug}', [HomeController::class, 'blogDetails'])->name('blogs.details');
 
-// Public Page: Committee (কমিটি তালিকা পেজ)
+// Public Page: Committee (কমিটি তালিকা ও নির্দিষ্ট কমিটি পেজ)
 Route::get('/committee', [HomeController::class, 'committeeIndex'])->name('committee.index');
+Route::get('/committees', [HomeController::class, 'committeeIndex'])->name('committees.index');
+Route::get('/committee/{slug}', [HomeController::class, 'committeeShow'])->name('committee.show');
 
 // Public Page: Contact (যোগাযোগ পেজ ও AJAX ফর্ম সাবমিট)
 Route::get('/contact', [\App\Http\Controllers\ContactController::class, 'index'])->name('contact.index');
@@ -97,6 +99,16 @@ Route::get('/offices', [HomeController::class, 'officesIndex'])->name('offices.i
 Route::get('/offices/{slug}', [HomeController::class, 'officeDetail'])->name('offices.detail');
 Route::get('/office/{slug}', function ($slug) {
     return redirect()->route('offices.detail', $slug);
+});
+
+// Public Page: Unions (ইউনিয়ন সমূহ - তালিকা ও বিস্তারিত)
+Route::get('/unions', [HomeController::class, 'unionsIndex'])->name('unions.index');
+Route::get('/unions/{slug}', [HomeController::class, 'unionDetail'])->name('unions.detail');
+Route::get('/union/{slug}', function ($slug) {
+    return redirect()->route('unions.detail', $slug);
+});
+Route::get('/union/union/{slug}', function ($slug) {
+    return redirect()->route('unions.detail', $slug);
 });
 
 // Public Donation Routes (ডিজি পে / DGePay অনুদান গেটওয়ে)
@@ -273,4 +285,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 
     // Donation Collection Management (অনুদান সংগ্রহ ও তালিকা)
     Route::resource('donations', \App\Http\Controllers\Admin\DonationController::class)->names('donations')->except(['edit', 'update']);
+
+    // Unions Management (ইউনিয়ন পরিষদ পরিচিতি ও ব্যবস্থাপনা)
+    Route::patch('unions/{union}/status', [\App\Http\Controllers\Admin\UnionController::class, 'toggleStatus'])->name('unions.status');
+    Route::resource('unions', \App\Http\Controllers\Admin\UnionController::class)->names('unions');
 });

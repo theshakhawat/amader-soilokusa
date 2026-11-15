@@ -72,6 +72,21 @@
         />
       </div>
 
+      <!-- মোবাইল / ফোন নম্বর -->
+      <div>
+        <label for="phone" class="block text-xs sm:text-sm font-bold text-gray-700 mb-2">
+          মোবাইল / ফোন নম্বর
+        </label>
+        <input
+          type="text"
+          id="phone"
+          name="phone"
+          value="{{ old('phone', $committeeMember->phone) }}"
+          placeholder="যেমন: 01712345678"
+          class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0b4622] text-sm"
+        />
+      </div>
+
       <!-- কমিটি নির্বাচন -->
       <div>
         <label for="committee_id" class="block text-xs sm:text-sm font-bold text-gray-700 mb-2">
@@ -104,9 +119,9 @@
           class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[#0b4622] text-sm"
         />
         <div class="text-[11px] text-gray-500 mt-1.5 space-y-0.5">
-          <p>• <strong>Order 1:</strong> প্রথম রো-তে একা প্রদর্শিত হবে (সভাপতি)।</p>
-          <p>• <strong>Order 2 ও 3:</strong> দ্বিতীয় রো-তে পাশাপাশি ২টি কার্ড প্রদর্শিত হবে।</p>
-          <p>• <strong>Order 4 বা তার বেশি:</strong> পরবর্তী রো-গুলোতে প্রতি রো-তে ৪টি করে কার্ড হিসেবে প্রদর্শিত হবে।</p>
+          <p>• <strong>Order 1:</strong> প্রথম রো-তে একা বড় কার্ডে সেন্টারে প্রদর্শিত হবে (সভাপতি)।</p>
+          <p>• <strong>এরপরের ক্রমগুলো:</strong> কমিটির সেটিংস অনুযায়ী ২য় রো-তে (২/৩/৪ জন) পাশাপাশি প্রদর্শিত হবে।</p>
+          <p>• <strong>বাকি সদস্যরা:</strong> পরবর্তী রো-তে অন্যান্য কার্যকরী সদস্য হিসেবে গ্রিডে প্রদর্শিত হবে।</p>
         </div>
       </div>
     </div>

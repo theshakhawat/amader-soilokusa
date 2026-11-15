@@ -21,6 +21,7 @@ use App\Models\Project;
 use App\Models\Institution;
 use App\Models\InstitutionCategory;
 use App\Models\Office;
+use App\Models\Union;
 use App\Models\StatCounter;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -415,41 +416,96 @@ class HomeController extends Controller
     }
 
     /**
-     * Public Committee Listing Page
+     * Public All Committees Index Page (কমিটি সমূহ - সকল কমিটি কার্ড তালিকা)
      */
     public function committeeIndex(): View
     {
-        $activeCommittee = Committee::where('is_active', true)
+        $committees = Committee::withCount(['members' => function ($q) {
+                $q->where('status', true);
+            }])
+            ->with(['members' => function ($q) {
+                $q->where('status', true)->orderBy('order', 'asc');
+            }])
+            ->where('is_active', true)
             ->orderBy('order', 'asc')
-            ->orderBy('id', 'desc')
-            ->first();
+            ->orderBy('id', 'asc')
+            ->get();
 
-        $membersQuery = CommitteeMember::where('status', true);
-        if ($activeCommittee) {
-            $membersQuery->where(function ($q) use ($activeCommittee) {
-                $q->where('committee_id', $activeCommittee->id)
-                  ->orWhereNull('committee_id');
-            });
+        return view('pages.committees.index', compact('committees'));
+    }
+
+    /**
+     * Public Committee Detail Page by Slug
+     */
+    public function committeeShow(string $slug): View
+    {
+        $committee = Committee::where('slug', $slug)->first();
+        if (!$committee) {
+            $committee = Committee::where('id', $slug)->firstOrFail();
         }
 
-        $allMembers = $membersQuery->orderBy('order', 'asc')->orderBy('id', 'asc')->get();
+        return $this->renderCommitteeView($committee);
+    }
 
-        // Row 1: সভাপতি (Order = 1)
-        $president = $allMembers->firstWhere('order', 1);
+    /**
+     * Helper to render dynamic committee layout with custom 3-tier hierarchy
+     */
+    protected function renderCommitteeView(?Committee $committee): View
+    {
+        $allActiveCommittees = Committee::where('is_active', true)
+            ->orderBy('order', 'asc')
+            ->get();
 
-        // Row 2: দুই জন (Order = 2 এবং 3)
-        $secondRowMembers = $allMembers->filter(function ($m) {
-            return $m->order == 2 || $m->order == 3;
-        })->values();
+        if (!$committee && $allActiveCommittees->isNotEmpty()) {
+            $committee = $allActiveCommittees->first();
+        }
 
-        // Row 3+: বাকি সদস্যরা (Order 4 বা তার বেশি)
-        $otherMembers = $allMembers->filter(function ($m) use ($president, $secondRowMembers) {
-            if ($president && $m->id === $president->id) return false;
-            if ($secondRowMembers->contains('id', $m->id)) return false;
-            return true;
-        })->values();
+        $allMembers = collect();
+        $president = null;
+        $secondRowMembers = collect();
+        $otherMembers = collect();
+        $secondRowCount = $committee ? (int)($committee->second_row_count ?: 2) : 2;
 
-        return view('pages.committee', compact('activeCommittee', 'president', 'secondRowMembers', 'otherMembers'));
+        if ($committee) {
+            $allMembers = CommitteeMember::where('committee_id', $committee->id)
+                ->where('status', true)
+                ->orderBy('order', 'asc')
+                ->orderBy('id', 'asc')
+                ->get();
+
+            // Row 1: সভাপতি (Order = 1, or title matching সভাপতি/আহ্বায়ক/প্রধান)
+            $president = $allMembers->first(function ($m) {
+                return $m->order == 1;
+            }) ?? $allMembers->first(function ($m) {
+                return (str_contains($m->title, 'সভাপতি') || str_contains($m->title, 'আহ্বায়ক') || str_contains($m->title, 'প্রধান'))
+                    && !str_contains($m->title, 'সহ-সভাপতি')
+                    && !str_contains($m->title, 'সহ সভাপতি')
+                    && !str_contains($m->title, 'যুগ্ম');
+            }) ?? $allMembers->first();
+
+            // Remaining members excluding president
+            $remainingMembers = $allMembers->filter(function ($m) use ($president) {
+                return !$president || $m->id !== $president->id;
+            })->values();
+
+            // Row 2: Top leadership (2, 3, or 4 members based on dynamic second_row_count)
+            $secondRowMembers = $remainingMembers->take($secondRowCount);
+
+            // Row 3+: All other remaining members
+            $otherMembers = $remainingMembers->slice($secondRowCount)->values();
+        }
+
+        $activeCommittee = $committee;
+
+        return view('pages.committee', compact(
+            'committee',
+            'activeCommittee',
+            'allActiveCommittees',
+            'president',
+            'secondRowMembers',
+            'otherMembers',
+            'secondRowCount'
+        ));
     }
 
     /**
@@ -575,5 +631,32 @@ class HomeController extends Controller
             ->firstOrFail();
 
         return view('pages.offices.detail', compact('office'));
+    }
+
+    /**
+     * Public: Unions List (সকল ইউনিয়ন পরিচিতি তালিকা পেজ)
+     */
+    public function unionsIndex(): View
+    {
+        $unions = Union::with(['images', 'members'])
+            ->where('status', true)
+            ->orderBy('order', 'asc')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        return view('pages.unions.index', compact('unions'));
+    }
+
+    /**
+     * Public: Union Detail (ইউনিয়ন বিস্তারিত পেজ)
+     */
+    public function unionDetail(string $slug): View
+    {
+        $union = Union::with(['images', 'members'])
+            ->where('slug', $slug)
+            ->where('status', true)
+            ->firstOrFail();
+
+        return view('pages.unions.detail', compact('union'));
     }
 }

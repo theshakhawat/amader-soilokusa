@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="bn" class="overflow-x-hidden">
+<html lang="bn">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}?v={{ file_exists(public_path('assets/css/style.css')) ? filemtime(public_path('assets/css/style.css')) : time() }}" />
   @stack('styles')
 </head>
-<body class="bg-[#f4f5f7] text-gray-800 antialiased selection:bg-[#c8102e] selection:text-white overflow-x-hidden w-full">
+<body class="bg-[#f4f5f7] text-gray-800 antialiased selection:bg-[#c8102e] selection:text-white w-full">
 
   {{-- Top Header Bar --}}
   @include('layouts.website.topnav')
@@ -53,7 +53,7 @@
        INTERACTIVE MODALS (RESPONSIVE FOR MOBILE & DESKTOP)
        ===================================================================== -->
   <!-- 1. Universal Details Modal -->
-  <div id="info-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-xs">
+  <div id="info-modal" class="fixed inset-0 z-[999] hidden items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-xs">
     <div class="bg-white rounded-2xl max-w-lg w-full p-4 sm:p-6 shadow-2xl border border-gray-100 animate-fadeIn max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-gray-100 pb-3">
         <span id="modal-category" class="text-xs font-bold bg-red-50 text-[#c8102e] px-3 py-1 rounded-full">বিস্তারিত</span>
@@ -73,7 +73,7 @@
   </div>
 
   <!-- 2. Donate Modal (ডিজি পে / DGePay কাস্টম অ্যামাউন্ট অনুদান ফরম) -->
-  <div id="donate-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-xs">
+  <div id="donate-modal" class="fixed inset-0 z-[999] hidden items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-xs">
     <div class="bg-white rounded-2xl max-w-md w-full p-4 sm:p-6 shadow-2xl border border-gray-100 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-gray-100 pb-3">
         <div class="flex items-center gap-2 text-[#c8102e] font-extrabold text-base sm:text-lg">
@@ -153,7 +153,7 @@
 
   {{-- 2.1 Donation Result Feedback Modal (Success or Failed Popup) --}}
   @if(session('donation_result'))
-    <div id="donation-result-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-3 sm:p-4 backdrop-blur-xs animate-fadeIn">
+    <div id="donation-result-modal" class="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 p-3 sm:p-4 backdrop-blur-xs animate-fadeIn">
       <div class="bg-white rounded-2xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-gray-100 text-center relative overflow-hidden">
         @if(session('donation_result') === 'success')
           {{-- Top accent bar --}}
@@ -235,7 +235,7 @@
   @endif
 
   <!-- 3. Video Preview Modal (Responsive Video Pop-up with Live Player) -->
-  <div id="video-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 p-3 sm:p-5 backdrop-blur-sm animate-fadeIn">
+  <div id="video-modal" class="fixed inset-0 z-[999] hidden items-center justify-center bg-black/80 p-3 sm:p-5 backdrop-blur-sm animate-fadeIn">
     <div class="bg-white rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl border border-gray-100 flex flex-col">
       <!-- Modal Header -->
       <div class="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-gray-100 bg-gray-50/80">

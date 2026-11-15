@@ -56,19 +56,21 @@ class CommitteeMemberController extends Controller
     {
         $validated = $request->validate([
             'committee_id' => 'nullable|exists:committees,id',
-            'name' => 'required|string|max:255',
-            'title' => 'required|string|max:255',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-            'order' => 'required|integer',
-            'status' => 'nullable|boolean',
+            'name'         => 'required|string|max:255',
+            'title'        => 'required|string|max:255',
+            'phone'        => 'nullable|string|max:32',
+            'photo'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'order'        => 'required|integer',
+            'status'       => 'nullable|boolean',
         ]);
 
         $data = [
             'committee_id' => $validated['committee_id'] ?? null,
-            'name' => $validated['name'],
-            'title' => $validated['title'],
-            'order' => $validated['order'],
-            'status' => $request->has('status') ? true : false,
+            'name'         => $validated['name'],
+            'title'        => $validated['title'],
+            'phone'        => $validated['phone'] ?? null,
+            'order'        => (int) $validated['order'],
+            'status'       => $request->has('status') ? true : false,
         ];
 
         if ($request->hasFile('photo')) {
@@ -96,19 +98,21 @@ class CommitteeMemberController extends Controller
     {
         $validated = $request->validate([
             'committee_id' => 'nullable|exists:committees,id',
-            'name' => 'required|string|max:255',
-            'title' => 'required|string|max:255',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-            'order' => 'required|integer',
-            'status' => 'nullable|boolean',
+            'name'         => 'required|string|max:255',
+            'title'        => 'required|string|max:255',
+            'phone'        => 'nullable|string|max:32',
+            'photo'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'order'        => 'required|integer',
+            'status'       => 'nullable|boolean',
         ]);
 
         $data = [
             'committee_id' => $validated['committee_id'] ?? null,
-            'name' => $validated['name'],
-            'title' => $validated['title'],
-            'order' => $validated['order'],
-            'status' => $request->has('status') ? true : false,
+            'name'         => $validated['name'],
+            'title'        => $validated['title'],
+            'phone'        => $validated['phone'] ?? null,
+            'order'        => (int) $validated['order'],
+            'status'       => $request->has('status') ? true : false,
         ];
 
         if ($request->hasFile('photo')) {

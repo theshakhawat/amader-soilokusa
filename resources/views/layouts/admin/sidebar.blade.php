@@ -662,6 +662,48 @@
       </div>
     </div>
 
+    <!-- ইউনিয়ন পরিষদ (Unions Management) -->
+    @php
+      $isUnionsActive = request()->routeIs('admin.unions*');
+    @endphp
+    <div class="sidebar-dropdown-group">
+      <button
+        type="button"
+        onclick="toggleSidebarDropdown('menu-unions', this)"
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium transition cursor-pointer focus:outline-none {{ $isUnionsActive ? 'bg-gray-100/70 text-[#0b4622] font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
+      >
+        <div class="flex items-center gap-3">
+          <i class="ri-community-line text-base w-5 text-center {{ $isUnionsActive ? 'text-[#0b4622]' : 'text-gray-400' }}"></i>
+          <span>ইউনিয়ন পরিষদ</span>
+        </div>
+        <i class="ri-arrow-down-s-line text-sm transition-transform duration-300 dropdown-arrow {{ $isUnionsActive ? 'rotate-180 text-[#0b4622]' : 'text-gray-400' }}"></i>
+      </button>
+      <div
+        id="menu-unions"
+        class="sidebar-submenu overflow-hidden transition-all duration-300 ease-in-out {{ $isUnionsActive ? 'max-h-[500px] opacity-100 mt-1.5' : 'max-h-0 opacity-0' }}"
+      >
+        <div class="bg-[#f8fafc] border border-gray-100/90 rounded-xl p-1.5 space-y-1 ml-2 border-l-2 border-l-[#0b4622]/40 shadow-2xs">
+          <!-- সকল ইউনিয়ন -->
+          <a
+            href="{{ route('admin.unions.index') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.unions.index') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-list-check-2 text-sm {{ request()->routeIs('admin.unions.index') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>সকল ইউনিয়ন</span>
+          </a>
+
+          <!-- নতুন ইউনিয়ন যোগ করুন -->
+          <a
+            href="{{ route('admin.unions.create') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.unions.create') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-add-line text-sm {{ request()->routeIs('admin.unions.create') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>নতুন ইউনিয়ন যোগ করুন</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
     <!-- ৬. দর্শনীয় স্থান (Places Management) -->
     @php
       $isPlacesActive = request()->routeIs('admin.places*');

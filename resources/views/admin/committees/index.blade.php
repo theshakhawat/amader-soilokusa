@@ -77,16 +77,20 @@
               <td class="py-3.5 px-4 font-bold text-gray-900">
                 <div class="flex flex-col">
                   <span class="text-sm font-extrabold text-gray-900">{{ $committee->name }}</span>
+                  <span class="text-[11px] text-[#0b4622] font-mono mt-0.5">/committee/{{ $committee->slug }}</span>
                   <span class="text-xs text-gray-500 font-medium line-clamp-1 mt-0.5">{{ $committee->description ?: 'কোনো বিবরণ নেই' }}</span>
                 </div>
               </td>
 
               <!-- Session / Duration -->
               <td class="py-3.5 px-4">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-[#0b4622] font-bold text-xs border border-emerald-100">
-                  <i class="ri-calendar-line text-xs"></i>
-                  {{ $committee->session_duration }}
-                </span>
+                <div class="flex flex-col gap-1">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-[#0b4622] font-bold text-xs border border-emerald-100 w-max">
+                    <i class="ri-calendar-line text-xs"></i>
+                    {{ $committee->session_duration }}
+                  </span>
+                  <span class="text-[11px] text-gray-500 font-semibold">২য় সারি: <strong class="text-gray-800">{{ $committee->second_row_count ?? 2 }} জন</strong></span>
+                </div>
               </td>
 
               <!-- Subtitle -->
@@ -114,6 +118,24 @@
               <!-- Actions -->
               <td class="py-3.5 px-4 text-right">
                 <div class="inline-flex items-center gap-1.5">
+                  <a
+                    href="{{ route('admin.committee-members.index', ['committee_id' => $committee->id]) }}"
+                    class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-[#0b4622] text-[#0b4622] hover:text-white text-xs font-bold transition flex items-center gap-1"
+                    title="কমিটি সদস্যবৃন্দ"
+                  >
+                    <i class="ri-user-settings-line"></i>
+                    <span>সদস্য ({{ $committee->members->count() }})</span>
+                  </a>
+
+                  <a
+                    href="{{ url('/committee/' . $committee->slug) }}"
+                    target="_blank"
+                    class="p-2 rounded-lg bg-gray-100 hover:bg-blue-600 hover:text-white text-gray-600 transition"
+                    title="ওয়েবসাইটে দেখুন"
+                  >
+                    <i class="ri-external-link-line text-base"></i>
+                  </a>
+
                   <a
                     href="{{ route('admin.committees.edit', $committee) }}"
                     class="p-2 rounded-lg bg-gray-100 hover:bg-[#0b4622] hover:text-white text-gray-600 transition"

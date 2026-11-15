@@ -13,6 +13,7 @@ class CommitteeMember extends Model
         'committee_id',
         'name',
         'title',
+        'phone',
         'photo',
         'order',
         'status',

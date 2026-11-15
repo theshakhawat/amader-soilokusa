@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Committee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class CommitteeController extends Controller
 {
@@ -32,22 +33,36 @@ class CommitteeController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name'             => 'required|string|max:255',
+            'slug'             => 'nullable|string|max:255|unique:committees,slug',
             'session_duration' => 'required|string|max:100',
-            'subtitle' => 'nullable|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-            'description' => 'nullable|string',
-            'is_active' => 'nullable|boolean',
-            'order' => 'nullable|integer',
+            'subtitle'         => 'nullable|string|max:255',
+            'second_row_count' => 'nullable|integer|in:2,3,4',
+            'image'            => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'description'      => 'nullable|string',
+            'is_active'        => 'nullable|boolean',
+            'order'            => 'nullable|integer',
         ]);
 
+        $slug = !empty($validated['slug']) ? Str::slug($validated['slug']) : Str::slug($validated['name']);
+        if (empty($slug)) {
+            $slug = 'committee-' . uniqid();
+        }
+        $baseSlug = $slug;
+        $counter = 1;
+        while (Committee::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter++;
+        }
+
         $data = [
-            'name' => $validated['name'],
+            'name'             => $validated['name'],
+            'slug'             => $slug,
             'session_duration' => $validated['session_duration'],
-            'subtitle' => $validated['subtitle'] ?? 'আগামীর শৈলকুপা',
-            'description' => $validated['description'] ?? null,
-            'is_active' => $request->has('is_active') ? true : false,
-            'order' => $validated['order'] ?? 0,
+            'subtitle'         => $validated['subtitle'] ?? 'আগামীর শৈলকুপা',
+            'second_row_count' => (int)($validated['second_row_count'] ?? 2),
+            'description'      => $validated['description'] ?? null,
+            'is_active'        => $request->has('is_active') ? true : false,
+            'order'            => (int)($validated['order'] ?? 0),
         ];
 
         if ($request->hasFile('image')) {
@@ -73,22 +88,36 @@ class CommitteeController extends Controller
     public function update(Request $request, Committee $committee)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name'             => 'required|string|max:255',
+            'slug'             => 'nullable|string|max:255|unique:committees,slug,' . $committee->id,
             'session_duration' => 'required|string|max:100',
-            'subtitle' => 'nullable|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-            'description' => 'nullable|string',
-            'is_active' => 'nullable|boolean',
-            'order' => 'nullable|integer',
+            'subtitle'         => 'nullable|string|max:255',
+            'second_row_count' => 'nullable|integer|in:2,3,4',
+            'image'            => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'description'      => 'nullable|string',
+            'is_active'        => 'nullable|boolean',
+            'order'            => 'nullable|integer',
         ]);
 
+        $slug = !empty($validated['slug']) ? Str::slug($validated['slug']) : ($committee->slug ?: Str::slug($validated['name']));
+        if (empty($slug)) {
+            $slug = 'committee-' . $committee->id;
+        }
+        $baseSlug = $slug;
+        $counter = 1;
+        while (Committee::where('slug', $slug)->where('id', '!=', $committee->id)->exists()) {
+            $slug = $baseSlug . '-' . $counter++;
+        }
+
         $data = [
-            'name' => $validated['name'],
+            'name'             => $validated['name'],
+            'slug'             => $slug,
             'session_duration' => $validated['session_duration'],
-            'subtitle' => $validated['subtitle'] ?? 'আগামীর শৈলকুপা',
-            'description' => $validated['description'] ?? null,
-            'is_active' => $request->has('is_active') ? true : false,
-            'order' => $validated['order'] ?? 0,
+            'subtitle'         => $validated['subtitle'] ?? 'আগামীর শৈলকুপা',
+            'second_row_count' => (int)($validated['second_row_count'] ?? 2),
+            'description'      => $validated['description'] ?? null,
+            'is_active'        => $request->has('is_active') ? true : false,
+            'order'            => (int)($validated['order'] ?? 0),
         ];
 
         if ($request->hasFile('image')) {
