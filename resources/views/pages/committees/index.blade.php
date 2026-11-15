@@ -75,7 +75,7 @@
             }) ?? $comm->members->first();
           @endphp
 
-          <a href="{{ route('committee.show', $comm->slug) }}"
+          <a href="{{ route('committee.show', $comm->slug ?: $comm->id) }}"
              class="group bg-white rounded-2xl border border-gray-200/90 shadow-2xs hover:shadow-xl hover:border-emerald-400 transition-all duration-300 flex flex-col overflow-hidden">
 
             {{-- Card Image / Header --}}

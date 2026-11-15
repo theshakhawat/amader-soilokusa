@@ -83,7 +83,7 @@ Route::get('/blogs/{slug}', [HomeController::class, 'blogDetails'])->name('blogs
 // Public Page: Committee (কমিটি তালিকা ও নির্দিষ্ট কমিটি পেজ)
 Route::get('/committee', [HomeController::class, 'committeeIndex'])->name('committee.index');
 Route::get('/committees', [HomeController::class, 'committeeIndex'])->name('committees.index');
-Route::get('/committee/{slug}', [HomeController::class, 'committeeShow'])->name('committee.show');
+Route::get('/committee/{slug?}', [HomeController::class, 'committeeShow'])->name('committee.show');
 
 // Public Page: Contact (যোগাযোগ পেজ ও AJAX ফর্ম সাবমিট)
 Route::get('/contact', [\App\Http\Controllers\ContactController::class, 'index'])->name('contact.index');
@@ -103,7 +103,7 @@ Route::get('/office/{slug}', function ($slug) {
 
 // Public Page: Unions (ইউনিয়ন সমূহ - তালিকা ও বিস্তারিত)
 Route::get('/unions', [HomeController::class, 'unionsIndex'])->name('unions.index');
-Route::get('/unions/{slug}', [HomeController::class, 'unionDetail'])->name('unions.detail');
+Route::get('/unions/{slug?}', [HomeController::class, 'unionDetail'])->name('unions.detail');
 Route::get('/union/{slug}', function ($slug) {
     return redirect()->route('unions.detail', $slug);
 });

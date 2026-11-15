@@ -437,11 +437,19 @@ class HomeController extends Controller
     /**
      * Public Committee Detail Page by Slug
      */
-    public function committeeShow(string $slug): View
+    public function committeeShow(?string $slug = null): View
     {
+        if (empty($slug)) {
+            return $this->committeeIndex();
+        }
+
         $committee = Committee::where('slug', $slug)->first();
         if (!$committee) {
-            $committee = Committee::where('id', $slug)->firstOrFail();
+            $committee = Committee::where('id', $slug)->first();
+        }
+
+        if (!$committee) {
+            return $this->committeeIndex();
         }
 
         return $this->renderCommitteeView($committee);
@@ -650,12 +658,27 @@ class HomeController extends Controller
     /**
      * Public: Union Detail (ইউনিয়ন বিস্তারিত পেজ)
      */
-    public function unionDetail(string $slug): View
+    public function unionDetail(?string $slug = null): View
     {
+        if (empty($slug)) {
+            return $this->unionsIndex();
+        }
+
         $union = Union::with(['images', 'members'])
             ->where('slug', $slug)
             ->where('status', true)
-            ->firstOrFail();
+            ->first();
+
+        if (!$union) {
+            $union = Union::with(['images', 'members'])
+                ->where('id', $slug)
+                ->where('status', true)
+                ->first();
+        }
+
+        if (!$union) {
+            return $this->unionsIndex();
+        }
 
         return view('pages.unions.detail', compact('union'));
     }

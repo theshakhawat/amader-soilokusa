@@ -91,7 +91,7 @@
                     <i class="ri-arrow-right-s-line text-emerald-600"></i>
                   </a>
                   @forelse($activeCommitteesDropdown as $comm)
-                    <a href="{{ route('committee.show', $comm->slug) }}"
+                    <a href="{{ route('committee.show', $comm->slug ?: $comm->id) }}"
                        class="flex items-center gap-2 px-4 py-2 hover:bg-emerald-50 hover:text-[#0b4622] transition text-xs font-semibold text-gray-700">
                       <i class="ri-team-line text-[#0b4622]"></i>
                       <span>{{ $comm->name }}</span>
@@ -376,7 +376,7 @@
                   সকল কমিটি সমূহ
                 </a>
                 @forelse($activeCommitteesDropdownMobile as $comm)
-                  <a href="{{ route('committee.show', $comm->slug) }}" class="mobile-nav-link block py-1.5 hover:text-[#0b4622] text-xs font-semibold">
+                  <a href="{{ route('committee.show', $comm->slug ?: $comm->id) }}" class="mobile-nav-link block py-1.5 hover:text-[#0b4622] text-xs font-semibold">
                     <i class="ri-team-line text-[#0b4622] mr-1"></i>
                     {{ $comm->name }}
                   </a>

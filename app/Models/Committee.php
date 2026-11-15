@@ -30,6 +30,14 @@ class Committee extends Model
     ];
 
     /**
+     * Ensure slug is always present.
+     */
+    public function getSlugAttribute($value): string
+    {
+        return !empty($value) ? (string)$value : (string)($this->id ?: 'committee');
+    }
+
+    /**
      * Relationship with Committee Members.
      */
     public function members(): HasMany

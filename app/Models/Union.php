@@ -35,6 +35,14 @@ class Union extends Model
         'order'  => 'integer',
     ];
 
+    /**
+     * Ensure slug is always present.
+     */
+    public function getSlugAttribute($value): string
+    {
+        return !empty($value) ? (string)$value : (string)($this->id ?: 'union');
+    }
+
     public function images(): HasMany
     {
         return $this->hasMany(UnionImage::class)->orderBy('order', 'asc');
