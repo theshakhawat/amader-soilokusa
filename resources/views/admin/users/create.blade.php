@@ -89,7 +89,7 @@
         <!-- Role -->
         <div>
           <label for="role" class="block text-xs font-bold text-gray-700 mb-1.5">
-            ভূমিকা / রোল (Role) <span class="text-[#c8102e]">*</span>
+            রোল (Role) <span class="text-[#c8102e]">*</span>
           </label>
           <select
             id="role"

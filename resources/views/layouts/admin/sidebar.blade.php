@@ -92,6 +92,15 @@
             <span>সোশ্যাল মিডিয়া লিংক</span>
           </a>
 
+          <!-- নেভবার মেন্যু সেটিংস (Navbar Settings) -->
+          <a
+            href="{{ route('admin.customization.navbar') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.customization.navbar*') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-menu-search-line text-sm {{ request()->routeIs('admin.customization.navbar*') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>নেভবার মেন্যু (Navbar Settings)</span>
+          </a>
+
           <!-- টপবার হেডার -->
           <a
             href="{{ route('admin.customization.topbar') }}"
@@ -169,7 +178,7 @@
 
     <!-- ৩. ব্যবহারকারী তালিকা -->
     @php
-      $isUsersActive = request()->routeIs('admin.users*') || request()->routeIs('admin.roles*');
+      $isUsersActive = request()->routeIs('admin.users*') || request()->routeIs('admin.roles*') || request()->routeIs('admin.permissions*');
     @endphp
     <div class="sidebar-dropdown-group">
       <button
@@ -215,13 +224,22 @@
             <span>অপেক্ষমাণ আবেদন</span>
           </a>
 
-          <!-- ভূমিকা ও পারমিশন -->
+          <!-- রোল (Role) -->
           <a
             href="{{ route('admin.roles.index') }}"
             class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.roles*') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
           >
             <i class="ri-shield-user-line text-sm {{ request()->routeIs('admin.roles*') ? 'text-white' : 'text-gray-400' }}"></i>
-            <span>ভূমিকা ও পারমিশন</span>
+            <span>রোল (Role)</span>
+          </a>
+
+          <!-- পারমিশন (Permission) -->
+          <a
+            href="{{ route('admin.permissions.index') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.permissions*') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-key-2-line text-sm {{ request()->routeIs('admin.permissions*') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>পারমিশন</span>
           </a>
         </div>
       </div>
@@ -552,6 +570,99 @@
       </div>
     </div>
 
+    <!-- প্রতিষ্ঠান সমূহ (Institutions Management) -->
+    @php
+      $isInstitutionsActive = request()->routeIs('admin.institutions*');
+    @endphp
+    <div class="sidebar-dropdown-group">
+      <button
+        type="button"
+        onclick="toggleSidebarDropdown('menu-institutions', this)"
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium transition cursor-pointer focus:outline-none {{ $isInstitutionsActive ? 'bg-gray-100/70 text-[#0b4622] font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
+      >
+        <div class="flex items-center gap-3">
+          <i class="ri-building-2-line text-base w-5 text-center {{ $isInstitutionsActive ? 'text-[#0b4622]' : 'text-gray-400' }}"></i>
+          <span>প্রতিষ্ঠান সমূহ</span>
+        </div>
+        <i class="ri-arrow-down-s-line text-sm transition-transform duration-300 dropdown-arrow {{ $isInstitutionsActive ? 'rotate-180 text-[#0b4622]' : 'text-gray-400' }}"></i>
+      </button>
+      <div
+        id="menu-institutions"
+        class="sidebar-submenu overflow-hidden transition-all duration-300 ease-in-out {{ $isInstitutionsActive ? 'max-h-[500px] opacity-100 mt-1.5' : 'max-h-0 opacity-0' }}"
+      >
+        <div class="bg-[#f8fafc] border border-gray-100/90 rounded-xl p-1.5 space-y-1 ml-2 border-l-2 border-l-[#0b4622]/40 shadow-2xs">
+          <!-- সকল প্রতিষ্ঠান -->
+          <a
+            href="{{ route('admin.institutions.index') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.institutions.index') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-list-check-2 text-sm {{ request()->routeIs('admin.institutions.index') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>সকল প্রতিষ্ঠান</span>
+          </a>
+
+          <!-- নতুন প্রতিষ্ঠান যুক্ত করুন -->
+          <a
+            href="{{ route('admin.institutions.create') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.institutions.create') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-add-line text-sm {{ request()->routeIs('admin.institutions.create') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>প্রতিষ্ঠান যুক্ত করুন</span>
+          </a>
+
+          <!-- প্রতিষ্ঠানের ক্যাটাগরি -->
+          <a
+            href="{{ route('admin.institutions.categories.index') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.institutions.categories*') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-price-tag-3-line text-sm {{ request()->routeIs('admin.institutions.categories*') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>প্রতিষ্ঠানের ক্যাটাগরি</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- অফিস সমূহ (Offices Management) -->
+    @php
+      $isOfficesActive = request()->routeIs('admin.offices*');
+    @endphp
+    <div class="sidebar-dropdown-group">
+      <button
+        type="button"
+        onclick="toggleSidebarDropdown('menu-offices', this)"
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium transition cursor-pointer focus:outline-none {{ $isOfficesActive ? 'bg-gray-100/70 text-[#0b4622] font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
+      >
+        <div class="flex items-center gap-3">
+          <i class="ri-government-line text-base w-5 text-center {{ $isOfficesActive ? 'text-[#0b4622]' : 'text-gray-400' }}"></i>
+          <span>অফিস সমূহ</span>
+        </div>
+        <i class="ri-arrow-down-s-line text-sm transition-transform duration-300 dropdown-arrow {{ $isOfficesActive ? 'rotate-180 text-[#0b4622]' : 'text-gray-400' }}"></i>
+      </button>
+      <div
+        id="menu-offices"
+        class="sidebar-submenu overflow-hidden transition-all duration-300 ease-in-out {{ $isOfficesActive ? 'max-h-[500px] opacity-100 mt-1.5' : 'max-h-0 opacity-0' }}"
+      >
+        <div class="bg-[#f8fafc] border border-gray-100/90 rounded-xl p-1.5 space-y-1 ml-2 border-l-2 border-l-[#0b4622]/40 shadow-2xs">
+          <!-- সকল অফিস -->
+          <a
+            href="{{ route('admin.offices.index') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.offices.index') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-list-check-2 text-sm {{ request()->routeIs('admin.offices.index') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>সকল অফিস</span>
+          </a>
+
+          <!-- নতুন অফিস যোগ করুন -->
+          <a
+            href="{{ route('admin.offices.create') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.offices.create') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-add-line text-sm {{ request()->routeIs('admin.offices.create') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>নতুন অফিস যোগ করুন</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
     <!-- ৬. দর্শনীয় স্থান (Places Management) -->
     @php
       $isPlacesActive = request()->routeIs('admin.places*');
@@ -640,6 +751,46 @@
           >
             <i class="ri-price-tag-3-line text-sm {{ request()->routeIs('admin.categories.*') ? 'text-white' : 'text-gray-400' }}"></i>
             <span>ক্যাটাগরি সমূহ</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ৭.৫. ব্যক্তিবর্গের বাণী (Persons Messages) -->
+    @php
+      $isMsgActive = request()->routeIs('admin.person-messages*');
+    @endphp
+    <div class="sidebar-dropdown-group">
+      <button
+        type="button"
+        onclick="toggleSidebarDropdown('menu-person-messages', this)"
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium transition cursor-pointer focus:outline-none {{ $isMsgActive ? 'bg-gray-100/70 text-[#0b4622] font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
+      >
+        <div class="flex items-center gap-3">
+          <i class="ri-chat-quote-line text-base w-5 text-center {{ $isMsgActive ? 'text-[#0b4622]' : 'text-gray-400' }}"></i>
+          <span>ব্যক্তিবর্গের বাণী</span>
+        </div>
+        <i class="ri-arrow-down-s-line text-sm transition-transform duration-300 dropdown-arrow {{ $isMsgActive ? 'rotate-180 text-[#0b4622]' : 'text-gray-400' }}"></i>
+      </button>
+      <div
+        id="menu-person-messages"
+        class="sidebar-submenu overflow-hidden transition-all duration-300 ease-in-out {{ $isMsgActive ? 'max-h-[500px] opacity-100 mt-1.5' : 'max-h-0 opacity-0' }}"
+      >
+        <div class="bg-[#f8fafc] border border-gray-100/90 rounded-xl p-1.5 space-y-1 ml-2 border-l-2 border-l-[#0b4622]/40 shadow-2xs">
+          <a
+            href="{{ route('admin.person-messages.index') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.person-messages.index') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-list-check-2 text-sm {{ request()->routeIs('admin.person-messages.index') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>সকল বাণী তালিকা</span>
+          </a>
+
+          <a
+            href="{{ route('admin.person-messages.create') }}"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.person-messages.create') ? 'bg-[#0b4622] text-white shadow-xs font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}"
+          >
+            <i class="ri-add-line text-sm {{ request()->routeIs('admin.person-messages.create') ? 'text-white' : 'text-gray-400' }}"></i>
+            <span>নতুন বাণী যোগ করুন</span>
           </a>
         </div>
       </div>

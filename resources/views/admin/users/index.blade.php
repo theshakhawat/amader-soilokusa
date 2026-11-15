@@ -31,9 +31,9 @@
       </h1>
       <p class="text-xs text-gray-500 mt-0.5">
         @if($filter === 'members')
-          সংগঠনের সাধারণ ও সক্রিয় সদস্য যাদের রোল 'member' (এডমিন বা সুপার এডমিন নন)।
+          সংগঠনের সাধারণ ও সক্রিয় সদস্য যাদের রোল 'member'।
         @else
-          সুপার এডমিন, এডমিন ও সাধারণ সদস্য সহ সকল নিবন্ধিত ব্যবহারকারীদের তথ্য ও রোল পরিচালনা করুন।
+          এডমিন ও সাধারণ সদস্য সহ সকল নিবন্ধিত ব্যবহারকারীদের তথ্য ও রোল পরিচালনা করুন।
         @endif
       </p>
     </div>
@@ -44,7 +44,15 @@
         class="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl transition cursor-pointer"
       >
         <i class="ri-shield-user-line"></i>
-        <span>ভূমিকা ও পারমিশন</span>
+        <span>রোল (Role)</span>
+      </a>
+
+      <a
+        href="{{ route('admin.permissions.index') }}"
+        class="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl transition cursor-pointer"
+      >
+        <i class="ri-key-2-line"></i>
+        <span>পারমিশন</span>
       </a>
 
       <a
@@ -217,10 +225,9 @@
 
               <!-- Roles -->
               <td class="py-3 px-4 text-center">
-                @forelse($user->roles as $r)
+                @forelse($user->roles->filter(fn($r) => $r->name !== 'super-admin') as $r)
                   @php
                     $roleStyle = match($r->name) {
-                      'super-admin' => 'bg-purple-50 text-purple-700 border-purple-200',
                       'admin'       => 'bg-blue-50 text-blue-700 border-blue-200',
                       'member'      => 'bg-emerald-50 text-emerald-700 border-emerald-200',
                       default       => 'bg-gray-50 text-gray-700 border-gray-200',
@@ -231,7 +238,14 @@
                     <span>{{ $r->name }}</span>
                   </span>
                 @empty
-                  <span class="text-gray-400 italic">No Role</span>
+                  @if($user->hasRole('super-admin'))
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[10px] font-black border uppercase bg-blue-50 text-blue-700 border-blue-200">
+                      <i class="ri-shield-check-line text-xs"></i>
+                      <span>ADMIN</span>
+                    </span>
+                  @else
+                    <span class="text-gray-400 italic">No Role</span>
+                  @endif
                 @endforelse
               </td>
 

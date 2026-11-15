@@ -1,63 +1,153 @@
 <!-- =====================================================================
-     2. MAIN NAVIGATION BAR (Responsive Mobile + Desktop)
+     2. MAIN NAVIGATION BAR (Fully Dynamic Nav Items with Multi-level Dropdowns)
      ===================================================================== -->
 <header class="bg-white sticky top-0 z-40 shadow-[0_2px_10px_rgba(0,0,0,0.06)]">
-  <div class="max-w-[1220px] mx-auto px-3 sm:px-6 h-[64px] sm:h-[76px] flex items-center justify-between gap-2 sm:gap-4">
+  <div class="max-w-[1240px] mx-auto px-3 sm:px-6 h-[64px] sm:h-[76px] flex items-center justify-between gap-2 sm:gap-4">
     @php
       $navBranding = \App\Models\SiteSetting::first();
       $navLogo = $navBranding ? $navBranding->header_logo_url : asset('assets/images/logo-icon.png');
       $navTitle = $navBranding ? $navBranding->site_title : 'আগামীর শৈলকুপা';
       $navTagline = $navBranding ? $navBranding->site_tagline : 'শৈলকুপার উন্নয়নে আমরা এক পরিবার';
+
+      // Load Dynamic Navigation Tree from DB
+      $dynamicNavItems = \App\Models\NavItem::whereNull('parent_id')
+          ->where('status', true)
+          ->with(['activeChildren.activeChildren'])
+          ->orderBy('order', 'asc')
+          ->get();
     @endphp
+
     <!-- Brand Logo -->
     <a href="{{ route('home') }}" class="flex items-center gap-2 sm:gap-3 group shrink-0 py-1">
       <img src="{{ $navLogo }}" alt="{{ $navTitle }} লোগো" class="w-9 h-9 sm:w-12 sm:h-12 object-contain shrink-0" />
       <div class="flex flex-col justify-center py-0.5">
-        <span class="block text-[19px] sm:text-[23px] md:text-[26px] font-extrabold text-[#b91c1c] tracking-normal leading-[1.3] pt-0.5">
+        <span class="block text-[18px] sm:text-[22px] md:text-[25px] font-extrabold text-[#b91c1c] tracking-normal leading-[1.3] pt-0.5">
           {{ $navTitle }}
         </span>
         @if($navTagline)
-          <span class="hidden sm:block text-[11px] sm:text-[12.5px] font-semibold text-[#0b4622] leading-tight mt-0.5">
+          <span class="hidden sm:block text-[11px] sm:text-[12px] font-semibold text-[#0b4622] leading-tight mt-0.5">
             {{ $navTagline }}
           </span>
         @endif
       </div>
     </a>
 
-    <!-- Desktop Menu -->
-    <nav class="hidden lg:flex items-center gap-1 xl:gap-2 text-[15px] font-semibold text-gray-800">
-      <a href="{{ route('home') }}" class="bg-[#c8102e] text-white px-4 py-1.5 rounded-[6px] shadow-sm hover:bg-[#a30b24] transition">
-        হোম
-      </a>
+    <!-- Desktop Navigation Menu (Dynamic from Database) -->
+    <nav class="hidden xl:flex items-center gap-1 text-[14px] 2xl:text-[15px] font-semibold text-gray-800">
+      @foreach($dynamicNavItems as $navItem)
+        @php
+          $hasChildren = $navItem->activeChildren->count() > 0;
+          $isHome = ($navItem->url === '/' || $navItem->url === route('home')) && request()->routeIs('home');
+        @endphp
 
-      <!-- Dropdown Menu Item -->
-      <div class="relative group">
-        <button type="button" onclick="document.getElementById('about-section')?.scrollIntoView({behavior:'smooth'})" class="px-3.5 py-1.5 rounded-[6px] hover:text-[#c8102e] inline-flex items-center gap-1 transition">
-          <span>আমাদের সম্পর্কে</span>
-          <i class="ri-arrow-down-s-line text-[#c8102e] text-base transition-transform group-hover:rotate-180"></i>
-        </button>
-        <div class="absolute left-0 top-full pt-2 w-52 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-          <div class="bg-white rounded-xl shadow-lg border border-gray-100 py-2 text-sm">
-            <a href="{{ route('home') }}#about-section" class="block px-4 py-2 hover:bg-red-50 hover:text-[#c8102e] transition">আমাদের লক্ষ্য ও উদ্দেশ্য</a>
-            <a href="{{ route('home') }}#president-section" class="block px-4 py-2 hover:bg-red-50 hover:text-[#c8102e] transition">সভাপতির বাণী</a>
-            <a href="{{ route('home') }}#personalities-section" class="block px-4 py-2 hover:bg-red-50 hover:text-[#c8102e] transition">সম্মানিত ব্যক্তিবর্গ</a>
-            <a href="{{ route('home') }}#committee-section" class="block px-4 py-2 hover:bg-red-50 hover:text-[#c8102e] transition">কার্যনির্বাহী কমিটি</a>
+        @if(!$hasChildren)
+          <!-- Simple Nav Link (হোম হলে লাল ব্যাকগ্রাউন্ড বাটন, বাকিগুলো সাধারণ নরমাল টেক্সট লিংক) -->
+          @if($isHome)
+            <a href="{{ url($navItem->url) }}" target="{{ $navItem->target }}" 
+               class="bg-[#c8102e] text-white px-4 py-1.5 rounded-[6px] shadow-sm hover:bg-[#a30b24] transition flex items-center gap-1">
+              @if($navItem->icon)
+                <i class="{{ $navItem->icon }}"></i>
+              @endif
+              <span>{{ $navItem->title }}</span>
+            </a>
+          @else
+            <a href="{{ url($navItem->url) }}" target="{{ $navItem->target }}" 
+               class="px-3.5 py-1.5 rounded-[6px] hover:text-[#c8102e] transition flex items-center gap-1">
+              @if($navItem->icon)
+                <i class="{{ $navItem->icon }}"></i>
+              @endif
+              <span>{{ $navItem->title }}</span>
+            </a>
+          @endif
+        @else
+          <!-- Dropdown Nav Item (Level 1) -->
+          <div class="relative group">
+            <button type="button" class="px-3 py-1.5 rounded-[6px] hover:text-[#c8102e] inline-flex items-center gap-1 transition focus:outline-none cursor-pointer">
+              @if($navItem->icon)
+                <i class="{{ $navItem->icon }} text-[#0b4622]"></i>
+              @endif
+              <span>{{ $navItem->title }}</span>
+              <i class="ri-arrow-down-s-line text-[#c8102e] text-base transition-transform group-hover:rotate-180"></i>
+            </button>
+
+            <!-- Level 2 Container -->
+            <div class="absolute left-0 top-full pt-1.5 w-60 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
+              <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 text-sm max-h-[480px] overflow-y-visible">
+                @foreach($navItem->activeChildren as $child)
+                  @php
+                    $hasSubChildren = $child->activeChildren->count() > 0;
+                  @endphp
+
+                  @if(!$hasSubChildren)
+                    <a href="{{ url($child->url) }}" target="{{ $child->target }}"
+                       class="flex items-center gap-2 px-4 py-2 hover:bg-red-50 hover:text-[#c8102e] transition text-xs font-semibold text-gray-700">
+                      @if($child->icon)
+                        <i class="{{ $child->icon }} text-[#0b4622]"></i>
+                      @endif
+                      <span>{{ $child->title }}</span>
+                    </a>
+                  @else
+                    <!-- Level 2 Item with Level 3 Flyout -->
+                    <div class="relative group/lvl2">
+                      <div class="px-4 py-2 hover:bg-emerald-50 hover:text-[#0b4622] flex items-center justify-between cursor-pointer text-xs font-bold text-gray-800 transition">
+                        <span class="flex items-center gap-2">
+                          @if($child->icon)
+                            <i class="{{ $child->icon }} text-[#0b4622]"></i>
+                          @endif
+                          {{ $child->title }}
+                        </span>
+                        <i class="ri-arrow-right-s-line text-gray-400 group-hover/lvl2:text-[#0b4622]"></i>
+                      </div>
+
+                      <!-- Level 3 Flyout -->
+                      <div class="absolute left-full top-0 pl-1 w-56 opacity-0 invisible group-hover/lvl2:opacity-100 group-hover/lvl2:visible transition-all duration-150 z-50">
+                        <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 text-xs max-h-[460px] overflow-y-visible">
+                          @foreach($child->activeChildren as $grandChild)
+                            @php
+                              $hasGreatChildren = $grandChild->activeChildren->count() > 0;
+                            @endphp
+
+                            @if(!$hasGreatChildren)
+                              <a href="{{ url($grandChild->url) }}" target="{{ $grandChild->target }}"
+                                 class="flex items-center gap-2 px-3.5 py-1.5 hover:bg-emerald-50 hover:text-[#0b4622] text-gray-700 font-medium transition">
+                                @if($grandChild->icon)
+                                  <i class="{{ $grandChild->icon }} text-[#0b4622]"></i>
+                                @endif
+                                <span>{{ $grandChild->title }}</span>
+                              </a>
+                            @else
+                              <!-- Level 3 with Level 4 Flyout (e.g. Union -> Chairman/Member) -->
+                              <div class="relative group/lvl3">
+                                <div class="px-3.5 py-1.5 hover:bg-emerald-50 hover:text-[#0b4622] flex items-center justify-between cursor-pointer text-xs font-semibold text-gray-700 transition">
+                                  <span>{{ $grandChild->title }}</span>
+                                  <i class="ri-arrow-right-s-line text-gray-400 group-hover/lvl3:text-[#0b4622]"></i>
+                                </div>
+                                <div class="absolute left-full top-0 pl-1 w-44 opacity-0 invisible group-hover/lvl3:opacity-100 group-hover/lvl3:visible transition-all duration-150 z-50">
+                                  <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 text-xs">
+                                    @foreach($grandChild->activeChildren as $fourthChild)
+                                      <a href="{{ url($fourthChild->url) }}" target="{{ $fourthChild->target }}"
+                                         class="flex items-center gap-2 px-3.5 py-1.5 hover:bg-emerald-50 hover:text-[#0b4622] text-gray-700 font-medium transition">
+                                        @if($fourthChild->icon)
+                                          <i class="{{ $fourthChild->icon }}"></i>
+                                        @endif
+                                        <span>{{ $fourthChild->title }}</span>
+                                      </a>
+                                    @endforeach
+                                  </div>
+                                </div>
+                              </div>
+                            @endif
+                          @endforeach
+                        </div>
+                      </div>
+                    </div>
+                  @endif
+                @endforeach
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-
-      <a href="{{ route('home') }}#notice-section" class="px-3.5 py-1.5 rounded-[6px] hover:text-[#c8102e] transition">
-        নোটিশ
-      </a>
-      <a href="{{ route('home') }}#gallery-section" class="px-3.5 py-1.5 rounded-[6px] hover:text-[#c8102e] transition">
-        গ্যালারি
-      </a>
-      <a href="{{ route('home') }}#events-section" class="px-3.5 py-1.5 rounded-[6px] hover:text-[#c8102e] transition">
-        কার্যক্রম
-      </a>
-      <a href="{{ route('contact.index') }}" class="px-3.5 py-1.5 rounded-[6px] hover:text-[#c8102e] transition {{ request()->routeIs('contact*') ? 'text-[#c8102e] font-extrabold' : '' }}">
-        যোগাযোগ
-      </a>
+        @endif
+      @endforeach
     </nav>
 
     <!-- Right Action Buttons (Donate + Login + Mobile Toggle) -->
@@ -77,7 +167,7 @@
           <span>লগইন</span>
         </a>
       @else
-        <!-- Desktop User Dropdown Avatar (Only user image & dropdown arrow) -->
+        <!-- Desktop User Dropdown Avatar -->
         <div class="hidden lg:block relative" id="desktop-user-dropdown-container">
           <button
             type="button"
@@ -102,26 +192,12 @@
             id="desktop-user-dropdown-menu"
             class="hidden absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 text-sm animate-fadeIn"
           >
-            <!-- User Info Header -->
             <div class="px-4 py-2.5 border-b border-gray-100 bg-gray-50/60 rounded-t-2xl">
               <p class="font-extrabold text-gray-900 truncate leading-tight">{{ Auth::user()->name }}</p>
               <p class="text-xs text-gray-500 truncate mt-0.5">{{ Auth::user()->email }}</p>
             </div>
 
             <div class="py-1">
-              <!-- আমার প্রোফাইল -->
-              <a href="{{ route('home') }}" class="flex items-center gap-2.5 px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-[#0b4622] font-semibold transition">
-                <i class="fa-regular fa-circle-user text-base text-gray-400"></i>
-                <span>আমার প্রোফাইল</span>
-              </a>
-
-              <!-- পাসওয়ার্ড পরিবর্তন -->
-              <a href="{{ route('home') }}" class="flex items-center gap-2.5 px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-[#0b4622] font-semibold transition">
-                <i class="fa-solid fa-key text-base text-gray-400"></i>
-                <span>পাসওয়ার্ড পরিবর্তন</span>
-              </a>
-
-              <!-- ড্যাশবোর্ডে যান -->
               <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 px-4 py-2 text-gray-700 hover:bg-emerald-50 hover:text-[#0b4622] font-semibold transition">
                 <i class="fa-solid fa-gauge text-base text-gray-400"></i>
                 <span>ড্যাশবোর্ডে যান</span>
@@ -129,7 +205,6 @@
             </div>
 
             <div class="border-t border-gray-100 pt-1">
-              <!-- লগআউট -->
               <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button type="submit" class="w-full text-left flex items-center gap-2.5 px-4 py-2 text-[#c8102e] hover:bg-red-50 font-bold transition cursor-pointer">
@@ -142,37 +217,110 @@
         </div>
       @endguest
 
-      <!-- Mobile Menu Button (Hamburger toggle - always visible on mobile/tablet) -->
-      <button type="button" onclick="toggleMobileMenu()" aria-label="Toggle Menu" class="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gray-50 hover:text-[#c8102e] transition cursor-pointer">
+      <!-- Mobile Menu Button (Hamburger toggle) -->
+      <button type="button" onclick="toggleMobileMenu()" aria-label="Toggle Menu" class="xl:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gray-50 hover:text-[#c8102e] transition cursor-pointer">
         <i id="mobile-menu-icon" class="ri-menu-3-line text-lg sm:text-xl"></i>
       </button>
     </div>
   </div>
 
-  <!-- Mobile Responsive Navigation Drawer -->
-  <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-gray-100 px-4 pt-3 pb-6 shadow-xl max-h-[calc(100vh-70px)] overflow-y-auto">
-    <!-- Nav Links List (Home to Contact) -->
+  <!-- Mobile Responsive Navigation Drawer (Dynamic Tree) -->
+  <div id="mobile-menu" class="hidden xl:hidden bg-white border-t border-gray-100 px-4 pt-3 pb-6 shadow-xl max-h-[calc(100vh-70px)] overflow-y-auto">
     <div class="flex flex-col space-y-1.5 text-[15px] font-semibold">
-      <a href="{{ route('home') }}" class="mobile-nav-link bg-[#c8102e] text-white px-4 py-2.5 rounded-lg">হোম</a>
-      <div>
-        <button type="button" onclick="toggleMobileSubmenu()" class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-gray-800 hover:bg-gray-50">
-          <span>আমাদের সম্পর্কে</span>
-          <i id="mobile-submenu-arrow" class="ri-arrow-down-s-line text-[#c8102e] text-lg transition-transform"></i>
-        </button>
-        <div id="mobile-about-submenu" class="hidden pl-6 pr-2 py-1 space-y-1 text-sm text-gray-600 border-l-2 border-red-200 ml-4 mt-1">
-          <a href="{{ route('home') }}#about-section" class="mobile-nav-link block py-1.5 hover:text-[#c8102e]">আমাদের লক্ষ্য ও উদ্দেশ্য</a>
-          <a href="{{ route('home') }}#president-section" class="mobile-nav-link block py-1.5 hover:text-[#c8102e]">সভাপতির বাণী</a>
-          <a href="{{ route('home') }}#personalities-section" class="mobile-nav-link block py-1.5 hover:text-[#c8102e]">সম্মানিত ব্যক্তিবর্গ</a>
-          <a href="{{ route('home') }}#committee-section" class="mobile-nav-link block py-1.5 hover:text-[#c8102e]">কার্যনির্বাহী কমিটি</a>
-        </div>
-      </div>
-      <a href="{{ route('home') }}#notice-section" class="mobile-nav-link px-4 py-2.5 rounded-lg hover:bg-gray-50">নোটিশ</a>
-      <a href="{{ route('home') }}#gallery-section" class="mobile-nav-link px-4 py-2.5 rounded-lg hover:bg-gray-50">গ্যালারি</a>
-      <a href="{{ route('home') }}#events-section" class="mobile-nav-link px-4 py-2.5 rounded-lg hover:bg-gray-50">কার্যক্রম</a>
-      <a href="{{ route('contact.index') }}" class="mobile-nav-link px-4 py-2.5 rounded-lg hover:bg-gray-50 {{ request()->routeIs('contact*') ? 'text-[#c8102e] font-extrabold bg-red-50/50' : '' }}">যোগাযোগ</a>
+      @foreach($dynamicNavItems as $mIdx => $navItem)
+        @php
+          $hasChildren = $navItem->activeChildren->count() > 0;
+          $isHome = ($navItem->url === '/' || $navItem->url === route('home')) && request()->routeIs('home');
+        @endphp
+
+        @if(!$hasChildren)
+          @if($isHome)
+            <a href="{{ url($navItem->url) }}" target="{{ $navItem->target }}" 
+               class="mobile-nav-link bg-[#c8102e] text-white px-4 py-2.5 rounded-lg flex items-center gap-2">
+              @if($navItem->icon)
+                <i class="{{ $navItem->icon }}"></i>
+              @endif
+              <span>{{ $navItem->title }}</span>
+            </a>
+          @else
+            <a href="{{ url($navItem->url) }}" target="{{ $navItem->target }}" 
+               class="mobile-nav-link hover:bg-gray-50 px-4 py-2.5 rounded-lg flex items-center gap-2">
+              @if($navItem->icon)
+                <i class="{{ $navItem->icon }}"></i>
+              @endif
+              <span>{{ $navItem->title }}</span>
+            </a>
+          @endif
+        @else
+          <div>
+            <button type="button" onclick="toggleMobileSub('mobile-nav-{{ $mIdx }}', 'mobile-arrow-{{ $mIdx }}')" 
+                    class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-gray-800 hover:bg-gray-50">
+              <span class="flex items-center gap-2">
+                @if($navItem->icon)
+                  <i class="{{ $navItem->icon }} text-[#0b4622]"></i>
+                @endif
+                {{ $navItem->title }}
+              </span>
+              <i id="mobile-arrow-{{ $mIdx }}" class="ri-arrow-down-s-line text-[#c8102e] text-lg transition-transform"></i>
+            </button>
+
+            <!-- Level 2 Mobile Submenu -->
+            <div id="mobile-nav-{{ $mIdx }}" class="hidden pl-4 pr-2 py-1.5 space-y-1 text-sm text-gray-600 border-l-2 border-emerald-500 ml-4 mt-1">
+              @foreach($navItem->activeChildren as $cIdx => $child)
+                @php
+                  $hasSubChildren = $child->activeChildren->count() > 0;
+                @endphp
+
+                @if(!$hasSubChildren)
+                  <a href="{{ url($child->url) }}" target="{{ $child->target }}" class="mobile-nav-link block py-1.5 hover:text-[#c8102e] text-xs">
+                    {{ $child->title }}
+                  </a>
+                @else
+                  <!-- Level 3 Mobile Submenu -->
+                  <div class="py-1">
+                    <button type="button" onclick="toggleMobileSub('mobile-sub-{{ $mIdx }}-{{ $cIdx }}', 'mobile-sub-arrow-{{ $mIdx }}-{{ $cIdx }}')" 
+                            class="w-full flex items-center justify-between py-1 text-xs font-bold text-gray-800 hover:text-[#0b4622]">
+                      <span>{{ $child->title }}</span>
+                      <i id="mobile-sub-arrow-{{ $mIdx }}-{{ $cIdx }}" class="ri-arrow-down-s-line text-xs transition-transform"></i>
+                    </button>
+                    <div id="mobile-sub-{{ $mIdx }}-{{ $cIdx }}" class="hidden pl-3 space-y-1 text-xs border-l border-gray-200 ml-2 mt-1">
+                      @foreach($child->activeChildren as $gcIdx => $grandChild)
+                        @php
+                          $hasGreatChildren = $grandChild->activeChildren->count() > 0;
+                        @endphp
+
+                        @if(!$hasGreatChildren)
+                          <a href="{{ url($grandChild->url) }}" target="{{ $grandChild->target }}" class="block py-1 hover:text-[#0b4622]">
+                            {{ $grandChild->title }}
+                          </a>
+                        @else
+                          <div class="py-1">
+                            <button type="button" onclick="toggleMobileSub('mobile-g-{{ $mIdx }}-{{ $cIdx }}-{{ $gcIdx }}', 'mobile-g-arrow-{{ $mIdx }}-{{ $cIdx }}-{{ $gcIdx }}')" 
+                                    class="w-full flex items-center justify-between py-0.5 text-gray-700 font-semibold hover:text-[#0b4622]">
+                              <span>{{ $grandChild->title }}</span>
+                              <i id="mobile-g-arrow-{{ $mIdx }}-{{ $cIdx }}-{{ $gcIdx }}" class="ri-arrow-down-s-line text-[10px] transition-transform"></i>
+                            </button>
+                            <div id="mobile-g-{{ $mIdx }}-{{ $cIdx }}-{{ $gcIdx }}" class="hidden pl-3 space-y-0.5 text-[11px] text-gray-500 border-l border-emerald-200 ml-2 py-1">
+                              @foreach($grandChild->activeChildren as $fourthChild)
+                                <a href="{{ url($fourthChild->url) }}" target="{{ $fourthChild->target }}" class="block py-0.5 hover:text-[#0b4622]">
+                                  {{ $fourthChild->title }}
+                                </a>
+                              @endforeach
+                            </div>
+                          </div>
+                        @endif
+                      @endforeach
+                    </div>
+                  </div>
+                @endif
+              @endforeach
+            </div>
+          </div>
+        @endif
+      @endforeach
     </div>
 
-    <!-- Mobile Auth Section: Always Placed Below 'যোগাযোগ' (Contact) -->
+    <!-- Mobile Auth Section -->
     <div class="mt-4 pt-4 border-t border-gray-100">
       @guest
         <div class="grid grid-cols-2 gap-2">
@@ -186,13 +334,8 @@
           </a>
         </div>
       @else
-        <!-- Mobile User Accordion Dropdown -->
         <div class="bg-gray-50/80 rounded-xl border border-gray-200/80 overflow-hidden">
-          <button
-            type="button"
-            onclick="toggleMobileUserDropdown()"
-            class="w-full flex items-center justify-between p-3 text-left focus:outline-none cursor-pointer"
-          >
+          <div class="p-3">
             <div class="flex items-center gap-2.5 min-w-0">
               @if(Auth::user()->photo)
                 <img src="{{ asset('storage/' . Auth::user()->photo) }}" alt="{{ Auth::user()->name }}" class="w-9 h-9 rounded-full object-cover shrink-0 border border-gray-200" />
@@ -206,29 +349,14 @@
                 <span class="block text-[10px] sm:text-xs text-gray-500 truncate">{{ Auth::user()->email }}</span>
               </div>
             </div>
-            <i id="mobile-user-dropdown-arrow" class="ri-arrow-down-s-line text-lg text-gray-500 transition-transform"></i>
-          </button>
-
-          <!-- Mobile Dropdown Links -->
-          <div id="mobile-user-dropdown-links" class="hidden border-t border-gray-200/70 bg-white py-1">
-            <a href="{{ route('home') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs sm:text-sm font-semibold text-gray-700 hover:bg-emerald-50 hover:text-[#0b4622] transition">
-              <i class="fa-regular fa-circle-user text-[#0b4622] text-sm"></i>
-              <span>আমার প্রোফাইল</span>
-            </a>
-            <a href="{{ route('home') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs sm:text-sm font-semibold text-gray-700 hover:bg-emerald-50 hover:text-[#0b4622] transition">
-              <i class="fa-solid fa-key text-[#0b4622] text-sm"></i>
-              <span>পাসওয়ার্ড পরিবর্তন</span>
-            </a>
-            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs sm:text-sm font-semibold text-gray-700 hover:bg-emerald-50 hover:text-[#0b4622] transition">
-              <i class="fa-solid fa-gauge text-[#0b4622] text-sm"></i>
-              <span>ড্যাশবোর্ডে যান</span>
-            </a>
-            <div class="border-t border-gray-100 pt-1 mt-1">
-              <form action="{{ route('logout') }}" method="POST">
+            <div class="mt-3 pt-2 border-t border-gray-200/60 flex items-center justify-between text-xs font-bold">
+              <a href="{{ route('admin.dashboard') }}" class="text-[#0b4622] hover:underline flex items-center gap-1">
+                <i class="fa-solid fa-gauge"></i> ড্যাশবোর্ড
+              </a>
+              <form action="{{ route('logout') }}" method="POST" class="inline">
                 @csrf
-                <button type="submit" class="w-full text-left flex items-center gap-2.5 px-4 py-2.5 text-xs sm:text-sm font-bold text-[#c8102e] hover:bg-red-50 transition cursor-pointer">
-                  <i class="fa-solid fa-arrow-right-from-bracket text-sm"></i>
-                  <span>লগআউট করুন</span>
+                <button type="submit" class="text-[#c8102e] hover:underline cursor-pointer">
+                  লগআউট
                 </button>
               </form>
             </div>
@@ -238,3 +366,18 @@
     </div>
   </div>
 </header>
+
+<script>
+function toggleMobileSub(menuId, arrowId) {
+  const menu = document.getElementById(menuId);
+  const arrow = document.getElementById(arrowId);
+  if (!menu) return;
+  if (menu.classList.contains('hidden')) {
+    menu.classList.remove('hidden');
+    if (arrow) arrow.classList.add('rotate-180');
+  } else {
+    menu.classList.add('hidden');
+    if (arrow) arrow.classList.remove('rotate-180');
+  }
+}
+</script>

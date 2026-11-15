@@ -87,7 +87,7 @@
         <!-- Role -->
         <div>
           <label for="role" class="block text-xs font-bold text-gray-700 mb-1.5">
-            ভূমিকা / রোল (Role) <span class="text-[#c8102e]">*</span>
+            রোল (Role) <span class="text-[#c8102e]">*</span>
           </label>
           <select
             id="role"
@@ -95,7 +95,12 @@
             class="w-full px-4 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:border-[#0b4622] transition font-semibold text-gray-800 cursor-pointer"
             required
           >
-            @php $currentRole = $user->roles->first()?->name; @endphp
+            @php 
+              $currentRole = $user->roles->first()?->name;
+              if ($currentRole === 'super-admin') {
+                  $currentRole = 'admin';
+              }
+            @endphp
             @foreach($roles as $r)
               <option value="{{ $r->name }}" {{ old('role', $currentRole) === $r->name ? 'selected' : '' }}>
                 {{ strtoupper($r->name) }}
