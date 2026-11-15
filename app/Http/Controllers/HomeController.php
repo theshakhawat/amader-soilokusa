@@ -10,7 +10,6 @@ use App\Models\Event;
 use App\Models\GalleryItem;
 use App\Models\HeroBanner;
 use App\Models\Notice;
-use App\Models\Page;
 use App\Models\PresidentMessage;
 use App\Models\Pride;
 use App\Models\PersonMessage;
