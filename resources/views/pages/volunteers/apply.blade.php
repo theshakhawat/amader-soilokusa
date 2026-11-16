@@ -66,13 +66,13 @@
 
     {{-- Registration Form Card --}}
     <div class="bg-white rounded-3xl border border-gray-200/90 shadow-sm overflow-hidden p-6 sm:p-10">
-      <form action="{{ route('volunteers.store') }}" method="POST" enctype="multipart/form-data" class="space-y-7">
+      <form id="volunteerForm" action="{{ route('volunteers.store') }}" method="POST" enctype="multipart/form-data" class="space-y-7">
         @csrf
 
         {{-- Section 1: Photo Upload with Live Preview (At the Beginning / Top) --}}
         <div class="bg-gray-50/70 border border-dashed border-gray-300 rounded-2xl p-5 sm:p-6 text-center space-y-4">
           <label class="block text-xs sm:text-sm font-bold text-gray-800">
-            <span class="text-red-500">*</span> আবেদনকারীর ছবি (প্রোফাইল ফটো):
+            <span class="text-gray-400 font-normal">(ঐচ্ছিক)</span> আবেদনকারীর ছবি (প্রোফাইল ফটো):
           </label>
 
           <div class="flex flex-col items-center justify-center">
@@ -119,7 +119,7 @@
           {{-- Full Name --}}
           <div class="space-y-1.5 sm:col-span-2">
             <label for="name" class="block text-xs sm:text-sm font-bold text-gray-800">
-              পূর্ণ নাম <span class="text-red-500">*</span>
+              পূর্ণ নাম <span class="text-red-500">*</span> <span class="text-[11px] font-normal text-gray-400">(কমপক্ষে ২টি শব্দ)</span>
             </label>
             <div class="relative">
               <input type="text"
@@ -128,15 +128,20 @@
                      value="{{ old('name') }}"
                      required
                      placeholder="উদা: মোঃ আরিফুল ইসলাম"
-                     class="w-full pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-[#0b4622] focus:ring-2 focus:ring-[#0b4622]/15 transition">
-              <i class="ri-user-3-line absolute left-3.5 top-3 sm:top-3.5 text-gray-400 text-base"></i>
+                     class="w-full pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm border {{ $errors->has('name') ? 'border-red-500 ring-2 ring-red-500/20' : 'border-gray-300 focus:border-[#0b4622] focus:ring-[#0b4622]/15' }} rounded-xl focus:outline-none focus:ring-2 transition">
+              <i class="ri-user-3-line absolute left-3.5 top-3 sm:top-3.5 {{ $errors->has('name') ? 'text-red-500' : 'text-gray-400' }} text-base"></i>
             </div>
+            @error('name')
+              <p class="text-xs text-red-600 font-semibold flex items-center gap-1 mt-1">
+                <i class="ri-error-warning-line"></i> {{ $message }}
+              </p>
+            @enderror
           </div>
 
           {{-- Phone Number --}}
           <div class="space-y-1.5">
             <label for="phone" class="block text-xs sm:text-sm font-bold text-gray-800">
-              মোবাইল নম্বর <span class="text-red-500">*</span>
+              মোবাইল নম্বর (১১ ডিজিট) <span class="text-red-500">*</span>
             </label>
             <div class="relative">
               <input type="tel"
@@ -144,6 +149,10 @@
                      name="phone"
                      value="{{ old('phone') }}"
                      required
+                     maxlength="11"
+                     inputmode="numeric"
+                     pattern="01[3-9][0-9]{8}"
+                     oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)"
                      placeholder="উদা: 017xxxxxxxx"
                      class="w-full pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm border {{ $errors->has('phone') ? 'border-red-500 ring-2 ring-red-500/20' : 'border-gray-300 focus:border-[#0b4622] focus:ring-[#0b4622]/15' }} rounded-xl focus:outline-none focus:ring-2 transition">
               <i class="ri-phone-line absolute left-3.5 top-3 sm:top-3.5 {{ $errors->has('phone') ? 'text-red-500' : 'text-gray-400' }} text-base"></i>
@@ -152,19 +161,22 @@
               <p class="text-xs text-red-600 font-semibold flex items-center gap-1 mt-1">
                 <i class="ri-error-warning-line"></i> {{ $message }}
               </p>
+            @else
+              <p class="text-[10px] text-gray-400">সঠিক ১১ ডিজিটের সক্রিয় মোবাইল নম্বর লিখুন।</p>
             @enderror
           </div>
 
           {{-- Email Address --}}
           <div class="space-y-1.5">
             <label for="email" class="block text-xs sm:text-sm font-bold text-gray-800">
-              ইমেইল অ্যাড্রেস <span class="text-xs font-normal text-gray-400">(যদি থাকে)</span>
+              ইমেইল অ্যাড্রেস <span class="text-red-500">*</span>
             </label>
             <div class="relative">
               <input type="email"
                      id="email"
                      name="email"
                      value="{{ old('email') }}"
+                     required
                      placeholder="উদা: yourname@gmail.com"
                      class="w-full pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm border {{ $errors->has('email') ? 'border-red-500 ring-2 ring-red-500/20' : 'border-gray-300 focus:border-[#0b4622] focus:ring-[#0b4622]/15' }} rounded-xl focus:outline-none focus:ring-2 transition">
               <i class="ri-mail-line absolute left-3.5 top-3 sm:top-3.5 {{ $errors->has('email') ? 'text-red-500' : 'text-gray-400' }} text-base"></i>
@@ -174,19 +186,20 @@
                 <i class="ri-error-warning-line"></i> {{ $message }}
               </p>
             @else
-              <p class="text-[10px] text-gray-400">অনুমোদন সংক্রান্ত ইমেইল পেতে সঠিক ইমেইল দিন।</p>
+              <p class="text-[10px] text-gray-400">অনুমোদন সংক্রান্ত নোটিফিকেশন পেতে সঠিক ইমেইল দিন।</p>
             @enderror
           </div>
 
           {{-- Blood Group --}}
           <div class="space-y-1.5 sm:col-span-2">
             <label for="blood_group" class="block text-xs sm:text-sm font-bold text-gray-800">
-              রক্তের গ্রুপ (Blood Group)
+              রক্তের গ্রুপ (Blood Group) <span class="text-red-500">*</span>
             </label>
             <div class="relative">
               <select id="blood_group"
                       name="blood_group"
-                      class="w-full pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-[#0b4622] focus:ring-2 focus:ring-[#0b4622]/15 transition bg-white appearance-none">
+                      required
+                      class="w-full pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm border {{ $errors->has('blood_group') ? 'border-red-500 ring-2 ring-red-500/20' : 'border-gray-300 focus:border-[#0b4622] focus:ring-[#0b4622]/15' }} rounded-xl focus:outline-none focus:ring-2 transition bg-white appearance-none">
                 <option value="">-- রক্তের গ্রুপ নির্বাচন করুন --</option>
                 <option value="A+" {{ old('blood_group') === 'A+' ? 'selected' : '' }}>A+ (পজিটিভ)</option>
                 <option value="A-" {{ old('blood_group') === 'A-' ? 'selected' : '' }}>A- (নেগেটিভ)</option>
@@ -200,6 +213,11 @@
               <i class="ri-drop-line absolute left-3.5 top-3 sm:top-3.5 text-red-500 text-base"></i>
               <i class="ri-arrow-down-s-line absolute right-3.5 top-3 sm:top-3.5 text-gray-400 pointer-events-none"></i>
             </div>
+            @error('blood_group')
+              <p class="text-xs text-red-600 font-semibold flex items-center gap-1 mt-1">
+                <i class="ri-error-warning-line"></i> {{ $message }}
+              </p>
+            @enderror
           </div>
 
           {{-- Address --}}
@@ -213,9 +231,14 @@
                         rows="3"
                         required
                         placeholder="আপনার বিস্তারিত ঠিকানা লিখুন..."
-                        class="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-[#0b4622] focus:ring-2 focus:ring-[#0b4622]/15 transition">{{ old('address') }}</textarea>
+                        class="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm border {{ $errors->has('address') ? 'border-red-500 ring-2 ring-red-500/20' : 'border-gray-300 focus:border-[#0b4622] focus:ring-[#0b4622]/15' }} rounded-xl focus:outline-none focus:ring-2 transition">{{ old('address') }}</textarea>
               <i class="ri-map-pin-line absolute left-3.5 top-3 text-gray-400 text-base"></i>
             </div>
+            @error('address')
+              <p class="text-xs text-red-600 font-semibold flex items-center gap-1 mt-1">
+                <i class="ri-error-warning-line"></i> {{ $message }}
+              </p>
+            @enderror
           </div>
         </div>
 
@@ -230,9 +253,10 @@
         {{-- Submit Button --}}
         <div class="pt-2 text-center">
           <button type="submit"
-                  class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-[#0b4622] hover:bg-[#08351a] text-white rounded-xl text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition">
+                  id="volunteerSubmitBtn"
+                  class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-[#0b4622] hover:bg-[#08351a] disabled:opacity-75 disabled:cursor-not-allowed text-white rounded-xl text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition">
             <i class="ri-send-plane-fill text-lg"></i>
-            <span>স্বেচ্ছাসেবী হিসেবে আবেদন জমা দিন</span>
+            <span class="btn-text">স্বেচ্ছাসেবী হিসেবে আবেদন জমা দিন</span>
           </button>
         </div>
       </form>
@@ -241,7 +265,7 @@
   </div>
 </div>
 
-{{-- Image Live Preview Script --}}
+{{-- Image Live Preview & Double-Submit Prevention Script --}}
 <script>
   function previewVolunteerImage(event) {
     const input = event.target;
@@ -253,5 +277,41 @@
       reader.readAsDataURL(input.files[0]);
     }
   }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('volunteerForm');
+    const submitBtn = document.getElementById('volunteerSubmitBtn');
+
+    if (form && submitBtn) {
+      form.addEventListener('submit', function(e) {
+        if (!form.checkValidity()) {
+          return;
+        }
+
+        // Check 2 words in name
+        const nameVal = (document.getElementById('name')?.value || '').trim();
+        const words = nameVal.split(/\s+/).filter(Boolean);
+        if (words.length < 2) {
+          alert('দয়া করে পূর্ণ নামে কমপক্ষে ২টি শব্দ (যেমন: প্রথম নাম ও শেষ নাম) লিখুন।');
+          e.preventDefault();
+          document.getElementById('name')?.focus();
+          return false;
+        }
+
+        // Check 11 digits phone
+        const phoneVal = (document.getElementById('phone')?.value || '').trim();
+        if (!/^01[3-9]\d{8}$/.test(phoneVal)) {
+          alert('দয়া করে সঠিক ১১ ডিজিটের মোবাইল নম্বর লিখুন (উদা: 017XXXXXXXX)।');
+          e.preventDefault();
+          document.getElementById('phone')?.focus();
+          return false;
+        }
+
+        // Disable button and show spinner
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin text-lg"></i><span>আবেদন জমা হচ্ছে...</span>';
+      });
+    }
+  });
 </script>
 @endsection

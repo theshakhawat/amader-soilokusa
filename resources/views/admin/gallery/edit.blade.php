@@ -140,85 +140,26 @@
             @enderror
           </div>
 
-          <!-- Video Options Group (Shown when video selected) -->
+          <!-- Video Options Group (Shown when video selected - Only YouTube URL) -->
           <div id="video-options-group" class="{{ $gallery->type === 'video' ? '' : 'hidden' }} space-y-4">
-            @php
-              $isUploadMode = old('video_source_type', ($gallery->type === 'video' && $gallery->file_path && empty($gallery->video_url)) ? 'upload' : 'url');
-            @endphp
-            <div>
-              <label class="block text-xs font-bold text-gray-700 mb-2">
-                ভিডিও মাধ্যম (Video Source) <span class="text-[#c8102e]">*</span>
-              </label>
-              <div class="grid grid-cols-2 gap-3">
-                <label class="flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50/50">
-                  <input
-                    type="radio"
-                    name="video_source_type"
-                    value="url"
-                    {{ $isUploadMode === 'url' ? 'checked' : '' }}
-                    onchange="toggleVideoSource('url')"
-                    class="text-purple-600 focus:ring-purple-600"
-                  >
-                  <div class="flex items-center gap-1.5 text-xs font-bold text-gray-800">
-                    <i class="ri-youtube-line text-base text-[#c8102e]"></i>
-                    <span>ইউটিউব লিংক (URL)</span>
-                  </div>
-                </label>
-
-                <label class="flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50/50">
-                  <input
-                    type="radio"
-                    name="video_source_type"
-                    value="upload"
-                    {{ $isUploadMode === 'upload' ? 'checked' : '' }}
-                    onchange="toggleVideoSource('upload')"
-                    class="text-purple-600 focus:ring-purple-600"
-                  >
-                  <div class="flex items-center gap-1.5 text-xs font-bold text-gray-800">
-                    <i class="ri-upload-cloud-2-line text-base text-[#0b4622]"></i>
-                    <span>কাস্টম ভিডিও ফাইল</span>
-                  </div>
-                </label>
-              </div>
-            </div>
-
-            <!-- 1. Video URL Field -->
-            <div id="video-url-subgroup" class="{{ $isUploadMode === 'url' ? '' : 'hidden' }} space-y-1.5">
+            <!-- Video URL Field -->
+            <div id="video-url-subgroup" class="space-y-1.5">
               <label for="video_url" class="block text-xs font-bold text-gray-700">
-                ইউটিউব / ভিডিও লিংক (Video URL)
+                ইউটিউব ভিডিও লিংক (YouTube URL) <span class="text-[#c8102e]">*</span>
               </label>
-              <input
-                type="url"
-                id="video_url"
-                name="video_url"
-                value="{{ old('video_url', $gallery->video_url) }}"
-                placeholder="https://www.youtube.com/watch?v=... বা https://youtu.be/..."
-                class="w-full px-4 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:border-[#0b4622] transition"
-              >
+              <div class="relative">
+                <input
+                  type="url"
+                  id="video_url"
+                  name="video_url"
+                  value="{{ old('video_url', $gallery->video_url) }}"
+                  placeholder="https://www.youtube.com/watch?v=... বা https://youtu.be/..."
+                  class="w-full pl-10 pr-4 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:border-[#0b4622] transition"
+                >
+                <i class="ri-youtube-line absolute left-3.5 top-2.5 text-[#c8102e] text-base"></i>
+              </div>
+              <p class="text-[11px] text-gray-500">ইউটিউব ভিডিওর সম্পূর্ণ লিংক বা শর্ট লিংক দিন। ইউটিউবের কভার ছবি স্বয়ংক্রিয়ভাবে থাম্বনেইল হিসেবে সেট হবে (অথবা আপনি চাইলে ডানে কাস্টম থাম্বনেইল যুক্ত করতে পারেন)।</p>
               @error('video_url')
-                <p class="text-xs text-[#c8102e] font-medium">{{ $message }}</p>
-              @enderror
-            </div>
-
-            <!-- 2. Video Direct File Upload -->
-            <div id="video-file-subgroup" class="{{ $isUploadMode === 'upload' ? '' : 'hidden' }} space-y-1.5">
-              <label for="video_file" class="block text-xs font-bold text-gray-700">
-                ভিডিও ফাইল নির্বাচন করুন (MP4, WebM, MOV) <span class="text-xs font-normal text-gray-400">(সর্বোচ্চ 100MB)</span>
-              </label>
-              @if($gallery->type === 'video' && $gallery->file_path)
-                <div class="p-2.5 bg-gray-100 rounded-xl text-xs text-gray-700 flex items-center justify-between mb-2">
-                  <span class="truncate font-medium"><i class="ri-film-line mr-1 text-purple-600"></i> বর্তমান ফাইল: {{ basename($gallery->file_path) }}</span>
-                  <a href="{{ Storage::disk('public')->url($gallery->file_path) }}" target="_blank" class="text-xs text-[#0b4622] font-bold hover:underline">প্লে করুন</a>
-                </div>
-              @endif
-              <input
-                type="file"
-                id="video_file"
-                name="video_file"
-                accept="video/mp4,video/webm,video/ogg,video/quicktime"
-                class="w-full text-xs text-gray-500 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 cursor-pointer"
-              >
-              @error('video_file')
                 <p class="text-xs text-[#c8102e] font-medium">{{ $message }}</p>
               @enderror
             </div>
@@ -288,26 +229,16 @@
 function toggleMediaFields(type) {
   const photoGroup = document.getElementById('photo-upload-group');
   const videoGroup = document.getElementById('video-options-group');
+  const videoUrlInput = document.getElementById('video_url');
 
   if (type === 'photo') {
     photoGroup.classList.remove('hidden');
     videoGroup.classList.add('hidden');
+    if (videoUrlInput) videoUrlInput.removeAttribute('required');
   } else {
     photoGroup.classList.add('hidden');
     videoGroup.classList.remove('hidden');
-  }
-}
-
-function toggleVideoSource(source) {
-  const urlSubgroup = document.getElementById('video-url-subgroup');
-  const fileSubgroup = document.getElementById('video-file-subgroup');
-
-  if (source === 'url') {
-    urlSubgroup.classList.remove('hidden');
-    fileSubgroup.classList.add('hidden');
-  } else {
-    urlSubgroup.classList.add('hidden');
-    fileSubgroup.classList.remove('hidden');
+    if (videoUrlInput) videoUrlInput.setAttribute('required', 'required');
   }
 }
 </script>

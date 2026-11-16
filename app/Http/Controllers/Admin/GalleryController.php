@@ -48,23 +48,28 @@ class GalleryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'type' => 'required|in:photo,video',
-            'video_source_type' => 'nullable|in:url,upload',
-            'title' => 'required|string|max:255',
-            'file' => 'nullable|file|max:102400', // max 100MB for video/photos
-            'video_file' => 'nullable|file|mimes:mp4,mov,ogg,webm,mkv|max:102400', // 100MB video
-            'video_url' => 'nullable|url|max:500',
-            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
+            'type'        => 'required|in:photo,video',
+            'title'       => 'required|string|max:255',
+            'file'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:20480', // max 20MB for photos
+            'video_url'   => 'nullable|required_if:type,video|url|max:500',
+            'thumbnail'   => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
             'order_index' => 'nullable|integer',
-            'status' => 'nullable|boolean',
+            'status'      => 'nullable|boolean',
+        ], [
+            'title.required'         => 'মিডিয়া শিরোনাম প্রদান করুন।',
+            'video_url.required_if'  => 'ভিডিও গ্যালারির জন্য ইউটিউব লিংক প্রদান করা আবশ্যক।',
+            'video_url.url'          => 'সঠিক ইউটিউব ভিডিও লিংক (URL) লিখুন।',
+            'file.image'             => 'ছবি অবশ্যই একটি বৈধ ইমেজ ফাইল হতে হবে।',
+            'file.max'               => 'ছবির সাইজ অনূর্ধ্ব ২০ মেগাবাইট (20MB) হতে হবে।',
         ]);
 
         $data = [
-            'type' => $validated['type'],
-            'title' => $validated['title'],
-            'video_url' => null,
+            'type'        => $validated['type'],
+            'title'       => $validated['title'],
+            'video_url'   => null,
+            'file_path'   => null,
             'order_index' => $validated['order_index'] ?? 0,
-            'status' => $request->has('status'),
+            'status'      => $request->has('status'),
         ];
 
         if ($validated['type'] === 'photo') {
@@ -73,18 +78,12 @@ class GalleryController extends Controller
                 $data['file_path'] = $request->file('file')->store('gallery/photos', 'public');
             }
         } else {
-            // Video: check if URL or uploaded file
-            $sourceType = $request->input('video_source_type', 'url');
-            if ($sourceType === 'upload' && $request->hasFile('video_file')) {
-                $data['file_path'] = $request->file('video_file')->store('gallery/videos', 'public');
-                $data['video_url'] = null;
-            } elseif ($request->filled('video_url')) {
-                $data['video_url'] = $validated['video_url'];
-                $data['file_path'] = null;
-            }
+            // Only YouTube URL for videos
+            $data['video_url'] = $validated['video_url'];
+            $data['file_path'] = null;
         }
 
-        // Upload custom thumbnail
+        // Upload custom thumbnail if provided
         if ($request->hasFile('thumbnail')) {
             $data['thumbnail'] = $request->file('thumbnail')->store('gallery/thumbnails', 'public');
         }
@@ -108,22 +107,26 @@ class GalleryController extends Controller
     public function update(Request $request, GalleryItem $gallery)
     {
         $validated = $request->validate([
-            'type' => 'required|in:photo,video',
-            'video_source_type' => 'nullable|in:url,upload',
-            'title' => 'required|string|max:255',
-            'file' => 'nullable|file|max:102400',
-            'video_file' => 'nullable|file|mimes:mp4,mov,ogg,webm,mkv|max:102400',
-            'video_url' => 'nullable|url|max:500',
-            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
+            'type'        => 'required|in:photo,video',
+            'title'       => 'required|string|max:255',
+            'file'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:20480',
+            'video_url'   => 'nullable|required_if:type,video|url|max:500',
+            'thumbnail'   => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
             'order_index' => 'nullable|integer',
-            'status' => 'nullable|boolean',
+            'status'      => 'nullable|boolean',
+        ], [
+            'title.required'        => 'মিডিয়া শিরোনাম প্রদান করুন।',
+            'video_url.required_if' => 'ভিডিও গ্যালারির জন্য ইউটিউব লিংক প্রদান করা আবশ্যক।',
+            'video_url.url'         => 'সঠিক ইউটিউব ভিডিও লিংক (URL) লিখুন।',
+            'file.image'            => 'ছবি অবশ্যই একটি বৈধ ইমেজ ফাইল হতে হবে।',
+            'file.max'              => 'ছবির সাইজ অনূর্ধ্ব ২০ মেগাবাইট (20MB) হতে হবে।',
         ]);
 
         $data = [
-            'type' => $validated['type'],
-            'title' => $validated['title'],
+            'type'        => $validated['type'],
+            'title'       => $validated['title'],
             'order_index' => $validated['order_index'] ?? $gallery->order_index,
-            'status' => $request->has('status'),
+            'status'      => $request->has('status'),
         ];
 
         if ($validated['type'] === 'photo') {
@@ -135,26 +138,13 @@ class GalleryController extends Controller
                 $data['file_path'] = $request->file('file')->store('gallery/photos', 'public');
             }
         } else {
-            // Video
-            $sourceType = $request->input('video_source_type', 'url');
-            if ($sourceType === 'upload') {
-                $data['video_url'] = null;
-                if ($request->hasFile('video_file')) {
-                    if ($gallery->file_path && Storage::disk('public')->exists($gallery->file_path)) {
-                        Storage::disk('public')->delete($gallery->file_path);
-                    }
-                    $data['file_path'] = $request->file('video_file')->store('gallery/videos', 'public');
+            // Video: Only YouTube URL, remove any previously uploaded local video file to save disk space
+            $data['video_url'] = $validated['video_url'] ?? $gallery->video_url;
+            if ($gallery->file_path) {
+                if (Storage::disk('public')->exists($gallery->file_path)) {
+                    Storage::disk('public')->delete($gallery->file_path);
                 }
-            } else {
-                // URL
-                $data['video_url'] = $validated['video_url'] ?? $gallery->video_url;
-                if ($request->filled('video_url') && $gallery->file_path) {
-                    // if switching from upload to url, can clean file_path
-                    if (Storage::disk('public')->exists($gallery->file_path)) {
-                        Storage::disk('public')->delete($gallery->file_path);
-                    }
-                    $data['file_path'] = null;
-                }
+                $data['file_path'] = null;
             }
         }
 

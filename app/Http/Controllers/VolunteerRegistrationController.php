@@ -28,21 +28,47 @@ class VolunteerRegistrationController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name'        => 'required|string|max:150',
-            'phone'       => 'required|string|max:35|unique:volunteers,phone',
-            'email'       => 'nullable|email|max:150|unique:volunteers,email',
+            'name'        => [
+                'required',
+                'string',
+                'max:150',
+                function ($attribute, $value, $fail) {
+                    $words = preg_split('/\s+/u', trim($value), -1, PREG_SPLIT_NO_EMPTY);
+                    if (count($words) < 2) {
+                        $fail('পূর্ণ নামে কমপক্ষে ২টি শব্দ (যেমন: প্রথম নাম ও শেষ নাম) থাকতে হবে।');
+                    }
+                },
+            ],
+            'phone'       => [
+                'required',
+                'string',
+                'regex:/^01[3-9]\d{8}$/',
+                'unique:volunteers,phone',
+            ],
+            'email'       => [
+                'required',
+                'string',
+                'lowercase',
+                'email:rfc,dns',
+                'max:150',
+                'unique:volunteers,email',
+            ],
             'photo'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
-            'blood_group' => 'nullable|string|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+            'blood_group' => 'required|string|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
             'address'     => 'required|string|max:500',
         ], [
-            'name.required'    => 'আপনার পূর্ণ নাম লিখুন।',
-            'phone.required'   => 'মোবাইল নম্বর লিখুন।',
-            'phone.unique'     => 'এই মোবাইল নম্বরটি দিয়ে ইতিমধ্যে একটি আবেদন বা রেজিস্ট্রেশন করা হয়েছে। অন্য নম্বর ব্যবহার করুন।',
-            'email.email'      => 'সঠিক ইমেইল অ্যাড্রেস লিখুন।',
-            'email.unique'     => 'এই ইমেইল অ্যাড্রেসটি দিয়ে ইতিমধ্যে একটি আবেদন বা রেজিস্ট্রেশন করা হয়েছে। অন্য ইমেইল ব্যবহার করুন।',
-            'photo.image'      => 'প্রোফাইল ছবি একটি বৈধ ইমেজ ফাইল (jpg, png, webp) হতে হবে।',
-            'photo.max'        => 'ছবির সাইজ ৩ মেগাবাইটের (3MB) বেশি হতে পারবে না।',
-            'address.required' => 'আপনার বর্তমান ঠিকানা লিখুন।',
+            'name.required'        => 'আপনার পূর্ণ নাম লিখুন।',
+            'phone.required'       => 'মোবাইল নম্বর লিখুন।',
+            'phone.regex'          => 'সঠিক ১১ ডিজিটের মোবাইল নম্বর (যেমন: 017XXXXXXXX) লিখুন।',
+            'phone.unique'         => 'এই মোবাইল নম্বরটি দিয়ে ইতিমধ্যে একটি আবেদন বা রেজিস্ট্রেশন করা হয়েছে। অন্য নম্বর ব্যবহার করুন।',
+            'email.required'       => 'বৈধ ইমেইল অ্যাড্রেস লিখুন।',
+            'email.email'          => 'সঠিক ও কার্যকর ইমেইল অ্যাড্রেস লিখুন।',
+            'email.unique'         => 'এই ইমেইল অ্যাড্রেসটি দিয়ে ইতিমধ্যে একটি আবেদন বা রেজিস্ট্রেশন করা হয়েছে। অন্য ইমেইল ব্যবহার করুন।',
+            'photo.image'          => 'প্রোফাইল ছবি একটি বৈধ ইমেজ ফাইল (jpg, png, webp) হতে হবে।',
+            'photo.max'            => 'ছবির সাইজ ৩ মেগাবাইটের (3MB) বেশি হতে পারবে না।',
+            'blood_group.required' => 'রক্তের গ্রুপ নির্বাচন করা আবশ্যক।',
+            'blood_group.in'       => 'একটি বৈধ রক্তের গ্রুপ নির্বাচন করুন।',
+            'address.required'     => 'আপনার বর্তমান ঠিকানা লিখুন।',
         ]);
 
         // Upload photo if present
