@@ -131,6 +131,9 @@
                      class="w-full pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm border {{ $errors->has('name') ? 'border-red-500 ring-2 ring-red-500/20' : 'border-gray-300 focus:border-[#0b4622] focus:ring-[#0b4622]/15' }} rounded-xl focus:outline-none focus:ring-2 transition">
               <i class="ri-user-3-line absolute left-3.5 top-3 sm:top-3.5 {{ $errors->has('name') ? 'text-red-500' : 'text-gray-400' }} text-base"></i>
             </div>
+            <p id="name-client-error" class="hidden text-xs text-red-600 font-semibold flex items-center gap-1 mt-1">
+              <i class="ri-error-warning-line"></i> <span id="name-client-error-text">নামে কমপক্ষে দুটি শব্দ (যেমন: প্রথম নাম ও শেষ নাম) থাকতে হবে।</span>
+            </p>
             @error('name')
               <p class="text-xs text-red-600 font-semibold flex items-center gap-1 mt-1">
                 <i class="ri-error-warning-line"></i> {{ $message }}
@@ -157,6 +160,9 @@
                      class="w-full pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm border {{ $errors->has('phone') ? 'border-red-500 ring-2 ring-red-500/20' : 'border-gray-300 focus:border-[#0b4622] focus:ring-[#0b4622]/15' }} rounded-xl focus:outline-none focus:ring-2 transition">
               <i class="ri-phone-line absolute left-3.5 top-3 sm:top-3.5 {{ $errors->has('phone') ? 'text-red-500' : 'text-gray-400' }} text-base"></i>
             </div>
+            <p id="phone-client-error" class="hidden text-xs text-red-600 font-semibold flex items-center gap-1 mt-1">
+              <i class="ri-error-warning-line"></i> <span id="phone-client-error-text">সঠিক ১১ ডিজিটের মোবাইল নম্বর লিখুন (যেমন: 017XXXXXXXX)।</span>
+            </p>
             @error('phone')
               <p class="text-xs text-red-600 font-semibold flex items-center gap-1 mt-1">
                 <i class="ri-error-warning-line"></i> {{ $message }}
@@ -166,17 +172,16 @@
             @enderror
           </div>
 
-          {{-- Email Address (Required, Unique, Valid) --}}
+          {{-- Email Address (Optional) --}}
           <div class="space-y-1.5">
             <label for="email" class="block text-xs sm:text-sm font-bold text-gray-800">
-              ইমেইল অ্যাড্রেস <span class="text-red-500">*</span>
+              ইমেইল অ্যাড্রেস <span class="text-xs font-normal text-gray-400">(ঐচ্ছিক)</span>
             </label>
             <div class="relative">
               <input type="email"
                      id="email"
                      name="email"
                      value="{{ old('email') }}"
-                     required
                      placeholder="উদা: member@gmail.com"
                      class="w-full pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm border {{ $errors->has('email') ? 'border-red-500 ring-2 ring-red-500/20' : 'border-gray-300 focus:border-[#0b4622] focus:ring-[#0b4622]/15' }} rounded-xl focus:outline-none focus:ring-2 transition">
               <i class="ri-mail-line absolute left-3.5 top-3 sm:top-3.5 {{ $errors->has('email') ? 'text-red-500' : 'text-gray-400' }} text-base"></i>
@@ -186,7 +191,7 @@
                 <i class="ri-error-warning-line"></i> {{ $message }}
               </p>
             @else
-              <p class="text-[10px] text-gray-400">সদস্য অনুমোদন ও ডিজিটাল আইডি কার্ড পেতে সঠিক ইমেইল দিন।</p>
+              <p class="text-[10px] text-gray-400">অনুমোদন সংক্রান্ত নোটিফিকেশন পেতে চাইলে ইমেইল দিতে পারেন।</p>
             @enderror
           </div>
 
@@ -281,30 +286,67 @@
   document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('memberForm');
     const submitBtn = document.getElementById('memberSubmitBtn');
+    const nameInput = document.getElementById('name');
+    const nameError = document.getElementById('name-client-error');
+    const phoneInput = document.getElementById('phone');
+    const phoneError = document.getElementById('phone-client-error');
+
+    nameInput?.addEventListener('input', function() {
+      const words = this.value.trim().split(/\s+/).filter(Boolean);
+      if (words.length >= 2) {
+        nameError?.classList.add('hidden');
+        nameInput.classList.remove('border-red-500', 'ring-2', 'ring-red-500/20');
+      }
+    });
+
+    phoneInput?.addEventListener('input', function() {
+      if (/^01[3-9]\d{8}$/.test(this.value.trim())) {
+        phoneError?.classList.add('hidden');
+        phoneInput.classList.remove('border-red-500', 'ring-2', 'ring-red-500/20');
+      }
+    });
 
     if (form && submitBtn) {
       form.addEventListener('submit', function(e) {
-        if (!form.checkValidity()) {
-          return;
-        }
+        let hasError = false;
 
         // Check 2 words in name
-        const nameVal = (document.getElementById('name')?.value || '').trim();
+        const nameVal = (nameInput?.value || '').trim();
         const words = nameVal.split(/\s+/).filter(Boolean);
         if (words.length < 2) {
-          alert('দয়া করে পূর্ণ নামে কমপক্ষে ২টি শব্দ (যেমন: প্রথম নাম ও শেষ নাম) লিখুন।');
           e.preventDefault();
-          document.getElementById('name')?.focus();
-          return false;
+          hasError = true;
+          if (nameError) {
+            nameError.classList.remove('hidden');
+          }
+          nameInput?.classList.add('border-red-500', 'ring-2', 'ring-red-500/20');
+          nameInput?.focus();
+        } else {
+          nameError?.classList.add('hidden');
         }
 
         // Check 11 digits phone
-        const phoneVal = (document.getElementById('phone')?.value || '').trim();
+        const phoneVal = (phoneInput?.value || '').trim();
         if (!/^01[3-9]\d{8}$/.test(phoneVal)) {
-          alert('দয়া করে সঠিক ১১ ডিজিটের মোবাইল নম্বর লিখুন (উদা: 017XXXXXXXX)।');
           e.preventDefault();
-          document.getElementById('phone')?.focus();
+          if (!hasError) {
+            phoneInput?.focus();
+          }
+          hasError = true;
+          if (phoneError) {
+            phoneError.classList.remove('hidden');
+          }
+          phoneInput?.classList.add('border-red-500', 'ring-2', 'ring-red-500/20');
+        } else {
+          phoneError?.classList.add('hidden');
+        }
+
+        if (hasError) {
           return false;
+        }
+
+        if (!form.checkValidity()) {
+          return;
         }
 
         // Disable button and show spinner

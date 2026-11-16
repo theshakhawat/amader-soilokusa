@@ -100,6 +100,42 @@
   <!-- Bottom-Right Toast Notification Container -->
   <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2.5 pointer-events-none"></div>
 
+  <!-- Global Custom Confirmation / Delete Modal -->
+  <div id="global-delete-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
+    <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 sm:p-7 transform transition-all duration-200 scale-95 opacity-0" id="global-delete-modal-card">
+      {{-- Icon --}}
+      <div class="w-14 h-14 mx-auto rounded-2xl bg-red-50 text-[#c8102e] flex items-center justify-center text-3xl shadow-xs mb-4">
+        <i class="ri-delete-bin-line"></i>
+      </div>
+
+      {{-- Content --}}
+      <div class="text-center space-y-2 mb-6">
+        <h3 id="global-delete-modal-title" class="text-base sm:text-lg font-bold text-gray-900">
+          আপনি কি নিশ্চিত?
+        </h3>
+        <p id="global-delete-modal-message" class="text-xs sm:text-sm text-gray-500 leading-relaxed">
+          এই তথ্যটি মুছে ফেললে তা আর ফিরিয়ে আনা সম্ভব নাও হতে পারে।
+        </p>
+      </div>
+
+      {{-- Actions --}}
+      <div class="flex items-center justify-center gap-3">
+        <button type="button"
+                id="global-delete-cancel-btn"
+                onclick="closeGlobalDeleteModal()"
+                class="flex-1 py-2.5 px-4 rounded-xl border border-gray-200 hover:bg-gray-100 text-xs sm:text-sm font-bold text-gray-700 transition cursor-pointer">
+          বাতিল করুন
+        </button>
+        <button type="button"
+                id="global-delete-confirm-btn"
+                class="flex-1 py-2.5 px-4 rounded-xl bg-[#c8102e] hover:bg-[#a00c24] text-xs sm:text-sm font-bold text-white shadow-sm hover:shadow transition cursor-pointer flex items-center justify-center gap-1.5">
+          <i class="ri-delete-bin-fill text-base"></i>
+          <span>হ্যাঁ, মুছে ফেলুন</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Admin Interactive Scripts -->
   <script>
     // Sidebar Menu Dropdown Toggle with Smooth Height/Opacity Animation
@@ -258,6 +294,100 @@
         showToast(@json(session('error')), 'error');
       });
     @endif
+
+    // Global Custom Confirm / Delete Modal Controller
+    let pendingConfirmAction = null;
+
+    function openGlobalDeleteModal(message, onConfirm) {
+      const modal = document.getElementById('global-delete-modal');
+      const card = document.getElementById('global-delete-modal-card');
+      const msgEl = document.getElementById('global-delete-modal-message');
+      const confirmBtn = document.getElementById('global-delete-confirm-btn');
+
+      if (!modal || !card) return;
+
+      if (msgEl && message) {
+        msgEl.innerText = message;
+      }
+
+      pendingConfirmAction = onConfirm;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      requestAnimationFrame(() => {
+        card.classList.remove('scale-95', 'opacity-0');
+        card.classList.add('scale-100', 'opacity-100');
+      });
+
+      confirmBtn.onclick = function() {
+        if (typeof pendingConfirmAction === 'function') {
+          pendingConfirmAction();
+        }
+        closeGlobalDeleteModal();
+      };
+    }
+
+    function closeGlobalDeleteModal() {
+      const modal = document.getElementById('global-delete-modal');
+      const card = document.getElementById('global-delete-modal-card');
+      if (!modal || !card) return;
+
+      card.classList.remove('scale-100', 'opacity-100');
+      card.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+        pendingConfirmAction = null;
+      }, 180);
+    }
+
+    // Intercept native submit forms or buttons that used confirm(...)
+    document.addEventListener('DOMContentLoaded', function() {
+      // Close on modal backdrop click
+      const modal = document.getElementById('global-delete-modal');
+      modal?.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          closeGlobalDeleteModal();
+        }
+      });
+
+      // Escape key to close modal
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          closeGlobalDeleteModal();
+        }
+      });
+    });
+
+    // Global customConfirm helper that replaces window.confirm with Custom Modal
+    window.customConfirm = function(message, callback) {
+      openGlobalDeleteModal(message, callback);
+    };
+
+    // Override forms that have onsubmit with custom modal behavior
+    document.addEventListener('submit', function(e) {
+      const form = e.target;
+      if (form.dataset.confirmed === 'true') {
+        // Already confirmed by custom modal, allow submit
+        return;
+      }
+
+      // Check if form or button has confirm prompt
+      const onsubmitAttr = form.getAttribute('onsubmit') || '';
+      const confirmMatch = onsubmitAttr.match(/confirm\s*\(\s*(['"`])(.*?)\1\s*\)/);
+
+      if (confirmMatch) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        const confirmMsg = confirmMatch[2] || 'আপনি কি নিশ্চিত যে এই রেকর্ডটি মুছে ফেলতে চান?';
+        openGlobalDeleteModal(confirmMsg, function() {
+          form.dataset.confirmed = 'true';
+          form.submit();
+        });
+        return false;
+      }
+    }, true);
   </script>
   @stack('scripts')
 </body>

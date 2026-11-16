@@ -279,11 +279,11 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function deleteFile(fileId) {
-  if (confirm('আপনি কি নিশ্চিতভাবে এই ফাইলটি মুছে ফেলতে চান?')) {
+  openGlobalDeleteModal('আপনি কি নিশ্চিতভাবে এই ফাইলটি মুছে ফেলতে চান?', function() {
     const form = document.getElementById('delete-file-form');
     form.action = `/admin/notices/files/${fileId}`;
     form.submit();
-  }
+  });
 }
 </script>
 @endsection

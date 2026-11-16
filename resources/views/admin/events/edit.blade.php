@@ -359,11 +359,11 @@ function previewThumbnail(event) {
 }
 
 function deletePhoto(photoId) {
-  if (confirm('আপনি কি নিশ্চিতভাবে এই ছবিটি গ্যালারি থেকে মুছে ফেলতে চান?')) {
+  openGlobalDeleteModal('আপনি কি নিশ্চিতভাবে এই ছবিটি গ্যালারি থেকে মুছে ফেলতে চান?', function() {
     const form = document.getElementById('delete-photo-form');
     form.action = `/admin/events/photos/${photoId}`;
     form.submit();
-  }
+  });
 }
 </script>
 @endsection

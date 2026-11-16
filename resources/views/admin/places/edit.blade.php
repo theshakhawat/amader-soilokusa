@@ -256,25 +256,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function deletePlacePhoto(photoId) {
-  if (!confirm('আপনি কি এই ছবিটি মুছে ফেলতে চান?')) return;
-
-  fetch(`/admin/places/photos/${photoId}`, {
-    method: 'DELETE',
-    headers: {
-      'X-CSRF-TOKEN': '{{ csrf_token() }}',
-      'Accept': 'application/json'
-    }
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      const box = document.getElementById(`photo-box-${photoId}`);
-      if (box) box.remove();
-    } else {
-      alert('ছবি মুছতে ব্যর্থ হয়েছে।');
-    }
-  })
-  .catch(err => alert('সার্ভার এরর'));
+  openGlobalDeleteModal('আপনি কি এই ছবিটি মুছে ফেলতে চান?', function() {
+    fetch(`/admin/places/photos/${photoId}`, {
+      method: 'DELETE',
+      headers: {
+        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        'Accept': 'application/json'
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        const box = document.getElementById(`photo-box-${photoId}`);
+        if (box) box.remove();
+        showToast('ছবি সফলভাবে মুছে ফেলা হয়েছে', 'success');
+      } else {
+        showToast('ছবি মুছতে ব্যর্থ হয়েছে।', 'error');
+      }
+    })
+    .catch(err => showToast('সার্ভার এরর', 'error'));
+  });
 }
 </script>
 @endsection

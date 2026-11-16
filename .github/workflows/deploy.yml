@@ -186,7 +186,7 @@ jobs:
             # ======================================
 
             run_with_notify "Running Seeder..." \
-              php artisan migrate:fresh --seed --force
+              # php artisan migrate:fresh --seed --force
 
             # ======================================
             # 7. Storage Link
