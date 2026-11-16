@@ -20,10 +20,12 @@ use App\Models\Project;
 use App\Models\Union;
 use App\Models\User;
 use App\Models\Volunteer;
+use App\Services\CacheService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -33,117 +35,137 @@ class DashboardController extends Controller
      */
     public function index(): View
     {
-        // 1. Primary Metrics (Live from Database)
-        $stats = [
-            // Members
-            'total_members'    => Member::count(),
-            'active_members'   => Member::where('status', true)->count(),
-            'pending_members'  => Member::where('status', false)->count(),
+        // 1. Primary Metrics (Cached with 300s TTL, auto-invalidated on model updates)
+        $cachedDashboard = Cache::remember(CacheService::KEY_ADMIN_DASHBOARD, 300, function () {
+            $stats = [
+                // Members
+                'total_members'    => Member::count(),
+                'active_members'   => Member::where('status', true)->count(),
+                'pending_members'  => Member::where('status', false)->count(),
 
-            // Volunteers
-            'total_volunteers'   => Volunteer::count(),
-            'active_volunteers'  => Volunteer::where('status', true)->count(),
-            'pending_volunteers' => Volunteer::where('status', false)->count(),
+                // Volunteers
+                'total_volunteers'   => Volunteer::count(),
+                'active_volunteers'  => Volunteer::where('status', true)->count(),
+                'pending_volunteers' => Volunteer::where('status', false)->count(),
 
-            // Donations
-            'total_donations'       => (float) Donation::where('status', 'success')->sum('amount'),
-            'this_month_donations'  => (float) Donation::where('status', 'success')
-                                        ->whereMonth('created_at', now()->month)
-                                        ->whereYear('created_at', now()->year)
-                                        ->sum('amount'),
-            'donations_count'       => Donation::where('status', 'success')->count(),
+                // Donations
+                'total_donations'       => (float) Donation::where('status', 'success')->sum('amount'),
+                'this_month_donations'  => (float) Donation::where('status', 'success')
+                                            ->whereMonth('created_at', now()->month)
+                                            ->whereYear('created_at', now()->year)
+                                            ->sum('amount'),
+                'donations_count'       => Donation::where('status', 'success')->count(),
 
-            // Projects
-            'total_projects'     => Project::count(),
-            'running_projects'   => Project::where('project_status', 'running')->count(),
-            'completed_projects' => Project::where('project_status', 'completed')->count(),
+                // Projects
+                'total_projects'     => Project::count(),
+                'running_projects'   => Project::where('project_status', 'running')->count(),
+                'completed_projects' => Project::where('project_status', 'completed')->count(),
 
-            // Notices
-            'total_notices'   => Notice::count(),
-            'active_notices'  => Notice::where('status', 'active')->count(),
+                // Notices
+                'total_notices'   => Notice::count(),
+                'active_notices'  => Notice::where('status', 'active')->count(),
 
-            // Events
-            'total_events'    => Event::count(),
-            'active_events'   => Event::where('status', 'active')->count(),
+                // Events
+                'total_events'    => Event::count(),
+                'active_events'   => Event::where('status', 'active')->count(),
 
-            // Committees & Members
-            'total_committee_members' => CommitteeMember::count(),
-            'total_committees'        => Committee::count(),
+                // Committees & Members
+                'total_committee_members' => CommitteeMember::count(),
+                'total_committees'        => Committee::count(),
 
-            // Media & Blog
-            'total_gallery_items' => GalleryItem::count(),
-            'total_posts'         => Post::count(),
+                // Media & Blog
+                'total_gallery_items' => GalleryItem::count(),
+                'total_posts'         => Post::count(),
 
-            // Messages
-            'total_messages'  => ContactMessage::count(),
-            'unread_messages' => ContactMessage::where('is_read', false)->count(),
+                // Messages
+                'total_messages'  => ContactMessage::count(),
+                'unread_messages' => ContactMessage::where('is_read', false)->count(),
 
-            // Regional & Info
-            'total_pages'        => \App\Models\Page::count(),
-            'total_institutions' => Institution::count(),
-            'total_offices'      => Office::count(),
-            'total_unions'       => Union::count(),
-            'total_prides'       => Pride::count(),
-            'total_places'       => Place::count(),
+                // Regional & Info
+                'total_pages'        => \App\Models\Page::count(),
+                'total_institutions' => Institution::count(),
+                'total_offices'      => Office::count(),
+                'total_unions'       => Union::count(),
+                'total_prides'       => Pride::count(),
+                'total_places'       => Place::count(),
 
-            // Users
-            'total_users'  => User::count(),
-            'active_users' => User::where('status', 'active')->count(),
-        ];
+                // Users
+                'total_users'  => User::count(),
+                'active_users' => User::where('status', 'active')->count(),
+            ];
 
-        // 2. Chart Analytics Data (6-Month Trend)
-        $months = [];
-        $donationTrend = [];
-        $memberTrend = [];
-        $volunteerTrend = [];
+            // 2. Chart Analytics Data (6-Month Trend)
+            $months = [];
+            $donationTrend = [];
+            $memberTrend = [];
+            $volunteerTrend = [];
 
-        $bnMonths = [
-            1 => 'জানু', 2 => 'ফেব্রু', 3 => 'মার্চ', 4 => 'এপ্রিল',
-            5 => 'মে', 6 => 'জুন', 7 => 'জুলাই', 8 => 'আগস্ট',
-            9 => 'সেপ্টে', 10 => 'অক্টো', 11 => 'নভে', 12 => 'ডিসে'
-        ];
+            $bnMonths = [
+                1 => 'জানু', 2 => 'ফেব্রু', 3 => 'মার্চ', 4 => 'এপ্রিল',
+                5 => 'মে', 6 => 'জুন', 7 => 'জুলাই', 8 => 'আগস্ট',
+                9 => 'সেপ্টে', 10 => 'অক্টো', 11 => 'নভে', 12 => 'ডিসে'
+            ];
 
-        for ($i = 5; $i >= 0; $i--) {
-            $date = Carbon::now()->subMonths($i);
-            $monthNum = (int) $date->format('n');
-            $year = $date->year;
-            $label = ($bnMonths[$monthNum] ?? $date->format('M')) . ' ' . $date->format('y');
+            for ($i = 5; $i >= 0; $i--) {
+                $date = Carbon::now()->subMonths($i);
+                $monthNum = (int) $date->format('n');
+                $year = $date->year;
+                $label = ($bnMonths[$monthNum] ?? $date->format('M')) . ' ' . $date->format('y');
 
-            $months[] = $label;
+                $months[] = $label;
 
-            $dSum = Donation::where('status', 'success')
-                ->whereYear('created_at', $year)
-                ->whereMonth('created_at', $monthNum)
-                ->sum('amount');
-            $donationTrend[] = (float) $dSum;
+                $dSum = Donation::where('status', 'success')
+                    ->whereYear('created_at', $year)
+                    ->whereMonth('created_at', $monthNum)
+                    ->sum('amount');
+                $donationTrend[] = (float) $dSum;
 
-            $mCount = Member::whereYear('created_at', $year)
-                ->whereMonth('created_at', $monthNum)
-                ->count();
-            $memberTrend[] = $mCount;
+                $mCount = Member::whereYear('created_at', $year)
+                    ->whereMonth('created_at', $monthNum)
+                    ->count();
+                $memberTrend[] = $mCount;
 
-            $vCount = Volunteer::whereYear('created_at', $year)
-                ->whereMonth('created_at', $monthNum)
-                ->count();
-            $volunteerTrend[] = $vCount;
-        }
+                $vCount = Volunteer::whereYear('created_at', $year)
+                    ->whereMonth('created_at', $monthNum)
+                    ->count();
+                $volunteerTrend[] = $vCount;
+            }
 
-        // Blood Groups Pool (Members + Volunteers combined)
-        $bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-        $bloodGroupCounts = [];
-        foreach ($bloodGroups as $bg) {
-            $mCount = Member::where('blood_group', $bg)->count();
-            $vCount = Volunteer::where('blood_group', $bg)->count();
-            $bloodGroupCounts[$bg] = $mCount + $vCount;
-        }
+            // Blood Groups Pool (Members + Volunteers combined)
+            $bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+            $bloodGroupCounts = [];
+            foreach ($bloodGroups as $bg) {
+                $mCount = Member::where('blood_group', $bg)->count();
+                $vCount = Volunteer::where('blood_group', $bg)->count();
+                $bloodGroupCounts[$bg] = $mCount + $vCount;
+            }
 
-        // Donation Methods Breakdown
+            // Donation Methods Breakdown
+            $donationMethods = Donation::where('status', 'success')
+                ->selectRaw('payment_method, count(*) as count, sum(amount) as total')
+                ->groupBy('payment_method')
+                ->get();
+
+            return compact('stats', 'months', 'donationTrend', 'memberTrend', 'volunteerTrend', 'bloodGroupCounts', 'donationMethods');
+        });
+
+        $stats = $cachedDashboard['stats'];
+        $months = $cachedDashboard['months'];
+        $donationTrend = $cachedDashboard['donationTrend'];
+        $memberTrend = $cachedDashboard['memberTrend'];
+        $volunteerTrend = $cachedDashboard['volunteerTrend'];
+        $bloodGroupCounts = $cachedDashboard['bloodGroupCounts'];
+        $donationMethods = $cachedDashboard['donationMethods'];
         $donationMethods = Donation::where('status', 'success')
             ->selectRaw('payment_method, count(*) as count, sum(amount) as total')
             ->groupBy('payment_method')
             ->get();
 
         $chartData = [
+            'labels'            => $months,
+            'donations'         => $donationTrend,
+            'members'           => $memberTrend,
+            'volunteers'        => $volunteerTrend,
             'months'            => $months,
             'donation_trend'    => $donationTrend,
             'member_trend'      => $memberTrend,

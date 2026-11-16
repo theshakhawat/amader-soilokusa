@@ -247,6 +247,17 @@
         icon.classList.remove('animate-spin');
       });
     }
+    // Session Toast Notifications
+    @if(session('success'))
+      document.addEventListener('DOMContentLoaded', function() {
+        showToast(@json(session('success')), 'success');
+      });
+    @endif
+    @if(session('error'))
+      document.addEventListener('DOMContentLoaded', function() {
+        showToast(@json(session('error')), 'error');
+      });
+    @endif
   </script>
   @stack('scripts')
 </body>

@@ -16,30 +16,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Seed Roles and Permissions
-        $this->call([
-            RoleAndPermissionSeeder::class,
-            NavItemSeeder::class,
-            TopbarSeeder::class,
-            HeroBannerSeeder::class,
-            SiteCustomizationSeeder::class,
-            BlogSeeder::class,
-            EventSeeder::class,
-            GallerySeeder::class,
-            NoticeSeeder::class,
-            PlaceSeeder::class,
-            PrideSeeder::class,
-            ProjectSeeder::class,
-            PageSeeder::class,
-            PersonMessageSeeder::class,
-            InstitutionSeeder::class,
-            OfficeSeeder::class,
-            DonationSeeder::class,
-            UnionSeeder::class,
-            CommitteeSeeder::class,
-        ]);
+        // 1. Roles & Permissions (First priority: foundational security layer)
+        $this->call(RoleAndPermissionSeeder::class);
 
-        // 2. Create Default Super Admin
+        // 2. Default Administrative and Standard Users
         $superAdmin = User::firstOrCreate(
             ['email' => 'admin@agamirshailkupa.org'],
             [
@@ -52,7 +32,6 @@ class DatabaseSeeder extends Seeder
         );
         $superAdmin->syncRoles(['admin']);
 
-        // 3. Create Default Member
         $member = User::firstOrCreate(
             ['email' => 'member@agamirshailkupa.org'],
             [
@@ -64,5 +43,61 @@ class DatabaseSeeder extends Seeder
             ]
         );
         $member->syncRoles(['member']);
+
+        // 3. Site Settings, Navigation & Chrome Customizations
+        $this->call([
+            SiteCustomizationSeeder::class,
+            TopbarSeeder::class,
+            HeroBannerSeeder::class,
+            NavItemSeeder::class,
+        ]);
+
+        // 4. Content & Dynamic Modules (with proper dependency order)
+        $this->call([
+            // Blog Categories and Posts (Categories are seeded first inside BlogSeeder)
+            BlogSeeder::class,
+
+            // Institutions (Categories seeded first, then institutions, images & members)
+            InstitutionSeeder::class,
+
+            // Committees & Executive Members
+            CommitteeSeeder::class,
+
+            // Upazila Unions & Parishads
+            UnionSeeder::class,
+
+            // Public & Govt Offices
+            OfficeSeeder::class,
+
+            // Events & Photos
+            EventSeeder::class,
+
+            // Notices & Attachments
+            NoticeSeeder::class,
+
+            // Development Projects & Photos
+            ProjectSeeder::class,
+
+            // Historic & Tourist Places
+            PlaceSeeder::class,
+
+            // Pride Personalities
+            PrideSeeder::class,
+
+            // Person Messages & Speeches
+            PersonMessageSeeder::class,
+
+            // Photo & Video Gallery Media
+            GallerySeeder::class,
+
+            // Dynamic Custom Pages
+            PageSeeder::class,
+
+            // Donations & Fund Management
+            DonationSeeder::class,
+
+            // Admin Global Quick Search Items Catalog
+            AdminSearchItemSeeder::class,
+        ]);
     }
 }

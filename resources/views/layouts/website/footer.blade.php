@@ -2,9 +2,9 @@
      10. FOOTER SECTION (Fully Responsive & Dynamic from Admin Settings)
      ===================================================================== -->
 @php
-  $footerSetting = \App\Models\FooterSetting::first();
-  $footerContact = \App\Models\ContactSetting::first();
-  $footerSocialLinks = \App\Models\SocialLink::where('is_active', true)->orderBy('order')->orderBy('id')->get();
+  $footerSetting = $sharedFooterSetting ?? \App\Models\FooterSetting::first();
+  $footerContact = $sharedSiteContact ?? \App\Models\ContactSetting::first();
+  $footerSocialLinks = $sharedSiteSocialLinks ?? \App\Models\SocialLink::where('is_active', true)->orderBy('order')->orderBy('id')->get();
 
   $brandTitle = $footerSetting->brand_title ?? 'আগামীর শৈলকুপা';
   $brandSubtitle = $footerSetting->brand_subtitle ?? 'শৈলকুপার উন্নয়নে আমরা এক পরিবার';
@@ -41,8 +41,8 @@
   <div class="max-w-[1220px] mx-auto px-4 sm:px-6 pt-8 pb-7 sm:pt-11 sm:pb-8 relative z-10">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6 sm:gap-8">
 
-            @php
-        $siteBranding = \App\Models\SiteSetting::first();
+      @php
+        $siteBranding = $sharedSiteBranding ?? \App\Models\SiteSetting::first();
         $footerLogoUrl = $siteBranding ? $siteBranding->footer_logo_url : asset('assets/images/logo-icon.png');
         $footerBrandTitle = ($siteBranding && $siteBranding->site_title) ? $siteBranding->site_title : $brandTitle;
         $footerBrandSubtitle = ($siteBranding && $siteBranding->site_tagline) ? $siteBranding->site_tagline : $brandSubtitle;

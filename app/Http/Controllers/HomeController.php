@@ -23,43 +23,69 @@ use App\Models\InstitutionCategory;
 use App\Models\Office;
 use App\Models\Union;
 use App\Models\StatCounter;
+use App\Services\CacheService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class HomeController extends Controller
 {
     public function index(): View
     {
-        $heroBanners = HeroBanner::where('status', true)->orderBy('order')->get();
-        $statCounters = StatCounter::where('status', true)->orderBy('order')->get();
-        $about = AboutSection::first();
-        $president = PresidentMessage::first();
-        $events = Event::whereIn('status', ['active', 'upcoming', 'ongoing'])
-            ->orderBy('order_index', 'asc')
-            ->orderBy('date', 'desc')
-            ->orderBy('id', 'desc')
-            ->take(3)
-            ->get();
+        $heroBanners = Cache::remember(CacheService::KEY_HERO_BANNERS, CacheService::TTL, function () {
+            return HeroBanner::where('status', true)->orderBy('order')->get();
+        });
 
-        $notices = Notice::whereIn('status', ['active', 'pinned'])
-            ->orderByRaw("CASE WHEN status = 'pinned' THEN 0 ELSE 1 END")
-            ->orderBy('date', 'desc')
-            ->orderBy('id', 'desc')
-            ->take(4)
-            ->get();
+        $statCounters = Cache::remember(CacheService::KEY_STAT_COUNTERS, CacheService::TTL, function () {
+            return StatCounter::where('status', true)->orderBy('order')->get();
+        });
 
-        $donation = DonationSetting::first();
-        $latestPosts = Post::with('category')
-            ->where('status', true)
-            ->orderBy('published', 'desc')
-            ->orderBy('id', 'desc')
-            ->take(3)
-            ->get();
-        $prides = Pride::where('status', true)
-            ->orderBy('order_index', 'asc')
-            ->orderBy('id', 'asc')
-            ->take(4)
-            ->get();
+        $about = Cache::remember(CacheService::KEY_ABOUT_SECTION, CacheService::TTL, function () {
+            return AboutSection::first();
+        });
+
+        $president = Cache::remember(CacheService::KEY_PRESIDENT_MESSAGE, CacheService::TTL, function () {
+            return PresidentMessage::first();
+        });
+
+        $events = Cache::remember(CacheService::KEY_HOME_EVENTS, CacheService::TTL, function () {
+            return Event::whereIn('status', ['active', 'upcoming', 'ongoing'])
+                ->orderBy('order_index', 'asc')
+                ->orderBy('date', 'desc')
+                ->orderBy('id', 'desc')
+                ->take(3)
+                ->get();
+        });
+
+        $notices = Cache::remember(CacheService::KEY_HOME_NOTICES, CacheService::TTL, function () {
+            return Notice::whereIn('status', ['active', 'pinned'])
+                ->orderByRaw("CASE WHEN status = 'pinned' THEN 0 ELSE 1 END")
+                ->orderBy('date', 'desc')
+                ->orderBy('id', 'desc')
+                ->take(4)
+                ->get();
+        });
+
+        $donation = Cache::remember(CacheService::KEY_DONATION_SETTING, CacheService::TTL, function () {
+            return DonationSetting::first();
+        });
+
+        $latestPosts = Cache::remember(CacheService::KEY_HOME_POSTS, CacheService::TTL, function () {
+            return Post::with('category')
+                ->where('status', true)
+                ->orderBy('published', 'desc')
+                ->orderBy('id', 'desc')
+                ->take(3)
+                ->get();
+        });
+
+        $prides = Cache::remember(CacheService::KEY_HOME_PRIDES, CacheService::TTL, function () {
+            return Pride::where('status', true)
+                ->orderBy('order_index', 'asc')
+                ->orderBy('id', 'asc')
+                ->take(4)
+                ->get();
+        });
 
         $heroSlidesData = $heroBanners->map(function ($banner) {
             return [
@@ -74,10 +100,12 @@ class HomeController extends Controller
             ];
         })->values()->all();
 
-        $committee = Committee::where('is_active', true)
-            ->orderBy('order', 'asc')
-            ->orderBy('id', 'desc')
-            ->first();
+        $committee = Cache::remember(CacheService::KEY_HOME_COMMITTEE, CacheService::TTL, function () {
+            return Committee::where('is_active', true)
+                ->orderBy('order', 'asc')
+                ->orderBy('id', 'desc')
+                ->first();
+        });
 
         return view('home', compact('heroBanners', 'statCounters', 'heroSlidesData', 'about', 'president', 'events', 'notices', 'prides', 'donation', 'latestPosts', 'committee'));
     }

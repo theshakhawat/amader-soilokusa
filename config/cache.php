@@ -131,6 +131,37 @@ return [
     |
     */
 
-    'serializable_classes' => false,
+    'serializable_classes' => [
+        \Illuminate\Database\Eloquent\Collection::class,
+        \Illuminate\Database\Eloquent\Model::class,
+        \Illuminate\Support\Collection::class,
+        \Carbon\Carbon::class,
+        \Illuminate\Support\Carbon::class,
+        \App\Models\HeroBanner::class,
+        \App\Models\StatCounter::class,
+        \App\Models\AboutSection::class,
+        \App\Models\PresidentMessage::class,
+        \App\Models\Event::class,
+        \App\Models\EventPhoto::class,
+        \App\Models\Notice::class,
+        \App\Models\NoticeFile::class,
+        \App\Models\DonationSetting::class,
+        \App\Models\Post::class,
+        \App\Models\Category::class,
+        \App\Models\Pride::class,
+        \App\Models\Committee::class,
+        \App\Models\CommitteeMember::class,
+        \App\Models\SiteSetting::class,
+        \App\Models\ContactSetting::class,
+        \App\Models\SocialLink::class,
+        \App\Models\TopbarSetting::class,
+        \App\Models\FooterSetting::class,
+        \App\Models\Union::class,
+        \App\Models\NavItem::class,
+        \App\Models\Member::class,
+        \App\Models\Volunteer::class,
+        \App\Models\Donation::class,
+        \App\Models\Project::class,
+    ],
 
 ];

@@ -147,7 +147,7 @@
                   {{ $totalUnreadCount }}টি নতুন
                 </span>
                 @if($unreadSystemCount > 0)
-                  <form action="{{ route('notifications.mark-all-read') }}" method="POST" class="inline">
+                  <form action="{{ route('admin.notifications.mark-all-read') }}" method="POST" class="inline">
                     @csrf
                     <button type="submit" class="text-[10px] text-gray-500 hover:text-[#0b4622] font-semibold hover:underline cursor-pointer" title="সব পড়া হয়েছে হিসেবে চিহ্নিত করুন">
                       পঠিত করুন
@@ -162,25 +162,44 @@
 
           {{-- Notification List --}}
           <div class="divide-y divide-gray-50 text-xs max-h-80 overflow-y-auto custom-scrollbar">
-            {{-- System Notifications (Volunteers & Members) --}}
+            {{-- System Notifications (Volunteers, Members & Donations) --}}
             @foreach($unreadSystemNotifications as $systemNotif)
               @php
                 $notifType = $systemNotif->data['type'] ?? '';
                 $isVolunteer = $notifType === 'volunteer_registration';
                 $isMember = $notifType === 'member_registration';
+                $isDonation = $notifType === 'donation_received';
+
+                $badgeIcon = 'ri-notification-line';
+                $badgeBg = 'bg-gray-100 text-gray-700';
+                $actionText = 'বিস্তারিত দেখুন';
+
+                if ($isVolunteer) {
+                  $badgeIcon = 'ri-user-heart-line';
+                  $badgeBg = 'bg-emerald-100 text-[#0b4622]';
+                  $actionText = 'স্বেচ্ছাসেবী পেজে যান';
+                } elseif ($isMember) {
+                  $badgeIcon = 'ri-vip-crown-line';
+                  $badgeBg = 'bg-blue-100 text-blue-700';
+                  $actionText = 'সদস্য পেজে যান';
+                } elseif ($isDonation) {
+                  $badgeIcon = 'ri-hand-coin-line';
+                  $badgeBg = 'bg-emerald-100 text-emerald-800';
+                  $actionText = 'অনুদানের বিবরণ দেখুন';
+                }
               @endphp
-              <a href="{{ route('notifications.read', $systemNotif->id) }}"
+              <a href="{{ route('admin.notifications.read', $systemNotif->id) }}"
                  class="block px-4 py-3 hover:bg-emerald-50/40 transition group relative bg-emerald-50/15">
                 <div class="flex items-start gap-3">
                   {{-- Icon Badge --}}
-                  <div class="w-8 h-8 rounded-xl {{ $isVolunteer ? 'bg-emerald-100 text-[#0b4622]' : 'bg-blue-100 text-blue-700' }} flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
-                    <i class="{{ $isVolunteer ? 'ri-user-heart-line' : 'ri-vip-crown-line' }} text-base"></i>
+                  <div class="w-8 h-8 rounded-xl {{ $badgeBg }} flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                    <i class="{{ $badgeIcon }} text-base"></i>
                   </div>
 
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between gap-1">
                       <p class="font-extrabold text-gray-900 text-xs truncate">
-                        {{ $systemNotif->data['title'] ?? 'নতুন আবেদন' }}
+                        {{ $systemNotif->data['title'] ?? 'নতুন নোটিফিকেশন' }}
                       </p>
                       <span class="text-[10px] text-gray-400 shrink-0 font-medium">
                         {{ $systemNotif->created_at->diffForHumans() }}
@@ -196,7 +215,7 @@
                         {{ $systemNotif->data['id_number'] ?? '' }}
                       </span>
                       <span class="inline-flex items-center gap-1 text-[10px] font-bold text-[#0b4622] group-hover:underline">
-                        <span>{{ $isVolunteer ? 'স্বেচ্ছাসেবী পেজে যান' : 'সদস্য পেজে যান' }}</span>
+                        <span>{{ $actionText }}</span>
                         <i class="ri-arrow-right-line text-[9px]"></i>
                       </span>
                     </div>

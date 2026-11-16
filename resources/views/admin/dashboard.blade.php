@@ -359,11 +359,11 @@ document.addEventListener('DOMContentLoaded', function () {
     new Chart(trendCtx, {
       type: 'line',
       data: {
-        labels: trendData.labels,
+        labels: trendData.labels || trendData.months || [],
         datasets: [
           {
             label: 'অনুদান (৳)',
-            data: trendData.donations,
+            data: trendData.donations || trendData.donation_trend || [],
             borderColor: '#0b4622',
             backgroundColor: 'rgba(11, 70, 34, 0.05)',
             borderWidth: 2,
@@ -375,7 +375,7 @@ document.addEventListener('DOMContentLoaded', function () {
           },
           {
             label: 'সদস্য',
-            data: trendData.members,
+            data: trendData.members || trendData.member_trend || [],
             borderColor: '#3b82f6',
             backgroundColor: 'transparent',
             borderWidth: 2,
@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function () {
           },
           {
             label: 'স্বেচ্ছাসেবী',
-            data: trendData.volunteers,
+            data: trendData.volunteers || trendData.volunteer_trend || [],
             borderColor: '#14b8a6',
             backgroundColor: 'transparent',
             borderWidth: 2,

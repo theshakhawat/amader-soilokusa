@@ -5,7 +5,7 @@
 >
   <!-- Sidebar Header / Logo (Dynamic from Website Settings) -->
   @php
-    $adminBranding = \App\Models\SiteSetting::first();
+    $adminBranding = $sharedSiteBranding ?? \App\Models\SiteSetting::first();
     $adminLogo = $adminBranding ? $adminBranding->header_logo_url : asset('assets/images/logo-icon.png');
     $adminTitle = ($adminBranding && !empty($adminBranding->site_title)) ? $adminBranding->site_title : 'আগামীর শৈলকুপা';
     $sidebarUser = auth()->user();

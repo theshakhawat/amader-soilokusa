@@ -4,17 +4,20 @@
 <header id="site-main-header" class="site-main-navbar bg-white sticky top-0 z-40 shadow-[0_2px_10px_rgba(0,0,0,0.06)]">
   <div class="max-w-[1240px] mx-auto px-3 sm:px-6 h-[64px] sm:h-[76px] flex items-center justify-between gap-2 sm:gap-4">
     @php
-      $navBranding = \App\Models\SiteSetting::first();
+      $navBranding = $sharedSiteBranding ?? \App\Models\SiteSetting::first();
       $navLogo = $navBranding ? $navBranding->header_logo_url : asset('assets/images/logo-icon.png');
       $navTitle = $navBranding ? $navBranding->site_title : 'আগামীর শৈলকুপা';
       $navTagline = $navBranding ? $navBranding->site_tagline : 'শৈলকুপার উন্নয়নে আমরা এক পরিবার';
 
-      // Load Dynamic Navigation Tree from DB
-      $dynamicNavItems = \App\Models\NavItem::whereNull('parent_id')
+      // Load Dynamic Navigation Tree (from shared cached composer or DB)
+      $dynamicNavItems = $sharedNavItems ?? \App\Models\NavItem::whereNull('parent_id')
           ->where('status', true)
           ->with(['activeChildren.activeChildren'])
           ->orderBy('order', 'asc')
           ->get();
+
+      $cachedActiveCommittees = $sharedActiveCommittees ?? \App\Models\Committee::where('is_active', true)->orderBy('order', 'asc')->get();
+      $cachedActiveUnions = $sharedActiveUnions ?? \App\Models\Union::where('status', true)->orderBy('order', 'asc')->get();
     @endphp
 
     <!-- Brand Logo -->
@@ -37,10 +40,10 @@
       @foreach($dynamicNavItems as $navItem)
         @php
           $isCommitteeNav = ($navItem->title === 'কমিটি' || str_contains($navItem->title, 'কমিটি'));
-          $activeCommitteesDropdown = $isCommitteeNav ? \App\Models\Committee::where('is_active', true)->orderBy('order', 'asc')->get() : collect();
+          $activeCommitteesDropdown = $isCommitteeNav ? $cachedActiveCommittees : collect();
 
           $isUpazilaNav = ($navItem->title === 'উপজেলা পরিচিতি' || str_contains($navItem->title, 'উপজেলা'));
-          $activeUnionsDropdown = $isUpazilaNav ? \App\Models\Union::where('status', true)->orderBy('order', 'asc')->get() : collect();
+          $activeUnionsDropdown = $isUpazilaNav ? $cachedActiveUnions : collect();
 
           $hasChildren = ($navItem->activeChildren->count() > 0) 
             || ($isCommitteeNav && $activeCommitteesDropdown->count() > 0)
@@ -246,7 +249,7 @@
       @endforeach
     </nav>
 
-    <!-- Right Action Buttons (Donate + Login + Mobile Toggle) -->
+    <!-- Right Action Buttons (Donate + Mobile Toggle) -->
     <div class="flex items-center gap-2 sm:gap-3 shrink-0">
       <!-- Donate Button -->
       <button type="button" onclick="openDonateModal()" class="inline-flex items-center bg-[#146c32] hover:bg-[#0f5426] text-white rounded-full p-0.5 pr-3 sm:pr-4 shadow-sm transition group cursor-pointer">
@@ -256,14 +259,8 @@
         <span class="pl-1.5 sm:pl-2.5 text-xs sm:text-sm font-bold tracking-wide">অনুদান</span>
       </button>
 
-      <!-- Desktop Login Link / User Dropdown Avatar -->
-      @guest
-        <a href="{{ route('login') }}" class="hidden lg:inline-flex items-center gap-1.5 border border-[#c8102e] text-[#c8102e] hover:bg-[#c8102e] hover:text-white text-xs sm:text-sm font-bold px-3.5 py-1.5 rounded-full shadow-xs transition">
-          <i class="fa-regular fa-user text-xs"></i>
-          <span>লগইন</span>
-        </a>
-      @else
-        <!-- Desktop User Dropdown Avatar -->
+      <!-- Desktop User Dropdown Avatar (Logged In Only) -->
+      @auth
         <div class="hidden lg:block relative" id="desktop-user-dropdown-container">
           <button
             type="button"
@@ -311,7 +308,7 @@
             </div>
           </div>
         </div>
-      @endguest
+      @endauth
 
       <!-- Mobile Menu Button (Hamburger toggle) -->
       <button type="button" onclick="toggleMobileMenu()" aria-label="Toggle Menu" class="xl:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gray-50 hover:text-[#c8102e] transition cursor-pointer">
@@ -326,10 +323,10 @@
       @foreach($dynamicNavItems as $mIdx => $navItem)
         @php
           $isCommitteeNavMobile = ($navItem->title === 'কমিটি' || str_contains($navItem->title, 'কমিটি'));
-          $activeCommitteesDropdownMobile = $isCommitteeNavMobile ? \App\Models\Committee::where('is_active', true)->orderBy('order', 'asc')->get() : collect();
+          $activeCommitteesDropdownMobile = $isCommitteeNavMobile ? $cachedActiveCommittees : collect();
 
           $isUpazilaNavMobile = ($navItem->title === 'উপজেলা পরিচিতি' || str_contains($navItem->title, 'উপজেলা'));
-          $activeUnionsDropdownMobile = $isUpazilaNavMobile ? \App\Models\Union::where('status', true)->orderBy('order', 'asc')->get() : collect();
+          $activeUnionsDropdownMobile = $isUpazilaNavMobile ? $cachedActiveUnions : collect();
 
           $hasChildren = ($navItem->activeChildren->count() > 0) 
             || ($isCommitteeNavMobile && $activeCommitteesDropdownMobile->count() > 0)
@@ -492,49 +489,56 @@
       @endforeach
     </div>
 
-    <!-- Mobile Auth Section -->
-    <div class="mt-4 pt-4 border-t border-gray-100">
-      @guest
-        <div class="grid grid-cols-2 gap-2">
-          <a href="{{ route('login') }}" class="flex items-center justify-center gap-1.5 bg-[#c8102e] text-white py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold shadow-xs hover:bg-[#a30b24] transition">
-            <i class="fa-solid fa-arrow-right-to-bracket text-xs"></i>
-            <span>লগইন</span>
-          </a>
-          <a href="{{ route('register') }}" class="flex items-center justify-center gap-1.5 border border-[#0b4622] text-[#0b4622] hover:bg-[#0b4622] hover:text-white py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition">
-            <i class="fa-solid fa-user-plus text-xs"></i>
-            <span>রেজিস্টার</span>
-          </a>
+    <!-- Mobile Bottom Action Links (স্বেচ্ছাসেবী কর্মী ও সদস্য হিসেবে যোগদান) -->
+    <div class="mt-4 pt-3 border-t border-gray-100 space-y-2">
+      <a href="{{ route('volunteers.apply') }}" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-teal-50/70 border border-teal-200/80 text-teal-800 hover:bg-teal-100/80 transition group">
+        <div class="flex items-center gap-2.5">
+          <span class="w-7 h-7 rounded-lg bg-teal-600 text-white flex items-center justify-center text-xs shadow-2xs">
+            <i class="fa-solid fa-hand-holding-heart"></i>
+          </span>
+          <span class="text-xs sm:text-sm font-bold">স্বেচ্ছাসেবী কর্মী হিসেবে যোগদান করুন</span>
         </div>
-      @else
-        <div class="bg-gray-50/80 rounded-xl border border-gray-200/80 overflow-hidden">
-          <div class="p-3">
-            <div class="flex items-center gap-2.5 min-w-0">
-              @if(Auth::user()->photo)
-                <img src="{{ asset('storage/' . Auth::user()->photo) }}" alt="{{ Auth::user()->name }}" class="w-9 h-9 rounded-full object-cover shrink-0 border border-gray-200" />
-              @else
-                <div class="w-9 h-9 rounded-full bg-[#0b4622] text-white flex items-center justify-center text-xs font-bold shrink-0">
-                  {{ mb_substr(Auth::user()->name, 0, 1) }}
-                </div>
-              @endif
-              <div class="min-w-0">
-                <span class="block text-xs sm:text-sm font-bold text-gray-900 leading-tight truncate">{{ Auth::user()->name }}</span>
-                <span class="block text-[10px] sm:text-xs text-gray-500 truncate">{{ Auth::user()->email }}</span>
+        <i class="fa-solid fa-arrow-right text-xs text-teal-600 group-hover:translate-x-0.5 transition-transform"></i>
+      </a>
+
+      <a href="{{ route('members.apply') }}" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200/80 text-[#0b4622] hover:bg-emerald-100/80 transition group">
+        <div class="flex items-center gap-2.5">
+          <span class="w-7 h-7 rounded-lg bg-[#0b4622] text-white flex items-center justify-center text-xs shadow-2xs">
+            <i class="fa-solid fa-user-plus"></i>
+          </span>
+          <span class="text-xs sm:text-sm font-bold">সদস্য হিসেবে যোগদান করুন</span>
+        </div>
+        <i class="fa-solid fa-arrow-right text-xs text-[#0b4622] group-hover:translate-x-0.5 transition-transform"></i>
+      </a>
+
+      @auth
+        <div class="mt-2 bg-gray-50/80 rounded-xl border border-gray-200/80 p-3">
+          <div class="flex items-center gap-2.5 min-w-0">
+            @if(Auth::user()->photo)
+              <img src="{{ asset('storage/' . Auth::user()->photo) }}" alt="{{ Auth::user()->name }}" class="w-8 h-8 rounded-full object-cover shrink-0 border border-gray-200" />
+            @else
+              <div class="w-8 h-8 rounded-full bg-[#0b4622] text-white flex items-center justify-center text-xs font-bold shrink-0">
+                {{ mb_substr(Auth::user()->name, 0, 1) }}
               </div>
-            </div>
-            <div class="mt-3 pt-2 border-t border-gray-200/60 flex items-center justify-between text-xs font-bold">
-              <a href="{{ route('admin.dashboard') }}" class="text-[#0b4622] hover:underline flex items-center gap-1">
-                <i class="fa-solid fa-gauge"></i> ড্যাশবোর্ড
-              </a>
-              <form action="{{ route('logout') }}" method="POST" class="inline">
-                @csrf
-                <button type="submit" class="text-[#c8102e] hover:underline cursor-pointer">
-                  লগআউট
-                </button>
-              </form>
+            @endif
+            <div class="min-w-0">
+              <span class="block text-xs font-bold text-gray-900 leading-tight truncate">{{ Auth::user()->name }}</span>
+              <span class="block text-[10px] text-gray-500 truncate">{{ Auth::user()->email }}</span>
             </div>
           </div>
+          <div class="mt-2.5 pt-2 border-t border-gray-200/60 flex items-center justify-between text-xs font-bold">
+            <a href="{{ route('admin.dashboard') }}" class="text-[#0b4622] hover:underline flex items-center gap-1">
+              <i class="fa-solid fa-gauge"></i> ড্যাশবোর্ড
+            </a>
+            <form action="{{ route('logout') }}" method="POST" class="inline">
+              @csrf
+              <button type="submit" class="text-[#c8102e] hover:underline cursor-pointer">
+                লগআউট
+              </button>
+            </form>
+          </div>
         </div>
-      @endguest
+      @endauth
     </div>
   </div>
 </header>

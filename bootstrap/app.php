@@ -16,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
             guests: '/login',
             users: '/admin',
         );
+        $middleware->alias([
+            'admin.permission' => \App\Http\Middleware\CheckAdminPermission::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

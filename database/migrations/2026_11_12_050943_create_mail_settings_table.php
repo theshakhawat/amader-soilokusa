@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('mail_host')->nullable()->default('smtp.gmail.com');
             $table->integer('mail_port')->nullable()->default(587);
             $table->string('mail_username')->nullable()->default('shakhawatdevofficial@gmail.com');
-            $table->text('mail_password')->nullable()->default('wbqribrzkhcqyhnm');
+            $table->string('mail_password', 500)->nullable()->default('wbqribrzkhcqyhnm');
             $table->string('mail_encryption')->nullable()->default('tls'); // tls, ssl, null
             $table->string('mail_from_address')->nullable()->default('shakhawatdevofficial@gmail.com');
             $table->string('mail_from_name')->nullable()->default('আগামীর শৈলকুপা');

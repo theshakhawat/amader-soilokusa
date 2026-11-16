@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Donation;
+use App\Models\User;
+use App\Notifications\NewDonationReceivedNotification;
 use App\Services\DgePayService;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 
 class DonationController extends Controller
 {
@@ -144,6 +147,16 @@ class DonationController extends Controller
                 'paid_at'          => now(),
                 'payment_response' => !empty($checkData) ? $checkData : $callbackParams,
             ]);
+
+            // Notify all admins about the new online donation
+            try {
+                $admins = User::all();
+                if ($admins->isNotEmpty()) {
+                    Notification::send($admins, new NewDonationReceivedNotification($donation));
+                }
+            } catch (\Throwable $e) {
+                Log::error('Donation admin notification error: ' . $e->getMessage());
+            }
 
             return redirect()->route('home')
                 ->with('donation_result', 'success')

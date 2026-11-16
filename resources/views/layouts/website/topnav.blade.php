@@ -2,13 +2,13 @@
      1. TOP HEADER BAR (Fully Responsive & Dynamic from Admin Customization)
      ===================================================================== -->
 @php
-  $topbarSetting = \App\Models\TopbarSetting::first();
+  $topbarSetting = $sharedTopbarSetting ?? \App\Models\TopbarSetting::first();
   $isTopbarActive = $topbarSetting ? $topbarSetting->is_active : true;
   $showContact = $topbarSetting ? $topbarSetting->show_contact : true;
   $showSocial = $topbarSetting ? $topbarSetting->show_social : true;
 
-  $topbarContact = \App\Models\ContactSetting::first();
-  $topbarSocialLinks = \App\Models\SocialLink::where('is_active', true)->orderBy('order')->orderBy('id')->get();
+  $topbarContact = $sharedSiteContact ?? \App\Models\ContactSetting::first();
+  $topbarSocialLinks = $sharedSiteSocialLinks ?? \App\Models\SocialLink::where('is_active', true)->orderBy('order')->orderBy('id')->get();
 @endphp
 
 @if($isTopbarActive)

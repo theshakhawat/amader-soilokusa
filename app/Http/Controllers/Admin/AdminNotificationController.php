@@ -44,6 +44,14 @@ class AdminNotificationController extends Controller
                 return redirect()->route('admin.members.index');
             }
 
+            // Route to donation details page
+            if ($type === 'donation_received') {
+                if ($sourceId && \App\Models\Donation::where('id', $sourceId)->exists()) {
+                    return redirect()->route('admin.donations.show', $sourceId);
+                }
+                return redirect()->route('admin.donations.index');
+            }
+
             $targetUrl = $notification->data['url'] ?? route('admin.dashboard');
             return redirect($targetUrl);
         }
