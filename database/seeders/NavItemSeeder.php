@@ -14,15 +14,6 @@ class NavItemSeeder extends Seeder
     {
         NavItem::query()->delete();
 
-        // 1. হোম
-        NavItem::create([
-            'title'     => 'হোম',
-            'url'       => '/',
-            'parent_id' => null,
-            'order'     => 1,
-            'status'    => true,
-        ]);
-
         // 2. আমাদের সম্পর্কে
         $about = NavItem::create([
             'title'     => 'আমাদের সম্পর্কে',

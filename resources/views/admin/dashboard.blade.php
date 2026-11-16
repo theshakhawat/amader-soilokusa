@@ -3,265 +3,489 @@
 @section('title', 'Administrative Console — আগামীর শৈলকুপা')
 
 @section('content')
-<div class="space-y-7 max-w-7xl mx-auto">
+<div class="space-y-5 max-w-7xl mx-auto pb-8">
 
-  <!-- Header Action Row (Like Reference: Title + Add Product / Review Buttons) -->
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+  {{-- ========================================================================= --}}
+  {{-- 1. MINIMAL HEADER & QUICK ACTIONS                                         --}}
+  {{-- ========================================================================= --}}
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
     <div>
-      <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-950 tracking-tight leading-tight">
+      <h1 class="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
         Administrative Console
       </h1>
-      <p class="text-xs sm:text-sm text-gray-500 mt-1 font-medium">
-        প্ল্যাটফর্ম পারফরম্যান্স ওভারভিউ, ব্যবস্থাপনা ও সার্বিক কার্যক্রম পর্যালোচনা।
+      <p class="text-xs text-gray-500 mt-0.5 flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>লাইভ সিস্টেম • {{ now()->translatedFormat('d F, Y') }}</span>
       </p>
     </div>
 
-    <!-- Right Header Action Pills -->
-    <div class="flex items-center flex-wrap gap-2.5 shrink-0">
-      <button
-        type="button"
-        class="inline-flex items-center gap-1.5 bg-[#0b4622] hover:bg-[#083519] text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-xl shadow-xs transition cursor-pointer"
+    {{-- Quick Action Buttons --}}
+    <div class="flex items-center flex-wrap gap-2">
+      <a
+        href="{{ route('admin.members.create') }}"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 rounded-lg text-xs font-semibold shadow-2xs transition"
       >
-        <i class="ri-add-line text-base font-bold"></i>
-        <span>নতুন কন্টেন্ট</span>
-      </button>
+        <i class="ri-user-add-line text-sm text-gray-500"></i>
+        <span>+ সদস্য</span>
+      </a>
 
       <a
-        href="#"
-        class="inline-flex items-center gap-1.5 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 text-xs sm:text-sm font-bold px-4 py-2 rounded-xl shadow-2xs transition"
+        href="{{ route('admin.volunteers.create') }}"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 rounded-lg text-xs font-semibold shadow-2xs transition"
       >
-        <i class="ri-survey-line text-sm text-emerald-700"></i>
-        <span>রিপোর্ট পর্যালোচনা</span>
+        <i class="ri-hand-heart-line text-sm text-gray-500"></i>
+        <span>+ স্বেচ্ছাসেবী</span>
+      </a>
+
+      <a
+        href="{{ route('admin.donations.create') }}"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#0b4622] hover:bg-[#08351a] text-white rounded-lg text-xs font-semibold shadow-2xs transition"
+      >
+        <i class="ri-add-line text-sm"></i>
+        <span>+ অনুদান এন্ট্রি</span>
       </a>
 
       <a
         href="{{ route('home') }}"
         target="_blank"
-        class="inline-flex items-center gap-1.5 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 text-xs sm:text-sm font-bold px-4 py-2 rounded-xl shadow-2xs transition"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 rounded-lg text-xs font-semibold shadow-2xs transition"
+        title="মূল ওয়েবসাইট"
       >
-        <i class="ri-global-line text-sm text-[#0b4622]"></i>
+        <i class="ri-external-link-line text-sm text-gray-500"></i>
         <span>লাইভ সাইট</span>
       </a>
     </div>
   </div>
 
-  <!-- Primary Metric Cards (Reference style: White card, left accent border, soft green icon badge, clean bold typography) -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+
+  {{-- ========================================================================= --}}
+  {{-- 2. CORE STATS (Clean, Minimal, Subtle 1px borders, Clickable)             --}}
+  {{-- ========================================================================= --}}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
     
-    <!-- 1. Total Members -->
-    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] border-l-4 border-l-[#0b4622] flex items-center justify-between hover:shadow-md transition">
-      <div>
-        <p class="text-xs font-bold text-gray-500 tracking-wide">মোট সদস্য (Members)</p>
-        <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1.5">{{ $stats['total_users'] ?? 5 }}</h3>
-        <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full mt-2">
-          {{ $stats['active_users'] ?? 5 }} জন সক্রিয় সদস্য
-        </span>
-      </div>
-      <div class="w-12 h-12 rounded-xl bg-emerald-50 text-[#0b4622] flex items-center justify-center text-xl shrink-0">
-        <i class="ri-user-star-line"></i>
-      </div>
-    </div>
-
-    <!-- 2. Fund & Donations -->
-    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] border-l-4 border-l-[#0b4622] flex items-center justify-between hover:shadow-md transition">
-      <div>
-        <p class="text-xs font-bold text-gray-500 tracking-wide">মোট অনুদান তহবিল</p>
-        <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1.5">৳ ১,৫০,০০০</h3>
-        <span class="inline-flex items-center gap-1 text-[11px] font-bold text-[#c8102e] bg-red-50 px-2 py-0.5 rounded-full mt-2">
-          চলতি মাস: ৳ ২৫,০০০
-        </span>
-      </div>
-      <div class="w-12 h-12 rounded-xl bg-emerald-50 text-[#0b4622] flex items-center justify-center text-xl shrink-0">
-        <i class="ri-hand-heart-line"></i>
-      </div>
-    </div>
-
-    <!-- 3. Ongoing Projects -->
-    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] border-l-4 border-l-[#0b4622] flex items-center justify-between hover:shadow-md transition">
-      <div>
-        <p class="text-xs font-bold text-gray-500 tracking-wide">চলমান উদ্যোগ ও প্রকল্প</p>
-        <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1.5">৮টি</h3>
-        <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full mt-2">
-          ৩টি সফল প্রকল্প
-        </span>
-      </div>
-      <div class="w-12 h-12 rounded-xl bg-emerald-50 text-[#0b4622] flex items-center justify-center text-xl shrink-0">
-        <i class="ri-projector-line"></i>
-      </div>
-    </div>
-
-    <!-- 4. Notices & Bulletins -->
-    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] border-l-4 border-l-[#0b4622] flex items-center justify-between hover:shadow-md transition">
-      <div>
-        <p class="text-xs font-bold text-gray-500 tracking-wide">প্রকাশিত নোটিশ</p>
-        <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1.5">১২টি</h3>
-        <span class="inline-flex items-center gap-1 text-[11px] font-bold text-gray-700 bg-gray-100 px-2 py-0.5 rounded-full mt-2">
-          ১টি সাম্প্রতিক বিজ্ঞপ্তি
-        </span>
-      </div>
-      <div class="w-12 h-12 rounded-xl bg-emerald-50 text-[#0b4622] flex items-center justify-center text-xl shrink-0">
-        <i class="ri-notification-badge-line"></i>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Secondary Row (Reference: 4 cards with Manage link on top right, clean icons) -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-    
-    <!-- Portfolio / Activities -->
-    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition">
-      <div class="flex items-center justify-between">
-        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-[#0b4622] flex items-center justify-center text-lg">
-          <i class="ri-node-tree"></i>
-        </div>
-        <a href="#" class="text-xs font-bold text-gray-500 hover:text-[#0b4622] flex items-center gap-1 transition">
-          <span>Manage</span>
-          <i class="ri-arrow-right-line text-xs"></i>
-        </a>
-      </div>
-      <div class="mt-4">
-        <p class="text-xs font-bold text-gray-500">কার্যক্রমের তালিকা</p>
-        <h4 class="text-2xl font-extrabold text-gray-900 mt-1">১৫+</h4>
-        <p class="text-[11px] text-gray-400 mt-1">কমিউনিটি ও সমাজকল্যাণমূলক কর্মসূচি</p>
-      </div>
-    </div>
-
-    <!-- Contact Messages -->
-    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition">
-      <div class="flex items-center justify-between">
-        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-[#0b4622] flex items-center justify-center text-lg">
-          <i class="ri-mail-open-line"></i>
-        </div>
-        <a href="#" class="text-xs font-bold text-gray-500 hover:text-[#0b4622] flex items-center gap-1 transition">
-          <span>Manage</span>
-          <i class="ri-arrow-right-line text-xs"></i>
-        </a>
-      </div>
-      <div class="mt-4">
-        <p class="text-xs font-bold text-gray-500">যোগাযোগের বার্তা</p>
-        <h4 class="text-2xl font-extrabold text-gray-900 mt-1">৮টি</h4>
-        <p class="text-[11px] text-gray-400 mt-1">নতুন অনুসন্ধান ও মতামতের তালিকা</p>
-      </div>
-    </div>
-
-    <!-- Committee & Team Members -->
-    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition">
-      <div class="flex items-center justify-between">
-        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-[#0b4622] flex items-center justify-center text-lg">
-          <i class="ri-team-line"></i>
-        </div>
-        <a href="#" class="text-xs font-bold text-gray-500 hover:text-[#0b4622] flex items-center gap-1 transition">
-          <span>Manage</span>
-          <i class="ri-arrow-right-line text-xs"></i>
-        </a>
-      </div>
-      <div class="mt-4">
-        <p class="text-xs font-bold text-gray-500">কমিটি সদস্যবৃন্দ</p>
-        <h4 class="text-2xl font-extrabold text-gray-900 mt-1">২১ জন</h4>
-        <p class="text-[11px] text-gray-400 mt-1">কার্যনির্বাহী ও উপদেষ্টা পরিষদ</p>
-      </div>
-    </div>
-
-    <!-- Gallery Media -->
-    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition">
-      <div class="flex items-center justify-between">
-        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-[#0b4622] flex items-center justify-center text-lg">
-          <i class="ri-image-add-line"></i>
-        </div>
-        <a href="#" class="text-xs font-bold text-gray-500 hover:text-[#0b4622] flex items-center gap-1 transition">
-          <span>Manage</span>
-          <i class="ri-arrow-right-line text-xs"></i>
-        </a>
-      </div>
-      <div class="mt-4">
-        <p class="text-xs font-bold text-gray-500">গ্যালারি মিডিয়া</p>
-        <h4 class="text-2xl font-extrabold text-gray-900 mt-1">৪৫টি</h4>
-        <p class="text-[11px] text-gray-400 mt-1">ছবি ও ভিডিও ডকুমেন্টস</p>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Bottom Section: Landing & Public Website Management Hub (Reference match) -->
-  <div class="pt-4">
-    <div class="mb-4">
-      <span class="text-xs font-extrabold text-gray-900 uppercase tracking-wider">
-        LANDING & PUBLIC WEBSITE MANAGEMENT HUB
+    {{-- Members --}}
+    <a
+      href="{{ route('admin.members.index') }}"
+      class="bg-white rounded-xl border border-gray-200/90 p-4 shadow-2xs hover:border-[#0b4622]/40 hover:shadow-sm transition group"
+    >
+      <span class="text-xs text-gray-500 font-medium block">মোট সদস্য</span>
+      <span class="text-2xl font-bold text-gray-900 block mt-1">
+        {{ $stats['total_members'] }} <span class="text-xs font-normal text-gray-400">জন</span>
       </span>
+      <div class="flex items-center gap-2 mt-2 text-[11px] text-gray-500">
+        <span class="text-emerald-700 font-medium">{{ $stats['active_members'] }} সক্রিয়</span>
+        @if($stats['pending_members'] > 0)
+          <span>•</span>
+          <span class="text-amber-700 font-medium">{{ $stats['pending_members'] }} অপেক্ষমাণ</span>
+        @endif
+      </div>
+    </a>
+
+    {{-- Volunteers --}}
+    <a
+      href="{{ route('admin.volunteers.index') }}"
+      class="bg-white rounded-xl border border-gray-200/90 p-4 shadow-2xs hover:border-[#0b4622]/40 hover:shadow-sm transition group"
+    >
+      <span class="text-xs text-gray-500 font-medium block">স্বেচ্ছাসেবী কর্মী</span>
+      <span class="text-2xl font-bold text-gray-900 block mt-1">
+        {{ $stats['total_volunteers'] }} <span class="text-xs font-normal text-gray-400">জন</span>
+      </span>
+      <div class="flex items-center gap-2 mt-2 text-[11px] text-gray-500">
+        <span class="text-emerald-700 font-medium">{{ $stats['active_volunteers'] }} অনুমোদিত</span>
+        @if($stats['pending_volunteers'] > 0)
+          <span>•</span>
+          <span class="text-amber-700 font-medium">{{ $stats['pending_volunteers'] }} আবেদন</span>
+        @endif
+      </div>
+    </a>
+
+    {{-- Donations Fund --}}
+    <a
+      href="{{ route('admin.donations.index') }}"
+      class="bg-white rounded-xl border border-gray-200/90 p-4 shadow-2xs hover:border-[#0b4622]/40 hover:shadow-sm transition group"
+    >
+      <span class="text-xs text-gray-500 font-medium block">মোট অনুদান তহবিল</span>
+      <span class="text-2xl font-bold text-gray-900 block mt-1">
+        ৳{{ number_format($stats['total_donations'], 0) }}
+      </span>
+      <div class="mt-2 text-[11px] text-gray-500">
+        <span>চলতি মাস: ৳{{ number_format($stats['this_month_donations'], 0) }}</span>
+      </div>
+    </a>
+
+    {{-- Projects --}}
+    <a
+      href="{{ route('admin.projects.index') }}"
+      class="bg-white rounded-xl border border-gray-200/90 p-4 shadow-2xs hover:border-[#0b4622]/40 hover:shadow-sm transition group"
+    >
+      <span class="text-xs text-gray-500 font-medium block">উন্নয়ন প্রকল্প</span>
+      <span class="text-2xl font-bold text-gray-900 block mt-1">
+        {{ $stats['total_projects'] }} <span class="text-xs font-normal text-gray-400">টি</span>
+      </span>
+      <div class="flex items-center gap-2 mt-2 text-[11px] text-gray-500">
+        <span>{{ $stats['running_projects'] }} চলমান</span>
+        <span>•</span>
+        <span>{{ $stats['completed_projects'] }} সম্পন্ন</span>
+      </div>
+    </a>
+
+  </div>
+
+
+  {{-- ========================================================================= --}}
+  {{-- 3. MINIMAL CHARTS (Clean 2-Column Grid)                                   --}}
+  {{-- ========================================================================= --}}
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    
+    {{-- Chart 1: Monthly Trends (2 Cols) --}}
+    <div class="bg-white rounded-xl p-5 border border-gray-200/90 shadow-2xs lg:col-span-2">
+      <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+        <div>
+          <h2 class="text-sm font-bold text-gray-900">
+            মাসিক অনুদান ও নিবন্ধন ট্রেন্ড
+          </h2>
+          <p class="text-[11px] text-gray-400 mt-0.5">গত ৬ মাসের তহবিল সংগ্রহ ও যোগদানের পরিসংখ্যান</p>
+        </div>
+        <div class="flex items-center gap-3 text-[11px] font-medium text-gray-500">
+          <span class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#0b4622]"></span>
+            অনুদান (৳)
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+            সদস্য
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span>
+            স্বেচ্ছাসেবী
+          </span>
+        </div>
+      </div>
+
+      <div class="mt-3 h-64 sm:h-72 w-full relative">
+        <canvas id="monthlyTrendChart"></canvas>
+      </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      
-      <!-- Quick Action Cards (Clean minimal white) -->
-      <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-3">
-        <h3 class="text-sm font-extrabold text-gray-900 flex items-center gap-2">
-          <i class="ri-flashlight-line text-[#0b4622]"></i>
-          <span>দ্রুত প্রকাশনা (Quick Actions)</span>
-        </h3>
-        
-        <a href="#" class="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/40 text-gray-800 transition group">
-          <div class="flex items-center gap-2.5">
-            <span class="w-8 h-8 rounded-lg bg-emerald-50 text-[#0b4622] flex items-center justify-center text-sm">
-              <i class="ri-megaphone-line"></i>
-            </span>
-            <span class="text-xs font-bold">নতুন নোটিশ তৈরি করুন</span>
-          </div>
-          <i class="ri-arrow-right-s-line text-gray-400 group-hover:text-[#0b4622] transition"></i>
-        </a>
+    {{-- Chart 2: Blood Donor Pool (1 Col) --}}
+    <div class="bg-white rounded-xl p-5 border border-gray-200/90 shadow-2xs">
+      <div class="pb-3 border-b border-gray-100">
+        <h2 class="text-sm font-bold text-gray-900">
+          রক্তের গ্রুপ বণ্টন
+        </h2>
+        <p class="text-[11px] text-gray-400 mt-0.5">নিবন্ধিত ডোনার ব্যাংক বিবরণী</p>
+      </div>
 
-        <a href="#" class="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-red-200 hover:bg-red-50/40 text-gray-800 transition group">
-          <div class="flex items-center gap-2.5">
-            <span class="w-8 h-8 rounded-lg bg-red-50 text-[#c8102e] flex items-center justify-center text-sm">
-              <i class="ri-image-line"></i>
-            </span>
-            <span class="text-xs font-bold">গ্যালারিতে ছবি যোগ করুন</span>
-          </div>
-          <i class="ri-arrow-right-s-line text-gray-400 group-hover:text-[#c8102e] transition"></i>
+      <div class="mt-3 h-64 sm:h-72 w-full relative">
+        <canvas id="bloodGroupChart"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+
+  {{-- ========================================================================= --}}
+  {{-- 4. RECENT ACTIVITY (Recent Donations & Submissions)                       --}}
+  {{-- ========================================================================= --}}
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    
+    {{-- Left: Recent Donations (2 Cols) --}}
+    <div class="bg-white rounded-xl p-5 border border-gray-200/90 shadow-2xs lg:col-span-2">
+      <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+        <div>
+          <h2 class="text-sm font-bold text-gray-900">
+            সর্বশেষ অনুদান সংগ্রহ
+          </h2>
+          <p class="text-[11px] text-gray-400 mt-0.5">রিয়েল-টাইম অনুদান লেনদেন</p>
+        </div>
+        <a
+          href="{{ route('admin.donations.index') }}"
+          class="text-xs font-semibold text-[#0b4622] hover:underline flex items-center gap-1"
+        >
+          <span>সকল অনুদান</span>
+          <i class="ri-arrow-right-line text-xs"></i>
         </a>
       </div>
 
-      <!-- Recent Log / Feed (Clean White & Slate) -->
-      <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] lg:col-span-2">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-extrabold text-gray-900 flex items-center gap-2">
-            <i class="ri-history-line text-gray-400"></i>
-            <span>সাম্প্রতিক সিস্টেম লগ (Recent Updates)</span>
-          </h3>
-          <span class="text-xs font-semibold text-gray-400">রিয়েল-টাইম</span>
-        </div>
-
-        <div class="divide-y divide-gray-100 text-xs">
-          <div class="py-3 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <span class="w-8 h-8 rounded-full bg-emerald-50 text-[#0b4622] flex items-center justify-center shrink-0">
-                <i class="ri-user-add-line"></i>
-              </span>
-              <div>
-                <p class="font-bold text-gray-900">নতুন সদস্য নিবন্ধন হয়েছে</p>
-                <p class="text-[11px] text-gray-500">অনলাইন পোর্টালের মাধ্যমে যাচাই সম্পন্ন</p>
-              </div>
-            </div>
-            <span class="text-gray-400">১০ মি. আগে</span>
+      <div class="overflow-x-auto mt-3">
+        @if($recentDonations->isEmpty())
+          <div class="text-center py-8 text-gray-400 text-xs">
+            কোনো অনুদানের ডাটা পাওয়া যায়নি।
           </div>
+        @else
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-gray-100 text-gray-400 font-medium text-[11px]">
+                <th class="py-2 px-2.5">দাতা</th>
+                <th class="py-2 px-2.5">মাধ্যম</th>
+                <th class="py-2 px-2.5 text-right">পরিমাণ</th>
+                <th class="py-2 px-2.5">তারিখ</th>
+                <th class="py-2 px-2.5 text-center">স্ট্যাটাস</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 font-normal">
+              @foreach($recentDonations as $donation)
+                <tr class="hover:bg-gray-50/60 transition">
+                  <td class="py-2.5 px-2.5">
+                    <p class="font-medium text-gray-900">{{ $donation->donor_name }}</p>
+                    <p class="text-[10px] text-gray-400 font-mono">{{ $donation->trx_id ?? '' }}</p>
+                  </td>
+                  <td class="py-2.5 px-2.5 text-gray-600">
+                    <span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-50 border border-gray-200 text-gray-600">
+                      {{ $donation->payment_method ?? ($donation->is_manual ? 'অফলাইন' : 'অনলাইন') }}
+                    </span>
+                  </td>
+                  <td class="py-2.5 px-2.5 font-bold text-gray-900 text-right">
+                    ৳{{ number_format($donation->amount, 0) }}
+                  </td>
+                  <td class="py-2.5 px-2.5 text-gray-500 text-[11px] whitespace-nowrap">
+                    {{ $donation->created_at->format('d M, Y') }}
+                  </td>
+                  <td class="py-2.5 px-2.5 text-center">
+                    @if($donation->status === 'success')
+                      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/60">
+                        সফল
+                      </span>
+                    @elseif($donation->status === 'pending')
+                      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200/60">
+                        পেন্ডিং
+                      </span>
+                    @else
+                      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                        বাতিল
+                      </span>
+                    @endif
+                  </td>
+                </tr>
+              @endforeach
+            </tbody>
+          </table>
+        @endif
+      </div>
+    </div>
 
-          <div class="py-3 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <span class="w-8 h-8 rounded-full bg-red-50 text-[#c8102e] flex items-center justify-center shrink-0">
-                <i class="ri-heart-pulse-line"></i>
-              </span>
-              <div>
-                <p class="font-bold text-gray-900">অনুদানের ভাউচার তৈরি হয়েছে</p>
-                <p class="text-[11px] text-gray-500">বিকাশ গেটওয়ের মাধ্যমে ১,০০০ টাকা প্রাপ্তি</p>
-              </div>
-            </div>
-            <span class="text-gray-400">১ ঘণ্টা আগে</span>
-          </div>
+    {{-- Right: Recent Submissions (1 Col) --}}
+    <div class="bg-white rounded-xl p-5 border border-gray-200/90 shadow-2xs">
+      <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+        <div>
+          <h2 class="text-sm font-bold text-gray-900">
+            সাম্প্রতিক আবেদন ও নিবন্ধন
+          </h2>
+          <p class="text-[11px] text-gray-400 mt-0.5">নতুন সদস্য ও স্বেচ্ছাসেবী</p>
         </div>
       </div>
 
+      <div class="mt-3 divide-y divide-gray-100 text-xs">
+        {{-- Recent Members --}}
+        @foreach($recentMembers as $m)
+          <div class="py-2.5 flex items-center justify-between hover:bg-gray-50/50 rounded-lg px-1.5 -mx-1.5 transition">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-8 h-8 rounded-lg bg-gray-100 text-[#0b4622] font-bold flex items-center justify-center shrink-0 text-xs border border-gray-200">
+                {{ mb_substr($m->name, 0, 1) }}
+              </div>
+              <div class="truncate">
+                <a href="{{ route('admin.members.show', $m) }}" class="font-medium text-gray-900 hover:text-[#0b4622] truncate block">
+                  {{ $m->name }}
+                </a>
+                <span class="text-[10px] text-gray-400">সদস্য • {{ $m->blood_group ?? 'গ্রুপ নেই' }}</span>
+              </div>
+            </div>
+            <div class="text-right shrink-0">
+              @if($m->status)
+                <span class="inline-block text-[10px] font-medium text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+                  অনুমোদিত
+                </span>
+              @else
+                <span class="inline-block text-[10px] font-medium text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">
+                  অপেক্ষমাণ
+                </span>
+              @endif
+            </div>
+          </div>
+        @endforeach
+
+        {{-- Recent Volunteers --}}
+        @foreach($recentVolunteers as $v)
+          <div class="py-2.5 flex items-center justify-between hover:bg-gray-50/50 rounded-lg px-1.5 -mx-1.5 transition">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-8 h-8 rounded-lg bg-gray-100 text-teal-700 font-bold flex items-center justify-center shrink-0 text-xs border border-gray-200">
+                {{ mb_substr($v->name, 0, 1) }}
+              </div>
+              <div class="truncate">
+                <a href="{{ route('admin.volunteers.show', $v) }}" class="font-medium text-gray-900 hover:text-teal-700 truncate block">
+                  {{ $v->name }}
+                </a>
+                <span class="text-[10px] text-gray-400">স্বেচ্ছাসেবী • {{ $v->blood_group ?? 'গ্রুপ নেই' }}</span>
+              </div>
+            </div>
+            <div class="text-right shrink-0">
+              @if($v->status)
+                <span class="inline-block text-[10px] font-medium text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+                  অনুমোদিত
+                </span>
+              @else
+                <span class="inline-block text-[10px] font-medium text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">
+                  অপেক্ষমাণ
+                </span>
+              @endif
+            </div>
+          </div>
+        @endforeach
+
+        @if($recentMembers->isEmpty() && $recentVolunteers->isEmpty())
+          <div class="text-center py-6 text-gray-400 text-xs">
+            কোনো নিবন্ধন পাওয়া যায়নি
+          </div>
+        @endif
+      </div>
     </div>
+
   </div>
 
 </div>
 @endsection
+
+@push('scripts')
+{{-- Chart.js CDN for Dynamic Interactive Charts --}}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // 1. Monthly Donation & Registration Trends Chart
+  const trendCtx = document.getElementById('monthlyTrendChart');
+  if (trendCtx) {
+    const trendData = @json($chartData);
+
+    new Chart(trendCtx, {
+      type: 'line',
+      data: {
+        labels: trendData.labels,
+        datasets: [
+          {
+            label: 'অনুদান (৳)',
+            data: trendData.donations,
+            borderColor: '#0b4622',
+            backgroundColor: 'rgba(11, 70, 34, 0.05)',
+            borderWidth: 2,
+            tension: 0.35,
+            fill: true,
+            yAxisID: 'y',
+            pointRadius: 3,
+            pointBackgroundColor: '#0b4622'
+          },
+          {
+            label: 'সদস্য',
+            data: trendData.members,
+            borderColor: '#3b82f6',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            tension: 0.35,
+            yAxisID: 'y1',
+            pointRadius: 3,
+            pointBackgroundColor: '#3b82f6'
+          },
+          {
+            label: 'স্বেচ্ছাসেবী',
+            data: trendData.volunteers,
+            borderColor: '#14b8a6',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            tension: 0.35,
+            yAxisID: 'y1',
+            pointRadius: 3,
+            pointBackgroundColor: '#14b8a6'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            backgroundColor: '#1f2937',
+            titleFont: { size: 11 },
+            bodyFont: { size: 11 },
+            padding: 8,
+            cornerRadius: 8
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { font: { size: 10 }, color: '#6b7280' }
+          },
+          y: {
+            type: 'linear',
+            display: true,
+            position: 'left',
+            grid: { color: 'rgba(0, 0, 0, 0.04)' },
+            ticks: {
+              font: { size: 10 },
+              color: '#6b7280',
+              callback: value => '৳' + (value >= 1000 ? (value/1000) + 'k' : value)
+            }
+          },
+          y1: {
+            type: 'linear',
+            display: false,
+            position: 'right',
+            grid: { drawOnChartArea: false }
+          }
+        }
+      }
+    });
+  }
+
+  // 2. Blood Groups Donor Pool Chart
+  const bloodCtx = document.getElementById('bloodGroupChart');
+  if (bloodCtx) {
+    const bloodGroups = @json($chartData['blood_groups']);
+    const labels = Object.keys(bloodGroups);
+    const counts = Object.values(bloodGroups);
+
+    new Chart(bloodCtx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: counts,
+          backgroundColor: '#0b4622',
+          borderRadius: 6,
+          borderSkipped: false,
+          maxBarThickness: 22
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#1f2937',
+            padding: 8,
+            cornerRadius: 8,
+            callbacks: {
+              label: context => context.parsed.y + ' জন ডোনার'
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { font: { size: 10, weight: 'bold' }, color: '#374151' }
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: 'rgba(0, 0, 0, 0.04)' },
+            ticks: { stepSize: 1, font: { size: 10 }, color: '#6b7280' }
+          }
+        }
+      }
+    });
+  }
+});
+</script>
+@endpush

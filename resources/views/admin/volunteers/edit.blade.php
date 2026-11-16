@@ -1,0 +1,268 @@
+@extends('layouts.admin.admin-layout')
+
+@section('title', 'স্বেচ্ছাসেবীর তথ্য সম্পাদনা — ' . $volunteer->name)
+
+@section('content')
+<div class="max-w-4xl mx-auto space-y-6">
+  {{-- Header with Back Button --}}
+  <div class="flex items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight flex items-center gap-2.5">
+        <span class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shadow-2xs">
+          <i class="ri-edit-line"></i>
+        </span>
+        <span>স্বেচ্ছাসেবীর তথ্য সম্পাদনা</span>
+      </h1>
+      <p class="text-xs sm:text-sm text-gray-500 mt-1 font-medium">{{ $volunteer->name }}-এর প্রোফাইল তথ্য পরিবর্তন করুন</p>
+    </div>
+
+    <a href="{{ route('admin.volunteers.index') }}"
+       class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white hover:bg-gray-50 text-gray-700 text-xs sm:text-sm font-bold rounded-xl border border-gray-300 shadow-2xs transition">
+      <i class="ri-arrow-left-line"></i>
+      <span>তালিকায় ফিরে যান</span>
+    </a>
+  </div>
+
+  {{-- Edit Form Card --}}
+  <div class="bg-white rounded-2xl border border-gray-200 p-6 sm:p-8 shadow-2xs">
+    <form action="{{ route('admin.volunteers.update', $volunteer->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+      @csrf
+      @method('PUT')
+
+      {{-- Photo Upload with Live Preview --}}
+      <div class="bg-gray-50/70 border border-dashed border-gray-300 rounded-2xl p-5 text-center space-y-3">
+        <label class="block text-xs sm:text-sm font-bold text-gray-800">
+          প্রোফাইল ছবি:
+        </label>
+
+        <div class="flex flex-col items-center justify-center">
+          <div class="relative w-28 h-28 rounded-full border-4 border-white shadow-md overflow-hidden bg-gray-200 group">
+            <img id="editVolunteerPhotoPreview"
+                 src="{{ $volunteer->photo_url }}"
+                 alt="{{ $volunteer->name }}"
+                 class="w-full h-full object-cover">
+            
+            <label for="editVolunteerPhotoInput"
+                   class="absolute inset-0 bg-black/40 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer">
+              <i class="ri-camera-switch-line text-2xl"></i>
+              <span class="text-[10px] font-semibold mt-1">পরিবর্তন করুন</span>
+            </label>
+          </div>
+
+          <div class="mt-3">
+            <input type="file"
+                   id="editVolunteerPhotoInput"
+                   name="photo"
+                   accept="image/*"
+                   class="hidden"
+                   onchange="previewEditVolunteerImage(event)">
+
+            <button type="button"
+                    onclick="document.getElementById('editVolunteerPhotoInput').click()"
+                    class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white hover:bg-gray-100 text-gray-700 text-xs font-bold rounded-xl border border-gray-300 shadow-2xs transition">
+              <i class="ri-upload-cloud-2-line text-base text-[#0b4622]"></i>
+              <span>নতুন ছবি নির্বাচন করুন</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {{-- Fields Grid --}}
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {{-- Full Name --}}
+        <div class="space-y-1">
+          <label for="name" class="block text-xs font-bold text-gray-700">
+            পূর্ণ নাম <span class="text-red-500">*</span>
+          </label>
+          <input type="text"
+                 id="name"
+                 name="name"
+                 value="{{ old('name', $volunteer->name) }}"
+                 required
+                 class="w-full px-3.5 py-2.5 text-xs sm:text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-[#0b4622]">
+          @error('name')
+            <p class="text-xs text-red-500 mt-0.5">{{ $message }}</p>
+          @enderror
+        </div>
+
+        {{-- ID Card Number --}}
+        <div class="space-y-1">
+          <label for="id_card_number" class="block text-xs font-bold text-gray-700">
+            আইডি কার্ড নম্বর (ID Card No.)
+          </label>
+          <input type="text"
+                 id="id_card_number"
+                 name="id_card_number"
+                 value="{{ old('id_card_number', $volunteer->id_card_number) }}"
+                 placeholder="উদা: ASV-2026-0001"
+                 class="w-full px-3.5 py-2.5 text-xs sm:text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-[#0b4622]">
+          <p class="text-[11px] text-gray-400">খালি রেখে সেভ করলে স্বয়ংক্রিয় ইউনিক নম্বর বজায় থাকবে</p>
+          @error('id_card_number')
+            <p class="text-xs text-red-500 mt-0.5">{{ $message }}</p>
+          @enderror
+        </div>
+
+        {{-- Phone Number --}}
+        <div class="space-y-1">
+          <label for="phone" class="block text-xs font-bold text-gray-700">
+            মোবাইল নম্বর <span class="text-red-500">*</span>
+          </label>
+          <input type="tel"
+                 id="phone"
+                 name="phone"
+                 value="{{ old('phone', $volunteer->phone) }}"
+                 required
+                 class="w-full px-3.5 py-2.5 text-xs sm:text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-[#0b4622]">
+          @error('phone')
+            <p class="text-xs text-red-500 mt-0.5">{{ $message }}</p>
+          @enderror
+        </div>
+
+        {{-- Email Address --}}
+        <div class="space-y-1">
+          <label for="email" class="block text-xs font-bold text-gray-700">
+            ইমেইল অ্যাড্রেস
+          </label>
+          <input type="email"
+                 id="email"
+                 name="email"
+                 value="{{ old('email', $volunteer->email) }}"
+                 class="w-full px-3.5 py-2.5 text-xs sm:text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-[#0b4622]">
+          @error('email')
+            <p class="text-xs text-red-500 mt-0.5">{{ $message }}</p>
+          @enderror
+        </div>
+
+        {{-- Blood Group --}}
+        <div class="space-y-1">
+          <label for="blood_group" class="block text-xs font-bold text-gray-700">
+            রক্তের গ্রুপ
+          </label>
+          <select id="blood_group"
+                  name="blood_group"
+                  class="w-full px-3.5 py-2.5 text-xs sm:text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-[#0b4622] bg-white">
+            <option value="">-- নির্বাচন করুন --</option>
+            <option value="A+" {{ old('blood_group', $volunteer->blood_group) === 'A+' ? 'selected' : '' }}>A+ (পজিটিভ)</option>
+            <option value="A-" {{ old('blood_group', $volunteer->blood_group) === 'A-' ? 'selected' : '' }}>A- (নেগেটিভ)</option>
+            <option value="B+" {{ old('blood_group', $volunteer->blood_group) === 'B+' ? 'selected' : '' }}>B+ (পজিটিভ)</option>
+            <option value="B-" {{ old('blood_group', $volunteer->blood_group) === 'B-' ? 'selected' : '' }}>B- (নেগেটিভ)</option>
+            <option value="AB+" {{ old('blood_group', $volunteer->blood_group) === 'AB+' ? 'selected' : '' }}>AB+ (পজিটিভ)</option>
+            <option value="AB-" {{ old('blood_group', $volunteer->blood_group) === 'AB-' ? 'selected' : '' }}>AB- (নেগেটিভ)</option>
+            <option value="O+" {{ old('blood_group', $volunteer->blood_group) === 'O+' ? 'selected' : '' }}>O+ (পজিটিভ)</option>
+            <option value="O-" {{ old('blood_group', $volunteer->blood_group) === 'O-' ? 'selected' : '' }}>O- (নেগেটিভ)</option>
+          </select>
+        </div>
+
+        {{-- Status --}}
+        <div class="space-y-1">
+          <label for="status" class="block text-xs font-bold text-gray-700">
+            স্ট্যাটাস ও অনুমোদন <span class="text-red-500">*</span>
+          </label>
+          <select id="status"
+                  name="status"
+                  class="w-full px-3.5 py-2.5 text-xs sm:text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-[#0b4622] bg-white">
+            <option value="1" {{ old('status', $volunteer->status ? '1' : '0') === '1' ? 'selected' : '' }}>অনুমোদিত ও সক্রিয় (Active)</option>
+            <option value="0" {{ old('status', $volunteer->status ? '1' : '0') === '0' ? 'selected' : '' }}>অপেক্ষমাণ (Pending Approval)</option>
+          </select>
+        </div>
+
+        {{-- Address --}}
+        <div class="space-y-1 sm:col-span-2">
+          <label for="address" class="block text-xs font-bold text-gray-700">
+            বর্তমান ঠিকানা <span class="text-red-500">*</span>
+          </label>
+          <textarea id="address"
+                    name="address"
+                    rows="3"
+                    required
+                    class="w-full px-3.5 py-2 text-xs sm:text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-[#0b4622]">{{ old('address', $volunteer->address) }}</textarea>
+          @error('address')
+            <p class="text-xs text-red-500 mt-0.5">{{ $message }}</p>
+          @enderror
+        </div>
+
+        {{-- Authorized Signature Upload --}}
+        <div class="space-y-1 sm:col-span-2 bg-gray-50/70 p-4 rounded-xl border border-dashed border-gray-300">
+          <label class="block text-xs font-bold text-gray-700 mb-1">
+            অনুমোদিত কর্মকর্তার স্বাক্ষর (আইডি কার্ডে প্রদর্শিত হবে)
+          </label>
+          <div class="flex items-center gap-4">
+            <div class="w-36 h-14 bg-white border border-gray-200 rounded-lg flex items-center justify-center overflow-hidden p-1 shadow-2xs">
+              <img id="editVolunteerSignaturePreview"
+                   src="{{ $volunteer->signature_url ?? '' }}"
+                   alt="স্বাক্ষর প্রিভিউ"
+                   class="max-h-full max-w-full object-contain {{ $volunteer->signature ? '' : 'hidden' }}">
+              <span id="editVolunteerSignaturePlaceholder" class="text-[11px] text-gray-400 font-medium {{ $volunteer->signature ? 'hidden' : '' }}">
+                স্বাক্ষর নেই
+              </span>
+            </div>
+            <div>
+              <input type="file" id="editVolunteerSignatureInput" name="signature" accept="image/*" class="hidden" onchange="previewEditVolunteerSignature(event)">
+              <button type="button" onclick="document.getElementById('editVolunteerSignatureInput').click()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-gray-100 text-gray-700 text-xs font-semibold rounded-lg border border-gray-300 shadow-2xs">
+                <i class="ri-file-upload-line text-blue-600"></i>
+                <span>নতুন স্বাক্ষর আপলোড</span>
+              </button>
+              <p class="text-[10px] text-gray-400 mt-1">স্বচ্ছ ব্যাকগ্রাউন্ডের PNG বা স্পষ্ট স্বাক্ষর ছবি দিন (সর্বোচ্চ ২MB)</p>
+            </div>
+          </div>
+          @error('signature')
+            <p class="text-xs text-red-500 mt-0.5">{{ $message }}</p>
+          @enderror
+        </div>
+
+        {{-- Admin Notes --}}
+        <div class="space-y-1 sm:col-span-2">
+          <label for="notes" class="block text-xs font-bold text-gray-700">
+            অ্যাডমিন মন্তব্য / বিশেষ নোট (ঐচ্ছিক)
+          </label>
+          <textarea id="notes"
+                    name="notes"
+                    rows="2"
+                    class="w-full px-3.5 py-2 text-xs sm:text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-[#0b4622]">{{ old('notes', $volunteer->notes) }}</textarea>
+        </div>
+      </div>
+
+      {{-- Action Buttons --}}
+      <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+        <a href="{{ route('admin.volunteers.index') }}"
+           class="px-5 py-2.5 rounded-xl border border-gray-300 hover:bg-gray-100 text-gray-700 text-xs sm:text-sm font-semibold transition">
+          বাতিল
+        </a>
+        <button type="submit"
+                class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition flex items-center gap-1.5 cursor-pointer">
+          <i class="ri-save-line text-base"></i>
+          <span>আপডেট সংরক্ষণ করুন</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function previewEditVolunteerImage(event) {
+    const input = event.target;
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('editVolunteerPhotoPreview').src = e.target.result;
+      }
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  function previewEditVolunteerSignature(event) {
+    const input = event.target;
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.getElementById('editVolunteerSignaturePreview');
+        const placeholder = document.getElementById('editVolunteerSignaturePlaceholder');
+        preview.src = e.target.result;
+        preview.classList.remove('hidden');
+        if (placeholder) placeholder.classList.add('hidden');
+      }
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
+@endsection

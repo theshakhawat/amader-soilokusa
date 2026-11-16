@@ -38,6 +38,16 @@ Route::get('/page/aboutme', function () {
     return redirect()->route('about.us');
 });
 
+// Public Volunteer Recruitment & Registration (স্বেচ্ছাসেবী কর্মী নিয়োগ ও আবেদন)
+Route::get('/volunteers/apply', [\App\Http\Controllers\VolunteerRegistrationController::class, 'create'])->name('volunteers.apply');
+Route::post('/volunteers/apply', [\App\Http\Controllers\VolunteerRegistrationController::class, 'store'])->name('volunteers.store');
+Route::get('/volunteer/{slug}', [\App\Http\Controllers\VolunteerRegistrationController::class, 'showCard'])->name('volunteers.card');
+
+// Public Member Recruitment & Registration (সদস্য নিয়োগ ও আবেদন)
+Route::get('/members/apply', [\App\Http\Controllers\MemberRegistrationController::class, 'create'])->name('members.apply');
+Route::post('/members/apply', [\App\Http\Controllers\MemberRegistrationController::class, 'store'])->name('members.store');
+Route::get('/member/{slug}', [\App\Http\Controllers\MemberRegistrationController::class, 'showCard'])->name('members.card');
+
 // Public Page: Person Messages (উপদেষ্টা / পৃষ্ঠপোষক / সভাপতি / কার্যনির্বাহী বাণী)
 Route::get('/message/{type}', [HomeController::class, 'personMessage'])->name('person-message.show');
 
@@ -181,13 +191,13 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     // Role Management (রোল ব্যবস্থাপনা)
     Route::get('/roles', [RolePermissionController::class, 'index'])->name('roles.index');
     Route::post('/roles', [RolePermissionController::class, 'storeRole'])->name('roles.store');
+    Route::put('/roles/{role}', [RolePermissionController::class, 'updateRole'])->name('roles.update');
+    Route::get('/roles/{role}/permissions', [RolePermissionController::class, 'editRolePermissions'])->name('roles.permissions');
     Route::put('/roles/{role}/permissions', [RolePermissionController::class, 'updateRolePermissions'])->name('roles.permissions.update');
     Route::delete('/roles/{role}', [RolePermissionController::class, 'destroyRole'])->name('roles.destroy');
 
-    // Permission Management (পারমিশন ব্যবস্থাপনা)
+    // Permission Management (পারমিশন ক্যাটালগ ও তালিকা - সুরক্ষিত, ডিলিট অপশন নেই)
     Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index');
-    Route::post('/permissions', [PermissionController::class, 'store'])->name('permissions.store');
-    Route::delete('/permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
     // Customization: Logo & Branding (লোগো ও ব্র্যান্ডিং)
     Route::get('/customization/branding', [BrandingSettingController::class, 'index'])->name('customization.branding');
     Route::put('/customization/branding', [BrandingSettingController::class, 'update'])->name('customization.branding.update');
@@ -284,9 +294,29 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::resource('offices', \App\Http\Controllers\Admin\OfficeController::class)->names('offices')->except(['show']);
 
     // Donation Collection Management (অনুদান সংগ্রহ ও তালিকা)
+    Route::get('donations/export', [\App\Http\Controllers\Admin\DonationController::class, 'export'])->name('donations.export');
     Route::resource('donations', \App\Http\Controllers\Admin\DonationController::class)->names('donations')->except(['edit', 'update']);
 
     // Unions Management (ইউনিয়ন পরিষদ পরিচিতি ও ব্যবস্থাপনা)
     Route::patch('unions/{union}/status', [\App\Http\Controllers\Admin\UnionController::class, 'toggleStatus'])->name('unions.status');
     Route::resource('unions', \App\Http\Controllers\Admin\UnionController::class)->names('unions');
+
+    // Volunteers Management (স্বেচ্ছাসেবী কর্মী ব্যবস্থাপনা)
+    Route::get('volunteers/export', [\App\Http\Controllers\Admin\VolunteerController::class, 'export'])->name('volunteers.export');
+    Route::patch('volunteers/{volunteer}/status', [\App\Http\Controllers\Admin\VolunteerController::class, 'toggleStatus'])->name('volunteers.status');
+    Route::patch('volunteers/{volunteer}/approve', [\App\Http\Controllers\Admin\VolunteerController::class, 'approve'])->name('volunteers.approve');
+    Route::resource('volunteers', \App\Http\Controllers\Admin\VolunteerController::class)->names('volunteers');
+
+    // Members Management (সদস্য ব্যবস্থাপনা)
+    Route::get('members/export', [\App\Http\Controllers\Admin\MemberController::class, 'export'])->name('members.export');
+    Route::patch('members/{member}/status', [\App\Http\Controllers\Admin\MemberController::class, 'toggleStatus'])->name('members.status');
+    Route::patch('members/{member}/approve', [\App\Http\Controllers\Admin\MemberController::class, 'approve'])->name('members.approve');
+    Route::resource('members', \App\Http\Controllers\Admin\MemberController::class)->names('members');
+
+    // Admin Notifications System (নোটিফিকেশন ব্যবস্থাপনা)
+    Route::get('notifications/{id}/read', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'read'])->name('notifications.read');
+    Route::post('notifications/mark-all-read', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
+
+    // Admin Global Quick Search (গ্লোবাল দ্রুত অনুসন্ধান)
+    Route::get('quick-search', [\App\Http\Controllers\Admin\AdminSearchController::class, 'search'])->name('quick-search');
 });

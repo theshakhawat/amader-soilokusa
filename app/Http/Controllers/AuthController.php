@@ -21,7 +21,7 @@ class AuthController extends Controller
     public function showLoginForm(): View|RedirectResponse
     {
         if (Auth::check()) {
-            return redirect()->route('home');
+            return redirect()->route('admin.dashboard');
         }
 
         return view('auth.login');
@@ -78,7 +78,13 @@ class AuthController extends Controller
         RateLimiter::clear($throttleKey);
         $request->session()->regenerate();
 
-        return redirect()->intended(route('home'))->with('success', 'স্বাগতম! আপনি সফলভাবে লগইন করেছেন।');
+        $intended = $request->session()->get('url.intended');
+        if (empty($intended) || $intended === url('/') || $intended === route('home')) {
+            $request->session()->forget('url.intended');
+            return redirect()->route('admin.dashboard')->with('success', 'স্বাগতম! আপনি সফলভাবে অ্যাডমিন প্যানেলে লগইন করেছেন।');
+        }
+
+        return redirect()->intended(route('admin.dashboard'))->with('success', 'স্বাগতম! আপনি সফলভাবে অ্যাডমিন প্যানেলে লগইন করেছেন।');
     }
 
     /**
@@ -87,7 +93,7 @@ class AuthController extends Controller
     public function showRegistrationForm(): View|RedirectResponse
     {
         if (Auth::check()) {
-            return redirect()->route('home');
+            return redirect()->route('admin.dashboard');
         }
 
         return view('auth.register');
@@ -139,7 +145,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('home')->with('success', 'অভিনন্দন! আপনার অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে এবং আপনি সরাসরি লগইন হয়েছেন।');
+        return redirect()->route('admin.dashboard')->with('success', 'অভিনন্দন! আপনার অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে এবং আপনি সরাসরি অ্যাডমিন প্যানেলে প্রবেশ করেছেন।');
     }
 
     /**
