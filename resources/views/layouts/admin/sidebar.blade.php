@@ -50,7 +50,7 @@
   </div>
 
   <!-- Navigation Menu List with Custom Scrollbar -->
-  <nav class="flex-1 overflow-y-auto px-3.5 py-3 space-y-4 text-sm custom-scrollbar">
+  <nav id="admin-sidebar-nav" class="flex-1 overflow-y-auto px-3.5 py-3 space-y-4 text-sm custom-scrollbar">
 
     <!-- ========================================================================= -->
     <!-- ১. ওভারভিউ / Overview                                                     -->

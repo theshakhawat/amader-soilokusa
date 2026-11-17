@@ -357,6 +357,39 @@
           closeGlobalDeleteModal();
         }
       });
+
+      // =========================================================================
+      // Persistent Admin Sidebar Scroll Position
+      // =========================================================================
+      const sidebarNav = document.getElementById('admin-sidebar-nav');
+      if (sidebarNav) {
+        const STORAGE_KEY = 'admin_sidebar_scroll_top';
+
+        // 1. Restore scroll position on page load
+        const savedScrollTop = sessionStorage.getItem(STORAGE_KEY);
+        if (savedScrollTop !== null) {
+          sidebarNav.scrollTop = parseInt(savedScrollTop, 10);
+        } else {
+          // If no saved scroll, ensure active menu item is comfortably visible
+          const activeMenuItem = sidebarNav.querySelector('.bg-\\[\\#0b4622\\], .bg-gray-100\\/70');
+          if (activeMenuItem) {
+            activeMenuItem.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+          }
+        }
+
+        // 2. Save scroll position on scroll (debounced) and before page unload
+        let scrollTimeout;
+        sidebarNav.addEventListener('scroll', function() {
+          clearTimeout(scrollTimeout);
+          scrollTimeout = setTimeout(function() {
+            sessionStorage.setItem(STORAGE_KEY, sidebarNav.scrollTop);
+          }, 80);
+        }, { passive: true });
+
+        window.addEventListener('beforeunload', function() {
+          sessionStorage.setItem(STORAGE_KEY, sidebarNav.scrollTop);
+        });
+      }
     });
 
     // Global customConfirm helper that replaces window.confirm with Custom Modal
