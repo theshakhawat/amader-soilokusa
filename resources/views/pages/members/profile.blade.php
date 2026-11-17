@@ -27,30 +27,32 @@
   </nav>
 
   {{-- Action Controls Toolbar --}}
-  <div class="bg-white rounded-2xl border border-gray-200/90 p-4 shadow-xs flex flex-wrap items-center justify-between gap-3">
+  <div class="bg-white rounded-2xl border border-gray-200/90 p-3 sm:p-4 shadow-xs flex items-center justify-between gap-2.5">
     <a href="{{ route('members.index') }}"
-       class="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs sm:text-sm font-semibold rounded-xl transition cursor-pointer">
-      <i class="ri-arrow-left-line text-base"></i>
-      <span>সকল সদস্য</span>
+       class="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs sm:text-sm font-bold rounded-xl transition cursor-pointer"
+       title="সকল সদস্য তালিকায় ফিরুন">
+      <i class="ri-arrow-left-line text-sm sm:text-base"></i>
+      <span class="hidden xs:inline sm:inline">সকল সদস্য</span>
     </a>
 
-    <div class="flex items-center gap-2.5">
+    <div class="flex items-center gap-2">
       {{-- ID Card Full-screen Print View Button --}}
       <a href="{{ $printCardUrl }}"
          target="_blank"
-         class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0b4622] hover:bg-[#08351a] text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs hover:shadow transition">
+         class="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 bg-[#0b4622] hover:bg-[#08351a] text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs hover:shadow transition"
+         title="আইডি কার্ড দেখুন ও প্রিন্ট করুন">
         <i class="ri-id-card-line text-base"></i>
-        <span>ডিজিটাল আইডি কার্ড দেখুন ও প্রিন্ট করুন</span>
+        <span>আইডি কার্ড</span>
       </a>
 
       {{-- Share / Copy Link --}}
       <button type="button"
               onclick="copyMemberProfileUrl()"
               id="btnCopyMemberUrl"
-              class="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs sm:text-sm font-semibold rounded-xl transition cursor-pointer"
+              class="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-2 sm:py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs sm:text-sm font-semibold rounded-xl transition cursor-pointer"
               title="প্রোফাইল লিংক কপি করুন">
         <i class="ri-share-forward-line text-base"></i>
-        <span id="copyMemberUrlText">শেয়ার লিংক</span>
+        <span id="copyMemberUrlText" class="hidden xs:inline sm:inline">শেয়ার</span>
       </button>
     </div>
   </div>
@@ -58,30 +60,23 @@
   {{-- Member Details Main Card --}}
   <div class="bg-white rounded-3xl border border-gray-200/90 shadow-sm overflow-hidden p-6 sm:p-9 space-y-7">
     
-    {{-- Header: Avatar, Name & ID (Clean, No extra badges) --}}
-    <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5 pb-6 border-b border-gray-100 text-center sm:text-left">
-      {{-- Profile Photo --}}
-      <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 border-[#0b4622]/20 shadow-md ring-4 ring-gray-50 shrink-0 bg-gray-100">
+    {{-- Header: Centered Avatar, Name & ID (No top QR, clean centered layout) --}}
+    <div class="flex flex-col items-center justify-center text-center gap-4 pb-6 border-b border-gray-100">
+      {{-- Profile Photo Centered --}}
+      <div class="w-32 h-32 sm:w-36 sm:h-36 rounded-3xl overflow-hidden border-2 border-[#0b4622]/20 shadow-lg ring-4 ring-emerald-50/80 shrink-0 bg-gray-100 mx-auto">
         <img src="{{ $member->photo_url }}" alt="{{ $member->name }}" class="w-full h-full object-cover">
       </div>
 
-      {{-- Name & ID --}}
-      <div class="flex-1 space-y-1.5">
+      {{-- Name & ID Below Image --}}
+      <div class="space-y-2">
         <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
           {{ $member->name }}
         </h1>
-        <p class="text-xs sm:text-sm font-mono">
-          <span class="font-bold text-[#0b4622] bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200">ID: {{ $member->card_id_number }}</span>
-        </p>
-      </div>
-
-      {{-- QR Code (Directly links to this public page) --}}
-      <div class="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-2xl border border-gray-200 shrink-0">
-        <div id="memberQrContainer" class="p-1 bg-white rounded-xl shadow-2xs border border-gray-200" style="min-width: 84px; min-height: 84px; display: flex; align-items: center; justify-content: center;"></div>
-        <span class="text-[10px] font-bold text-gray-500 mt-1.5 flex items-center gap-1">
-          <i class="ri-qr-code-line text-xs text-[#0b4622]"></i>
-          প্রোফাইল কিউআর কোড
-        </span>
+        <div>
+          <span class="inline-block font-mono font-bold text-[#0b4622] bg-emerald-50 px-4 py-1.5 rounded-xl border border-emerald-200 text-xs sm:text-sm">
+            ID: {{ $member->card_id_number }}
+          </span>
+        </div>
       </div>
     </div>
 
@@ -180,26 +175,48 @@
       </div>
     </div>
 
+    {{-- Bottom Dedicated Large QR Code Card (Specially designed for Mobile & Overview) --}}
+    <div class="mt-8 pt-6 border-t border-gray-100 flex flex-col items-center justify-center text-center space-y-3 bg-gray-50/70 rounded-2xl p-6 border border-gray-200/80">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[#0b4622] text-xs font-bold">
+        <i class="ri-qr-scan-2-line text-sm"></i>
+        <span>ডিজিটাল প্রোফাইল কিউআর কোড</span>
+      </div>
+
+      {{-- Big QR Container --}}
+      <div class="p-3 bg-white rounded-2xl shadow-md border-2 border-gray-200/90 inline-block">
+        <div id="memberQrContainerBottom" style="min-width: 140px; min-height: 140px; display: flex; align-items: center; justify-content: center;"></div>
+      </div>
+
+      <div class="max-w-xs space-y-1">
+        <p class="text-xs font-extrabold text-gray-800">
+          যেকোনো স্মার্টফোন ক্যামেরা দিয়ে স্ক্যান করুন
+        </p>
+        <p class="text-[11px] text-gray-500 leading-relaxed">
+          এই কিউআর কোডটি স্ক্যান করলে সরাসরি <strong>{{ $member->name }}</strong>-এর অনলাইন ভেরিফায়েড প্রোফাইল পেজে নিয়ে আসবে।
+        </p>
+      </div>
+    </div>
+
   </div>
 
 </div>
 
 <script>
-  // Render QR Code pointing directly to this profile page
+  // Render Bottom Large QR Code pointing directly to this profile page
   function renderMemberProfileQr() {
-    const qrContainer = document.getElementById('memberQrContainer');
-    if (!qrContainer) return;
-    qrContainer.innerHTML = '';
-
     const profileUrl = "{{ $publicProfileUrl }}";
+    const container = document.getElementById('memberQrContainerBottom');
+    if (!container) return;
+    container.innerHTML = '';
+    const size = 140;
 
     // 1. Try local qrcode.js
     if (typeof QRCode !== 'undefined') {
       try {
-        new QRCode(qrContainer, {
+        new QRCode(container, {
           text: profileUrl,
-          width: 76,
-          height: 76,
+          width: size,
+          height: size,
           colorDark: "#0b4622",
           colorLight: "#ffffff",
           correctLevel: QRCode.CorrectLevel.M
@@ -212,12 +229,12 @@
 
     // 2. Reliable fallback image QR API
     const img = document.createElement('img');
-    img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=76x76&color=0b4622&bgcolor=ffffff&data=' + encodeURIComponent(profileUrl);
+    img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=' + size + 'x' + size + '&color=0b4622&bgcolor=ffffff&data=' + encodeURIComponent(profileUrl);
     img.alt = 'QR Code';
-    img.width = 76;
-    img.height = 76;
-    img.className = 'rounded-lg';
-    qrContainer.appendChild(img);
+    img.width = size;
+    img.height = size;
+    img.className = 'rounded-lg mx-auto';
+    container.appendChild(img);
   }
 
   if (document.readyState === 'loading') {
@@ -231,7 +248,7 @@
       const textSpan = document.getElementById('copyMemberUrlText');
       textSpan.textContent = 'কপি হয়েছে!';
       setTimeout(() => {
-        textSpan.textContent = 'শেয়ার লিংক';
+        textSpan.textContent = 'শেয়ার';
       }, 2500);
     });
   }

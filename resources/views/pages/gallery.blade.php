@@ -277,16 +277,26 @@ function switchGalleryTab(tab) {
   const btnPhoto = document.getElementById('tab-btn-photo');
   const btnVideo = document.getElementById('tab-btn-video');
 
-  if (tab === 'photo') {
+  if (tab === 'photo' || tab === 'image') {
     photoContent.classList.remove('hidden');
     videoContent.classList.add('hidden');
     btnPhoto.className = 'flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition bg-[#0b4622] text-white shadow-xs';
     btnVideo.className = 'flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition text-gray-600 hover:text-gray-900';
+    
+    // Update URL query parameter without page reload
+    const url = new URL(window.location);
+    url.searchParams.set('type', 'image');
+    history.pushState({ type: 'image' }, '', url);
   } else {
     photoContent.classList.add('hidden');
     videoContent.classList.remove('hidden');
     btnVideo.className = 'flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition bg-[#0b4622] text-white shadow-xs';
     btnPhoto.className = 'flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition text-gray-600 hover:text-gray-900';
+    
+    // Update URL query parameter without page reload
+    const url = new URL(window.location);
+    url.searchParams.set('type', 'video');
+    history.pushState({ type: 'video' }, '', url);
   }
 }
 

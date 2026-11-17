@@ -264,8 +264,13 @@ class HomeController extends Controller
      */
     public function gallery(Request $request): View
     {
-        $activeTab = $request->query('tab', 'photo');
-        if (!in_array($activeTab, ['photo', 'video'])) {
+        // Support ?type=image / ?type=photo / ?type=video (also ?tab=...)
+        $requestedType = strtolower($request->query('type', $request->query('tab', 'photo')));
+        if (in_array($requestedType, ['image', 'images', 'photo', 'photos'])) {
+            $activeTab = 'photo';
+        } elseif (in_array($requestedType, ['video', 'videos'])) {
+            $activeTab = 'video';
+        } else {
             $activeTab = 'photo';
         }
 
