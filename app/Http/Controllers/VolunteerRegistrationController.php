@@ -15,6 +15,35 @@ use Illuminate\View\View;
 class VolunteerRegistrationController extends Controller
 {
     /**
+     * Show public list of active/approved volunteers (স্বেচ্ছাসেবী কর্মীগণ).
+     */
+    public function index(Request $request): View
+    {
+        $query = Volunteer::approved()->latest('approved_at')->latest('id');
+
+        if ($request->filled('search')) {
+            $searchTerm = trim($request->search);
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', "%{$searchTerm}%")
+                  ->orWhere('phone', 'like', "%{$searchTerm}%")
+                  ->orWhere('email', 'like', "%{$searchTerm}%")
+                  ->orWhere('blood_group', 'like', "%{$searchTerm}%")
+                  ->orWhere('address', 'like', "%{$searchTerm}%")
+                  ->orWhere('id_card_number', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        if ($request->filled('blood_group')) {
+            $query->where('blood_group', $request->blood_group);
+        }
+
+        $volunteers = $query->paginate(12)->withQueryString();
+        $totalActive = Volunteer::approved()->count();
+
+        return view('pages.volunteers.index', compact('volunteers', 'totalActive'));
+    }
+
+    /**
      * Show volunteer registration application form.
      */
     public function create(): View
@@ -114,7 +143,7 @@ class VolunteerRegistrationController extends Controller
     }
 
     /**
-     * Display public volunteer profile & digital ID card with QR code (UUID supported).
+     * Display public volunteer profile details page with table view.
      */
     public function showCard(string $identifier): View
     {
@@ -124,6 +153,20 @@ class VolunteerRegistrationController extends Controller
             return view('pages.volunteers.pending-card', compact('volunteer'));
         }
 
-        return view('pages.volunteers.id-card', compact('volunteer'));
+        return view('pages.volunteers.profile', compact('volunteer'));
+    }
+
+    /**
+     * Dedicated clean full-screen Volunteer ID Card for printing / downloading (without navbar, sidebar, footer).
+     */
+    public function printCard(string $identifier): View
+    {
+        $volunteer = Volunteer::where('uuid', $identifier)->orWhere('slug', $identifier)->firstOrFail();
+
+        if (!$volunteer->status) {
+            return view('pages.volunteers.pending-card', compact('volunteer'));
+        }
+
+        return view('pages.volunteers.print-card', compact('volunteer'));
     }
 }

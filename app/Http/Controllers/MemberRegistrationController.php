@@ -15,6 +15,35 @@ use Illuminate\View\View;
 class MemberRegistrationController extends Controller
 {
     /**
+     * Show public list of active/approved members (সদস্যগণ).
+     */
+    public function index(Request $request): View
+    {
+        $query = Member::approved()->latest('approved_at')->latest('id');
+
+        if ($request->filled('search')) {
+            $searchTerm = trim($request->search);
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', "%{$searchTerm}%")
+                  ->orWhere('phone', 'like', "%{$searchTerm}%")
+                  ->orWhere('email', 'like', "%{$searchTerm}%")
+                  ->orWhere('blood_group', 'like', "%{$searchTerm}%")
+                  ->orWhere('address', 'like', "%{$searchTerm}%")
+                  ->orWhere('id_card_number', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        if ($request->filled('blood_group')) {
+            $query->where('blood_group', $request->blood_group);
+        }
+
+        $members = $query->paginate(12)->withQueryString();
+        $totalActive = Member::approved()->count();
+
+        return view('pages.members.index', compact('members', 'totalActive'));
+    }
+
+    /**
      * Show member registration application form.
      */
     public function create(): View
@@ -114,7 +143,7 @@ class MemberRegistrationController extends Controller
     }
 
     /**
-     * Display public member profile & digital member ID card with QR code (UUID supported).
+     * Display public member profile details page with table view.
      */
     public function showCard(string $identifier): View
     {
@@ -124,6 +153,20 @@ class MemberRegistrationController extends Controller
             return view('pages.members.pending-card', compact('member'));
         }
 
-        return view('pages.members.id-card', compact('member'));
+        return view('pages.members.profile', compact('member'));
+    }
+
+    /**
+     * Dedicated clean full-screen Member ID Card for printing / downloading (without navbar, sidebar, footer).
+     */
+    public function printCard(string $identifier): View
+    {
+        $member = Member::where('uuid', $identifier)->orWhere('slug', $identifier)->firstOrFail();
+
+        if (!$member->status) {
+            return view('pages.members.pending-card', compact('member'));
+        }
+
+        return view('pages.members.print-card', compact('member'));
     }
 }

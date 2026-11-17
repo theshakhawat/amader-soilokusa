@@ -38,15 +38,19 @@ Route::get('/page/aboutme', function () {
     return redirect()->route('about.us');
 });
 
-// Public Volunteer Recruitment & Registration (স্বেচ্ছাসেবী কর্মী নিয়োগ ও আবেদন)
+// Public Volunteer Recruitment & Listing (স্বেচ্ছাসেবী কর্মীগণ ও আবেদন)
+Route::get('/volunteers', [\App\Http\Controllers\VolunteerRegistrationController::class, 'index'])->name('volunteers.index');
 Route::get('/volunteers/apply', [\App\Http\Controllers\VolunteerRegistrationController::class, 'create'])->name('volunteers.apply');
 Route::post('/volunteers/apply', [\App\Http\Controllers\VolunteerRegistrationController::class, 'store'])->name('volunteers.store');
 Route::get('/volunteer/{slug}', [\App\Http\Controllers\VolunteerRegistrationController::class, 'showCard'])->name('volunteers.card');
+Route::get('/volunteer/{slug}/print-card', [\App\Http\Controllers\VolunteerRegistrationController::class, 'printCard'])->name('volunteers.print-card');
 
-// Public Member Recruitment & Registration (সদস্য নিয়োগ ও আবেদন)
+// Public Member Recruitment & Listing (সদস্যগণ ও আবেদন)
+Route::get('/members', [\App\Http\Controllers\MemberRegistrationController::class, 'index'])->name('members.index');
 Route::get('/members/apply', [\App\Http\Controllers\MemberRegistrationController::class, 'create'])->name('members.apply');
 Route::post('/members/apply', [\App\Http\Controllers\MemberRegistrationController::class, 'store'])->name('members.store');
 Route::get('/member/{slug}', [\App\Http\Controllers\MemberRegistrationController::class, 'showCard'])->name('members.card');
+Route::get('/member/{slug}/print-card', [\App\Http\Controllers\MemberRegistrationController::class, 'printCard'])->name('members.print-card');
 
 // Public Page: Person Messages (উপদেষ্টা / পৃষ্ঠপোষক / সভাপতি / কার্যনির্বাহী বাণী)
 Route::get('/message/{type}', [HomeController::class, 'personMessage'])->name('person-message.show');

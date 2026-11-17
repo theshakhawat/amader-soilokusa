@@ -18,6 +18,8 @@
     ['label' => 'নোটিশ', 'url' => '#notice-section'],
     ['label' => 'কার্যক্রম', 'url' => '#events-section'],
     ['label' => 'গ্যালারি', 'url' => '#gallery-section'],
+    ['label' => 'সদস্যগণ', 'url' => '/members'],
+    ['label' => 'স্বেচ্ছাসেবী কর্মীগণ', 'url' => '/volunteers'],
   ];
 
   $importantLinksTitle = $footerSetting->important_links_title ?? 'গুরুত্বপূর্ণ লিংক';
@@ -90,16 +92,42 @@
       <div class="lg:col-span-2">
         <h3 class="text-sm sm:text-[16px] font-extrabold text-white mb-2.5 sm:mb-3.5">{{ $quickLinksTitle }}</h3>
         <ul class="space-y-1.5 sm:space-y-2 text-xs sm:text-[13.5px] text-white/85">
+          @php
+            $hasMemberQuickLink = false;
+            $hasVolunteerQuickLink = false;
+          @endphp
           @foreach($quickLinks as $link)
             @if(!empty($link['label']))
-            <li>
-              <a href="{{ $link['url'] ?? '#' }}" class="hover:text-white inline-flex items-center gap-1.5 transition">
-                <i class="ri-arrow-right-s-line text-emerald-300"></i>
-                <span>{{ $link['label'] }}</span>
-              </a>
-            </li>
+              @php
+                if (str_contains($link['label'], 'সদস্যগণ')) $hasMemberQuickLink = true;
+                if (str_contains($link['label'], 'স্বেচ্ছাসেবী')) $hasVolunteerQuickLink = true;
+              @endphp
+              <li>
+                <a href="{{ $link['url'] ?? '#' }}" class="hover:text-white inline-flex items-center gap-1.5 transition">
+                  <i class="ri-arrow-right-s-line text-emerald-300"></i>
+                  <span>{{ $link['label'] }}</span>
+                </a>
+              </li>
             @endif
           @endforeach
+
+          @if(!$hasMemberQuickLink)
+            <li>
+              <a href="{{ route('members.index') }}" class="hover:text-white inline-flex items-center gap-1.5 transition">
+                <i class="ri-arrow-right-s-line text-emerald-300"></i>
+                <span>সদস্যগণ</span>
+              </a>
+            </li>
+          @endif
+
+          @if(!$hasVolunteerQuickLink)
+            <li>
+              <a href="{{ route('volunteers.index') }}" class="hover:text-white inline-flex items-center gap-1.5 transition">
+                <i class="ri-arrow-right-s-line text-emerald-300"></i>
+                <span>স্বেচ্ছাসেবী কর্মীগণ</span>
+              </a>
+            </li>
+          @endif
         </ul>
       </div>
 

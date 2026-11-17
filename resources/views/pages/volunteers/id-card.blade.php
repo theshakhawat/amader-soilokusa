@@ -76,15 +76,15 @@
 
     {{-- Breadcrumb & Verification Badge (Hidden in Print) --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 print:hidden">
-      <nav class="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-500">
+      <nav class="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-500 bg-white px-4 py-2.5 rounded-2xl border border-gray-100 shadow-2xs">
         <a href="{{ route('home') }}" class="hover:text-[#0b4622] transition flex items-center gap-1.5">
           <i class="ri-home-4-line text-sm text-[#0b4622]"></i>
           <span>হোম</span>
         </a>
         <i class="ri-arrow-right-s-line text-gray-400"></i>
-        <a href="{{ route('volunteers.apply') }}" class="hover:text-[#0b4622] transition">স্বেচ্ছাসেবী নিয়োগ</a>
+        <a href="{{ route('volunteers.index') }}" class="hover:text-[#0b4622] font-semibold text-gray-700 transition">স্বেচ্ছাসেবী কর্মীগণ</a>
         <i class="ri-arrow-right-s-line text-gray-400"></i>
-        <span class="text-[#0b4622] font-semibold">ডিজিটাল পরিচয়পত্র</span>
+        <span class="text-[#0b4622] font-semibold">কর্মী প্রোফাইল ও আইডি কার্ড</span>
       </nav>
 
       {{-- Top Verified Status --}}
@@ -97,11 +97,18 @@
     {{-- Action Controls Toolbar (Hidden in Print) --}}
     <div class="bg-white rounded-2xl border border-gray-200/90 p-4 shadow-sm flex flex-wrap items-center justify-between gap-3 print:hidden">
       <div>
-        <h2 class="text-sm font-black text-gray-800">স্বেচ্ছাসেবী ডিজিটাল আইডি কার্ড</h2>
+        <h2 class="text-sm font-black text-gray-800">স্বেচ্ছাসেবী প্রোফাইল ও ডিজিটাল আইডি কার্ড</h2>
         <p class="text-xs text-gray-500 mt-0.5">নিচের বাটনটি ব্যবহার করে কার্ডটি হাই-রেজোলিউশন ছবি (PNG) হিসেবে ডাউনলোড করুন</p>
       </div>
 
       <div class="flex flex-wrap items-center gap-2.5">
+        {{-- Back to list --}}
+        <a href="{{ route('volunteers.index') }}"
+           class="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs sm:text-sm font-semibold rounded-xl transition cursor-pointer">
+          <i class="ri-arrow-left-line text-base"></i>
+          <span>সকল কর্মী</span>
+        </a>
+
         {{-- Download PNG Button --}}
         <button type="button"
                 id="btnDownloadPNG"
@@ -115,7 +122,7 @@
         <button type="button"
                 onclick="copyPublicUrl()"
                 id="btnCopyUrl"
-                class="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs sm:text-sm font-semibold rounded-xl transition cursor-pointer"
+                class="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-emerald-50 hover:bg-emerald-100 text-[#0b4622] text-xs sm:text-sm font-semibold rounded-xl border border-emerald-200/60 transition cursor-pointer"
                 title="ভেরিফিকেশন লিংক কপি করুন">
           <i class="ri-share-forward-line text-base"></i>
           <span id="copyUrlText">শেয়ার লিংক</span>
@@ -123,8 +130,148 @@
       </div>
     </div>
 
-    {{-- Main Volunteer ID Card Display Container --}}
-    <div class="flex justify-center items-center py-2">
+    {{-- Main Profile Content Grid: Left Table Info + Right ID Card --}}
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+      {{-- Left Side: Information Table Card (6 Cols) --}}
+      <div class="lg:col-span-6 bg-white rounded-3xl border border-gray-200/90 shadow-sm p-6 sm:p-7 space-y-6 print:hidden">
+        {{-- Profile Header Summary --}}
+        <div class="flex items-center gap-4 pb-5 border-b border-gray-100">
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-[#0b4622]/20 shadow-md ring-2 ring-emerald-50 shrink-0 bg-gray-100">
+            <img src="{{ $volunteer->photo_url }}" alt="{{ $volunteer->name }}" class="w-full h-full object-cover">
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-[#0b4622] border border-emerald-200 mb-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              অফিসিয়াল সক্রিয় কর্মী
+            </div>
+            <h1 class="text-lg sm:text-xl font-black text-gray-900 truncate">
+              {{ $volunteer->name }}
+            </h1>
+            <p class="text-xs text-gray-500 font-mono mt-0.5">
+              ID: <span class="font-bold text-gray-800">{{ $volunteer->card_id_number }}</span>
+            </p>
+          </div>
+        </div>
+
+        {{-- Information Table --}}
+        <div class="space-y-3">
+          <h3 class="text-xs sm:text-sm font-bold text-gray-800 flex items-center gap-2">
+            <i class="ri-file-user-line text-[#0b4622] text-base"></i>
+            <span>স্বেচ্ছাসেবী পরিচিতি ও যোগাযোগের বিবরণ</span>
+          </h3>
+
+          <div class="overflow-hidden rounded-2xl border border-gray-200">
+            <table class="w-full text-xs sm:text-sm text-left divide-y divide-gray-200">
+              <tbody class="divide-y divide-gray-100 bg-white">
+                <tr class="hover:bg-gray-50/70 transition">
+                  <td class="py-3 px-4 font-bold text-gray-600 bg-gray-50/60 w-36 sm:w-44 whitespace-nowrap">
+                    কর্মীর নাম
+                  </td>
+                  <td class="py-3 px-4 font-extrabold text-gray-900">
+                    {{ $volunteer->name }}
+                  </td>
+                </tr>
+
+                <tr class="hover:bg-gray-50/70 transition">
+                  <td class="py-3 px-4 font-bold text-gray-600 bg-gray-50/60 whitespace-nowrap">
+                    স্বেচ্ছাসেবী আইডি
+                  </td>
+                  <td class="py-3 px-4 font-mono font-bold text-[#0b4622]">
+                    {{ $volunteer->card_id_number }}
+                  </td>
+                </tr>
+
+                <tr class="hover:bg-gray-50/70 transition">
+                  <td class="py-3 px-4 font-bold text-gray-600 bg-gray-50/60 whitespace-nowrap">
+                    মোবাইল নম্বর
+                  </td>
+                  <td class="py-3 px-4 font-semibold text-gray-800">
+                    <a href="tel:{{ $volunteer->phone }}" class="hover:text-[#0b4622] inline-flex items-center gap-1.5 transition">
+                      <i class="ri-phone-line text-[#0b4622]"></i>
+                      <span>{{ $volunteer->phone }}</span>
+                    </a>
+                  </td>
+                </tr>
+
+                @if(!empty($volunteer->email))
+                <tr class="hover:bg-gray-50/70 transition">
+                  <td class="py-3 px-4 font-bold text-gray-600 bg-gray-50/60 whitespace-nowrap">
+                    ইমেইল অ্যাড্রেস
+                  </td>
+                  <td class="py-3 px-4 text-gray-700">
+                    <a href="mailto:{{ $volunteer->email }}" class="hover:text-[#0b4622] inline-flex items-center gap-1.5 transition break-all">
+                      <i class="ri-mail-line text-blue-600"></i>
+                      <span>{{ $volunteer->email }}</span>
+                    </a>
+                  </td>
+                </tr>
+                @endif
+
+                <tr class="hover:bg-gray-50/70 transition">
+                  <td class="py-3 px-4 font-bold text-gray-600 bg-gray-50/60 whitespace-nowrap">
+                    রক্তের গ্রুপ
+                  </td>
+                  <td class="py-3 px-4">
+                    @if(!empty($volunteer->blood_group))
+                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-red-50 text-[#c8102e] border border-red-200 font-bold text-xs">
+                        <i class="ri-drop-fill text-red-500"></i>
+                        {{ $volunteer->blood_group }}
+                      </span>
+                    @else
+                      <span class="text-gray-400">তথ্য নেই</span>
+                    @endif
+                  </td>
+                </tr>
+
+                <tr class="hover:bg-gray-50/70 transition">
+                  <td class="py-3 px-4 font-bold text-gray-600 bg-gray-50/60 whitespace-nowrap align-top">
+                    বর্তমান ঠিকানা
+                  </td>
+                  <td class="py-3 px-4 text-gray-700 leading-relaxed">
+                    <div class="flex items-start gap-1.5">
+                      <i class="ri-map-pin-line text-amber-600 mt-0.5 shrink-0"></i>
+                      <span>{{ $volunteer->address ?: 'শৈলকুপা, ঝিনাইদহ' }}</span>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr class="hover:bg-gray-50/70 transition">
+                  <td class="py-3 px-4 font-bold text-gray-600 bg-gray-50/60 whitespace-nowrap">
+                    স্বেচ্ছাসেবী স্থিতি
+                  </td>
+                  <td class="py-3 px-4">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                      <i class="ri-checkbox-circle-fill text-emerald-600"></i>
+                      অনুমোদিত ও সক্রিয় (Active)
+                    </span>
+                  </td>
+                </tr>
+
+                <tr class="hover:bg-gray-50/70 transition">
+                  <td class="py-3 px-4 font-bold text-gray-600 bg-gray-50/60 whitespace-nowrap">
+                    অনুমোদনের তারিখ
+                  </td>
+                  <td class="py-3 px-4 text-gray-700 font-medium">
+                    {{ $volunteer->approved_at ? $volunteer->approved_at->format('d F, Y') : ($volunteer->created_at ? $volunteer->created_at->format('d F, Y') : '২০২৬') }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {{-- Verification Prompt Note --}}
+        <div class="bg-gray-50 rounded-2xl border border-gray-200/80 p-4 text-xs text-gray-600 flex items-start gap-3">
+          <i class="ri-shield-keyhole-line text-lg text-[#0b4622] shrink-0 mt-0.5"></i>
+          <p class="leading-relaxed">
+            এটি <strong>আগামীর শৈলকুপা</strong>-এর কেন্দ্রীয় ডাটাবেজ ভেরিফায়েড স্বেচ্ছাসেবী প্রোফাইল। ডানপাশের ডিজিটাল আইডি কার্ডটি পরিচয়পত্র হিসেবে ব্যবহারযোগ্য।
+          </p>
+        </div>
+      </div>
+
+      {{-- Right Side: The Digital ID Card Display (6 Cols) --}}
+      <div class="lg:col-span-6 flex flex-col items-center justify-center">
       {{-- The Downloadable & Printable Card Element --}}
       <div id="volunteerIdCardElement"
            style="width: 380px; max-width: 380px; background-color: #ffffff; border-radius: 24px; border: 2px solid rgba(11, 70, 34, 0.35); box-shadow: 0 20px 30px -10px rgba(0,0,0,0.18); overflow: hidden; position: relative; color: #111827; user-select: none; font-family: 'Hind Siliguri', 'SolaimanLipi', 'Noto Sans Bengali', sans-serif;">
@@ -286,7 +433,7 @@
     </div>
 
     {{-- Verification Security Note (Hidden in Print) --}}
-    <div class="max-w-[380px] mx-auto bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center space-y-1 print:hidden">
+    <div class="max-w-2xl mx-auto bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center space-y-1 print:hidden">
       <p class="text-xs font-bold text-emerald-950 flex items-center justify-center gap-1.5">
         <i class="ri-shield-check-fill text-emerald-600"></i>
         <span>অফিসিয়াল অনলাইন ভেরিফিকেশন সিস্টেম</span>
