@@ -155,8 +155,21 @@
           </select>
         </div>
 
-        {{-- Status --}}
+        {{-- Occupation --}}
         <div class="space-y-1">
+          <label for="occupation" class="block text-xs font-bold text-gray-700">
+            পেশা (Occupation)
+          </label>
+          <input type="text"
+                 id="occupation"
+                 name="occupation"
+                 value="{{ old('occupation', $member->occupation) }}"
+                 placeholder="উদা: শিক্ষক, ব্যবসায়ী, চাকরিজীবী"
+                 class="w-full px-3.5 py-2.5 text-xs sm:text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-[#0b4622]">
+        </div>
+
+        {{-- Status --}}
+        <div class="space-y-1 sm:col-span-2">
           <label for="status" class="block text-xs font-bold text-gray-700">
             সদস্যপদ স্ট্যাটাস <span class="text-red-500">*</span>
           </label>
@@ -172,6 +185,31 @@
         <div class="space-y-1 sm:col-span-2">
           <label for="address" class="block text-xs font-bold text-gray-700">
             বর্তমান ঠিকানা <span class="text-red-500">*</span>
+          </label>
+          <textarea id="address"
+                    name="address"
+                    rows="2"
+                    required
+                    class="w-full px-3.5 py-2 text-xs sm:text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-[#0b4622]">{{ old('address', $member->address) }}</textarea>
+          @error('address')
+            <p class="text-xs text-red-500 mt-0.5">{{ $message }}</p>
+          @enderror
+        </div>
+
+        {{-- Permanent Address --}}
+        <div class="space-y-1 sm:col-span-2">
+          <label for="permanent_address" class="block text-xs font-bold text-gray-700">
+            স্থায়ী ঠিকানা (ঐচ্ছিক)
+          </label>
+          <textarea id="permanent_address"
+                    name="permanent_address"
+                    rows="2"
+                    placeholder="স্থায়ী বিস্তারিত ঠিকানা লিখুন..."
+                    class="w-full px-3.5 py-2 text-xs sm:text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-[#0b4622]">{{ old('permanent_address', $member->permanent_address) }}</textarea>
+          @error('permanent_address')
+            <p class="text-xs text-red-500 mt-0.5">{{ $message }}</p>
+          @enderror
+        </div>
           </label>
           <textarea id="address"
                     name="address"

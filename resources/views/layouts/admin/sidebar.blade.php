@@ -761,6 +761,36 @@
         </div>
         @endif
 
+        {{-- গঠনতন্ত্র ও বিধিমালা --}}
+        @php
+          $isRulesActive = request()->routeIs('admin.rules*');
+        @endphp
+        <div class="sidebar-dropdown-group">
+          <button
+            type="button"
+            onclick="toggleSidebarDropdown('menu-rules', this)"
+            class="w-full flex items-center justify-between px-3.5 py-2 rounded-xl font-medium transition cursor-pointer focus:outline-none {{ $isRulesActive ? 'bg-gray-100/70 text-[#0b4622] font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
+          >
+            <div class="flex items-center gap-3">
+              <i class="ri-book-open-line text-base w-5 text-center {{ $isRulesActive ? 'text-[#0b4622]' : 'text-gray-400' }}"></i>
+              <span>গঠনতন্ত্র ও বিধিমালা</span>
+            </div>
+            <i class="ri-arrow-down-s-line text-sm transition-transform duration-300 dropdown-arrow {{ $isRulesActive ? 'rotate-180 text-[#0b4622]' : 'text-gray-400' }}"></i>
+          </button>
+          <div id="menu-rules" class="sidebar-submenu overflow-hidden transition-all duration-300 ease-in-out {{ $isRulesActive ? 'max-h-[500px] opacity-100 mt-1' : 'max-h-0 opacity-0' }}">
+            <div class="bg-[#f8fafc] border border-gray-100 rounded-xl p-1.5 space-y-0.5 ml-2 border-l-2 border-l-[#0b4622]/40">
+              <a href="{{ route('admin.rules.index') }}" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.rules.index') ? 'bg-[#0b4622] text-white font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}">
+                <i class="ri-list-check-2 text-sm"></i>
+                <span>সকল ভাগ ও নীতিমালা</span>
+              </a>
+              <a href="{{ route('admin.rules.create') }}" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition {{ request()->routeIs('admin.rules.create') ? 'bg-[#0b4622] text-white font-bold' : 'text-gray-600 hover:bg-white hover:text-[#0b4622]' }}">
+                <i class="ri-add-circle-line text-sm"></i>
+                <span>নতুন ভাগ যোগ করুন</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
     @endif

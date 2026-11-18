@@ -96,7 +96,9 @@ class VolunteerController extends Controller
             'photo'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
             'signature'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'blood_group'    => 'nullable|string|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+            'occupation'     => 'nullable|string|max:150',
             'address'        => 'required|string|max:500',
+            'permanent_address' => 'nullable|string|max:500',
             'status'         => 'required|boolean',
             'notes'          => 'nullable|string|max:1000',
         ], [
@@ -139,7 +141,9 @@ class VolunteerController extends Controller
             'phone'          => $validated['phone'],
             'email'          => $validated['email'] ?? null,
             'blood_group'    => $validated['blood_group'] ?? null,
+            'occupation'     => $validated['occupation'] ?? null,
             'address'        => $validated['address'],
+            'permanent_address' => $validated['permanent_address'] ?? null,
             'status'         => $isApproved,
             'approved_at'    => $isApproved ? now() : null,
             'approved_by'    => $isApproved ? auth()->id() : null,
@@ -186,7 +190,9 @@ class VolunteerController extends Controller
             'photo'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
             'signature'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'blood_group'    => 'nullable|string|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+            'occupation'     => 'nullable|string|max:150',
             'address'        => 'required|string|max:500',
+            'permanent_address' => 'nullable|string|max:500',
             'status'         => 'required|boolean',
             'notes'          => 'nullable|string|max:1000',
         ], [
@@ -222,7 +228,9 @@ class VolunteerController extends Controller
         $volunteer->phone = $validated['phone'];
         $volunteer->email = $validated['email'] ?? null;
         $volunteer->blood_group = $validated['blood_group'] ?? null;
+        $volunteer->occupation = $validated['occupation'] ?? null;
         $volunteer->address = $validated['address'];
+        $volunteer->permanent_address = $validated['permanent_address'] ?? null;
         $volunteer->status = $isNowApproved;
         $volunteer->notes = $validated['notes'] ?? null;
 
@@ -318,7 +326,9 @@ class VolunteerController extends Controller
                 'মোবাইল নম্বর',
                 'ইমেইল',
                 'রক্তের গ্রুপ',
-                'ঠিকানা',
+                'পেশা',
+                'বর্তমান ঠিকানা',
+                'স্থায়ী ঠিকানা',
                 'স্ট্যাটাস',
                 'আবেদনের তারিখ',
                 'অনুমোদনের তারিখ',
@@ -334,7 +344,9 @@ class VolunteerController extends Controller
                     $v->phone,
                     $v->email ?? '',
                     $v->blood_group ?? '',
+                    $v->occupation ?? '',
                     $v->address ?? '',
+                    $v->permanent_address ?? '',
                     $v->status ? 'Active' : 'Inactive',
                     $v->created_at ? $v->created_at->format('d/m/Y h:i A') : '',
                     $v->approved_at ? Carbon::parse($v->approved_at)->format('d/m/Y h:i A') : '',

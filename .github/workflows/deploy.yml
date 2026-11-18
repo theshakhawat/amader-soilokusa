@@ -179,7 +179,7 @@ jobs:
             # ======================================
 
             run_with_notify "Running database migrations..." \
-              # php artisan migrate --force
+              php artisan migrate --force
 
             # ======================================
             # 6. Database Seeder

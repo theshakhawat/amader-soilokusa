@@ -36,18 +36,14 @@
     </a>
 
     <!-- Desktop Navigation Menu (Dynamic from Database) -->
-    <nav class="hidden xl:flex items-center gap-1 text-[14px] 2xl:text-[15px] font-semibold text-gray-800">
+    <nav class="hidden lg:flex items-center gap-0.5 xl:gap-1 text-[13px] xl:text-[14px] 2xl:text-[15px] font-semibold text-gray-800">
       @foreach($dynamicNavItems as $navItem)
         @php
           $isCommitteeNav = ($navItem->title === 'কমিটি' || str_contains($navItem->title, 'কমিটি'));
           $activeCommitteesDropdown = $isCommitteeNav ? $cachedActiveCommittees : collect();
 
-          $isUpazilaNav = ($navItem->title === 'উপজেলা পরিচিতি' || str_contains($navItem->title, 'উপজেলা'));
-          $activeUnionsDropdown = $isUpazilaNav ? $cachedActiveUnions : collect();
-
           $hasChildren = ($navItem->activeChildren->count() > 0) 
-            || ($isCommitteeNav && $activeCommitteesDropdown->count() > 0)
-            || ($isUpazilaNav && $activeUnionsDropdown->count() > 0);
+            || ($isCommitteeNav && $activeCommitteesDropdown->count() > 0);
           $isHome = ($navItem->url === '/' || $navItem->url === route('home')) && request()->routeIs('home');
         @endphp
 
@@ -81,10 +77,10 @@
               <i class="ri-arrow-down-s-line text-[#c8102e] text-base transition-transform group-hover:rotate-180"></i>
             </button>
 
-            <!-- Level 2 Container -->
+            <!-- Level 2 Container (Dropdown Menu) -->
             <div class="absolute left-0 top-full pt-1.5 w-60 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
-              <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 text-sm {{ $isUpazilaNav ? 'max-h-[460px] overflow-y-auto custom-nav-scrollbar' : '' }}">
-                @if($isCommitteeNav)
+              <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 text-sm">
+                @if($isCommitteeNav && $navItem->activeChildren->count() === 0)
                   <a href="{{ route('committee.index') }}"
                      class="flex items-center justify-between px-4 py-2 bg-emerald-50/70 hover:bg-emerald-100/80 text-[#0b4622] transition text-xs font-bold border-b border-emerald-100">
                     <span class="flex items-center gap-1.5">
@@ -102,146 +98,51 @@
                   @empty
                     <div class="px-4 py-2 text-xs text-gray-400">কোনো সক্রিয় কমিটি নেই</div>
                   @endforelse
-                @elseif($isUpazilaNav)
-                  <a href="{{ route('unions.index') }}"
-                     class="flex items-center justify-between px-4 py-2 bg-emerald-50/70 hover:bg-emerald-100/80 text-[#0b4622] transition text-xs font-bold border-b border-emerald-100">
-                    <span class="flex items-center gap-1.5">
-                      <i class="ri-community-line text-sm text-[#0b4622]"></i>
-                      <span>সমস্ত ইউনিয়ন সমূহ</span>
-                    </span>
-                    <i class="ri-arrow-right-s-line text-emerald-600"></i>
-                  </a>
-                  @forelse($activeUnionsDropdown as $u)
-                    <a href="{{ route('unions.detail', $u->slug) }}"
-                       class="flex items-center gap-2 px-4 py-1.5 hover:bg-emerald-50 hover:text-[#0b4622] transition text-xs font-semibold text-gray-700">
-                      <i class="ri-building-line text-[#0b4622]"></i>
-                      <span>{{ $u->name }}</span>
-                    </a>
-                  @empty
-                    <div class="px-4 py-2 text-xs text-gray-400">কোনো সক্রিয় ইউনিয়ন নেই</div>
-                  @endforelse
                 @else
-                  @php
-                    $isInstitutionNav = (str_contains($navItem->title, 'প্রতিষ্ঠান') || $navItem->url === '/institutions');
-                    $isOfficeNav = (str_contains($navItem->title, 'অফিস') || $navItem->url === '/offices');
-                  @endphp
-
-                  @if($isInstitutionNav)
-                    <a href="{{ route('institutions.home') }}"
-                       class="flex items-center justify-between px-4 py-2 bg-emerald-50/70 hover:bg-emerald-100/80 text-[#0b4622] transition text-xs font-bold border-b border-emerald-100">
-                      <span class="flex items-center gap-1.5">
-                        <i class="ri-building-line text-sm text-[#0b4622]"></i>
-                        <span>সমস্ত প্রতিষ্ঠান সমূহ</span>
-                      </span>
-                      <i class="ri-arrow-right-s-line text-emerald-600"></i>
-                    </a>
-                  @elseif($isOfficeNav)
-                    <a href="{{ route('offices.index') }}"
-                       class="flex items-center justify-between px-4 py-2 bg-emerald-50/70 hover:bg-emerald-100/80 text-[#0b4622] transition text-xs font-bold border-b border-emerald-100">
-                      <span class="flex items-center gap-1.5">
-                        <i class="ri-government-line text-sm text-[#0b4622]"></i>
-                        <span>সমস্ত অফিস সমূহ</span>
-                      </span>
-                      <i class="ri-arrow-right-s-line text-emerald-600"></i>
-                    </a>
-                  @endif
-
                   @foreach($navItem->activeChildren as $child)
                     @php
                       $hasSubChildren = $child->activeChildren->count() > 0;
-                      $isOverviewItem = ($isInstitutionNav && ($child->url === '/institutions' || str_contains($child->title, 'সমস্ত'))) 
-                                     || ($isOfficeNav && ($child->url === '/offices' || str_contains($child->title, 'সমস্ত')));
                     @endphp
 
-                    @if($isOverviewItem)
-                      @continue
-                    @endif
-
-                  @if(!$hasSubChildren)
-                    <a href="{{ url($child->url) }}" target="{{ $child->target }}"
-                       class="flex items-center gap-2 px-4 py-2 hover:bg-red-50 hover:text-[#c8102e] transition text-xs font-semibold text-gray-700">
-                      @if($child->icon)
-                        <i class="{{ $child->icon }} text-[#0b4622]"></i>
-                      @endif
-                      <span>{{ $child->title }}</span>
-                    </a>
-                  @else
-                    <!-- Level 2 Item with Level 3 Flyout -->
-                    <div class="relative group/lvl2">
-                      <a href="{{ url($child->url ?: '/unions') }}" class="px-4 py-2 hover:bg-emerald-50 hover:text-[#0b4622] flex items-center justify-between cursor-pointer text-xs font-bold text-gray-800 transition">
-                        <span class="flex items-center gap-2">
-                          @if($child->icon)
-                            <i class="{{ $child->icon }} text-[#0b4622]"></i>
-                          @endif
-                          {{ $child->title }}
-                        </span>
-                        <i class="ri-arrow-right-s-line text-gray-400 group-hover/lvl2:text-[#0b4622]"></i>
+                    @if(!$hasSubChildren)
+                      <a href="{{ url($child->url) }}" target="{{ $child->target }}"
+                         class="flex items-center gap-2 px-4 py-2 hover:bg-red-50 hover:text-[#c8102e] transition text-xs font-semibold text-gray-700">
+                        @if($child->icon)
+                          <i class="{{ $child->icon }} text-[#0b4622]"></i>
+                        @endif
+                        <span>{{ $child->title }}</span>
                       </a>
+                    @else
+                      <!-- Level 2 Item with Level 3 Flyout (Max 3rd Level) -->
+                      <div class="relative group/lvl2">
+                        <a href="{{ url($child->url) }}" target="{{ $child->target }}" class="px-4 py-2 hover:bg-emerald-50 hover:text-[#0b4622] flex items-center justify-between cursor-pointer text-xs font-bold text-gray-800 transition">
+                          <span class="flex items-center gap-2">
+                            @if($child->icon)
+                              <i class="{{ $child->icon }} text-[#0b4622]"></i>
+                            @endif
+                            {{ $child->title }}
+                          </span>
+                          <i class="ri-arrow-right-s-line text-gray-400 group-hover/lvl2:text-[#0b4622]"></i>
+                        </a>
 
-                      <!-- Level 3 Flyout -->
-                      <div class="absolute left-full top-0 pl-1 w-56 hidden group-hover/lvl2:block lvl3-flyout z-50">
-                        <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 text-xs max-h-[460px] overflow-y-auto custom-nav-scrollbar">
-                          @php
-                            $isUnionLvl2 = ($child->title === 'ইউনিয়ন পরিচিতি' || $child->url === '/unions' || str_contains($child->url, 'unions'));
-                          @endphp
-
-                          @if($isUnionLvl2)
-                            @php
-                              $activeUnionsList = \App\Models\Union::where('status', true)->orderBy('order', 'asc')->get();
-                            @endphp
-                            @forelse($activeUnionsList as $u)
-                              <a href="{{ route('unions.detail', $u->slug) }}"
-                                 class="flex items-center gap-2 px-3.5 py-1.5 hover:bg-emerald-50 hover:text-[#0b4622] text-gray-700 font-medium transition">
-                                <i class="ri-community-line text-[#0b4622] text-xs shrink-0"></i>
-                                <span>{{ str_replace([' ইউনিয়ন পরিষদ', ' ইউনিয়ন পরিষদ'], '', $u->name) }}</span>
-                              </a>
-                            @empty
-                              <span class="block px-3.5 py-1.5 text-gray-400 text-xs">কোনো সক্রিয় ইউনিয়ন নেই</span>
-                            @endforelse
-                          @else
+                        <!-- Level 3 Flyout -->
+                        <div class="absolute left-full top-0 pl-1.5 w-60 hidden group-hover/lvl2:block lvl3-flyout z-50">
+                          <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 text-xs">
                             @foreach($child->activeChildren as $grandChild)
-                              @php
-                                $hasGreatChildren = $grandChild->activeChildren->count() > 0;
-                              @endphp
-
-                              @if(!$hasGreatChildren)
-                                <a href="{{ url($grandChild->url) }}" target="{{ $grandChild->target }}"
-                                   class="flex items-center gap-2 px-3.5 py-1.5 hover:bg-emerald-50 hover:text-[#0b4622] text-gray-700 font-medium transition">
-                                  @if($grandChild->icon)
-                                    <i class="{{ $grandChild->icon }} text-[#0b4622]"></i>
-                                  @endif
-                                  <span>{{ $grandChild->title }}</span>
-                                </a>
-                              @else
-                                <!-- Level 3 with Level 4 Flyout -->
-                                <div class="relative group/lvl3">
-                                  <div class="px-3.5 py-1.5 hover:bg-emerald-50 hover:text-[#0b4622] flex items-center justify-between cursor-pointer text-xs font-semibold text-gray-700 transition">
-                                    <span>{{ $grandChild->title }}</span>
-                                    <i class="ri-arrow-right-s-line text-gray-400 group-hover/lvl3:text-[#0b4622]"></i>
-                                  </div>
-                                  <div class="absolute left-full top-0 pl-1 w-44 hidden group-hover/lvl3:block lvl4-flyout z-50">
-                                    <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 text-xs">
-                                      @foreach($grandChild->activeChildren as $fourthChild)
-                                        <a href="{{ url($fourthChild->url) }}" target="{{ $fourthChild->target }}"
-                                           class="flex items-center gap-2 px-3.5 py-1.5 hover:bg-emerald-50 hover:text-[#0b4622] text-gray-700 font-medium transition">
-                                          @if($fourthChild->icon)
-                                            <i class="{{ $fourthChild->icon }}"></i>
-                                          @endif
-                                          <span>{{ $fourthChild->title }}</span>
-                                        </a>
-                                      @endforeach
-                                    </div>
-                                  </div>
-                                </div>
-                              @endif
+                              <a href="{{ url($grandChild->url) }}" target="{{ $grandChild->target }}"
+                                 class="flex items-center gap-2 px-3.5 py-1.5 hover:bg-emerald-50 hover:text-[#0b4622] text-gray-700 font-medium transition">
+                                @if($grandChild->icon)
+                                  <i class="{{ $grandChild->icon }} text-[#0b4622]"></i>
+                                @endif
+                                <span>{{ $grandChild->title }}</span>
+                              </a>
                             @endforeach
-                          @endif
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  @endif
-                @endforeach
-              @endif
+                    @endif
+                  @endforeach
+                @endif
               </div>
             </div>
           </div>
@@ -311,26 +212,22 @@
       @endauth
 
       <!-- Mobile Menu Button (Hamburger toggle) -->
-      <button type="button" onclick="toggleMobileMenu()" aria-label="Toggle Menu" class="xl:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gray-50 hover:text-[#c8102e] transition cursor-pointer">
+      <button type="button" onclick="toggleMobileMenu()" aria-label="Toggle Menu" class="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gray-50 hover:text-[#c8102e] transition cursor-pointer">
         <i id="mobile-menu-icon" class="ri-menu-3-line text-lg sm:text-xl"></i>
       </button>
     </div>
   </div>
 
   <!-- Mobile Responsive Navigation Drawer (Dynamic Tree) -->
-  <div id="mobile-menu" class="hidden xl:hidden bg-white border-t border-gray-100 px-4 pt-3 pb-6 shadow-xl max-h-[calc(100vh-70px)] overflow-y-auto">
+  <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-gray-100 px-4 pt-3 pb-6 shadow-xl max-h-[calc(100vh-70px)] overflow-y-auto">
     <div class="flex flex-col space-y-1.5 text-[15px] font-semibold">
       @foreach($dynamicNavItems as $mIdx => $navItem)
         @php
           $isCommitteeNavMobile = ($navItem->title === 'কমিটি' || str_contains($navItem->title, 'কমিটি'));
           $activeCommitteesDropdownMobile = $isCommitteeNavMobile ? $cachedActiveCommittees : collect();
 
-          $isUpazilaNavMobile = ($navItem->title === 'উপজেলা পরিচিতি' || str_contains($navItem->title, 'উপজেলা'));
-          $activeUnionsDropdownMobile = $isUpazilaNavMobile ? $cachedActiveUnions : collect();
-
           $hasChildren = ($navItem->activeChildren->count() > 0) 
-            || ($isCommitteeNavMobile && $activeCommitteesDropdownMobile->count() > 0)
-            || ($isUpazilaNavMobile && $activeUnionsDropdownMobile->count() > 0);
+            || ($isCommitteeNavMobile && $activeCommitteesDropdownMobile->count() > 0);
           $isHome = ($navItem->url === '/' || $navItem->url === route('home')) && request()->routeIs('home');
         @endphp
 
@@ -367,7 +264,7 @@
 
             <!-- Level 2 Mobile Submenu -->
             <div id="mobile-nav-{{ $mIdx }}" class="hidden pl-4 pr-2 py-1.5 space-y-1 text-sm text-gray-600 border-l-2 border-emerald-500 ml-4 mt-1">
-              @if($isCommitteeNavMobile)
+              @if($isCommitteeNavMobile && $navItem->activeChildren->count() === 0)
                 <a href="{{ route('committee.index') }}" class="mobile-nav-link block py-1.5 hover:text-[#0b4622] text-xs font-bold text-[#0b4622] border-b border-gray-100 mb-1">
                   <i class="ri-function-line mr-1"></i>
                   সকল কমিটি সমূহ
@@ -380,54 +277,18 @@
                 @empty
                   <span class="block py-1 text-gray-400 text-xs">কোনো সক্রিয় কমিটি নেই</span>
                 @endforelse
-              @elseif($isUpazilaNavMobile)
-                <a href="{{ route('unions.index') }}" class="mobile-nav-link block py-1.5 hover:text-[#0b4622] text-xs font-bold text-[#0b4622] border-b border-gray-100 mb-1">
-                  <i class="ri-community-line mr-1"></i>
-                  সমস্ত ইউনিয়ন সমূহ
-                </a>
-                @forelse($activeUnionsDropdownMobile as $u)
-                  <a href="{{ route('unions.detail', $u->slug) }}" class="mobile-nav-link block py-1.5 hover:text-[#0b4622] text-xs font-semibold">
-                    <i class="ri-building-line text-[#0b4622] mr-1"></i>
-                    {{ $u->name }}
-                  </a>
-                @empty
-                  <span class="block py-1 text-gray-400 text-xs">কোনো সক্রিয় ইউনিয়ন নেই</span>
-                @endforelse
               @else
-                @php
-                  $isInstitutionNavMobile = (str_contains($navItem->title, 'প্রতিষ্ঠান') || $navItem->url === '/institutions');
-                  $isOfficeNavMobile = (str_contains($navItem->title, 'অফিস') || $navItem->url === '/offices');
-                @endphp
-
-                @if($isInstitutionNavMobile)
-                  <a href="{{ route('institutions.home') }}" class="mobile-nav-link block py-1.5 hover:text-[#0b4622] text-xs font-bold text-[#0b4622] border-b border-gray-100 mb-1">
-                    <i class="ri-building-line mr-1"></i>
-                    সমস্ত প্রতিষ্ঠান সমূহ
-                  </a>
-                @elseif($isOfficeNavMobile)
-                  <a href="{{ route('offices.index') }}" class="mobile-nav-link block py-1.5 hover:text-[#0b4622] text-xs font-bold text-[#0b4622] border-b border-gray-100 mb-1">
-                    <i class="ri-government-line mr-1"></i>
-                    সমস্ত অফিস সমূহ
-                  </a>
-                @endif
-
                 @foreach($navItem->activeChildren as $cIdx => $child)
                   @php
                     $hasSubChildren = $child->activeChildren->count() > 0;
-                    $isOverviewItemMobile = ($isInstitutionNavMobile && ($child->url === '/institutions' || str_contains($child->title, 'সমস্ত'))) 
-                                         || ($isOfficeNavMobile && ($child->url === '/offices' || str_contains($child->title, 'সমস্ত')));
                   @endphp
-
-                  @if($isOverviewItemMobile)
-                    @continue
-                  @endif
 
                 @if(!$hasSubChildren)
                   <a href="{{ url($child->url) }}" target="{{ $child->target }}" class="mobile-nav-link block py-1.5 hover:text-[#c8102e] text-xs">
                     {{ $child->title }}
                   </a>
                 @else
-                  <!-- Level 3 Mobile Submenu -->
+                  <!-- Level 3 Mobile Submenu (Max 3rd Level) -->
                   <div class="py-1">
                     <button type="button" onclick="toggleMobileSub('mobile-sub-{{ $mIdx }}-{{ $cIdx }}', 'mobile-sub-arrow-{{ $mIdx }}-{{ $cIdx }}')" 
                             class="w-full flex items-center justify-between py-1 text-xs font-bold text-gray-800 hover:text-[#0b4622]">
@@ -435,49 +296,11 @@
                       <i id="mobile-sub-arrow-{{ $mIdx }}-{{ $cIdx }}" class="ri-arrow-down-s-line text-xs transition-transform"></i>
                     </button>
                     <div id="mobile-sub-{{ $mIdx }}-{{ $cIdx }}" class="hidden pl-3 space-y-1 text-xs border-l border-gray-200 ml-2 mt-1">
-                      @php
-                        $isUnionMobile = ($child->title === 'ইউনিয়ন পরিচিতি' || $child->url === '/unions' || str_contains($child->url, 'unions'));
-                      @endphp
-
-                      @if($isUnionMobile)
-                        @php
-                          $activeUnionsMobile = \App\Models\Union::where('status', true)->orderBy('order', 'asc')->get();
-                        @endphp
-                        @forelse($activeUnionsMobile as $u)
-                          <a href="{{ route('unions.detail', $u->slug) }}" class="block py-1 hover:text-[#0b4622] text-gray-700 font-medium">
-                            {{ str_replace([' ইউনিয়ন পরিষদ', ' ইউনিয়ন পরিষদ'], '', $u->name) }}
-                          </a>
-                        @empty
-                          <span class="block py-1 text-gray-400 text-[11px]">কোনো সক্রিয় ইউনিয়ন নেই</span>
-                        @endforelse
-                      @else
-                        @foreach($child->activeChildren as $gcIdx => $grandChild)
-                          @php
-                            $hasGreatChildren = $grandChild->activeChildren->count() > 0;
-                          @endphp
-
-                          @if(!$hasGreatChildren)
-                            <a href="{{ url($grandChild->url) }}" target="{{ $grandChild->target }}" class="block py-1 hover:text-[#0b4622]">
-                              {{ $grandChild->title }}
-                            </a>
-                          @else
-                            <div class="py-1">
-                              <button type="button" onclick="toggleMobileSub('mobile-g-{{ $mIdx }}-{{ $cIdx }}-{{ $gcIdx }}', 'mobile-g-arrow-{{ $mIdx }}-{{ $cIdx }}-{{ $gcIdx }}')" 
-                                      class="w-full flex items-center justify-between py-0.5 text-gray-700 font-semibold hover:text-[#0b4622]">
-                                <span>{{ $grandChild->title }}</span>
-                                <i id="mobile-g-arrow-{{ $mIdx }}-{{ $cIdx }}-{{ $gcIdx }}" class="ri-arrow-down-s-line text-[10px] transition-transform"></i>
-                              </button>
-                              <div id="mobile-g-{{ $mIdx }}-{{ $cIdx }}-{{ $gcIdx }}" class="hidden pl-3 space-y-0.5 text-[11px] text-gray-500 border-l border-emerald-200 ml-2 py-1">
-                                @foreach($grandChild->activeChildren as $fourthChild)
-                                  <a href="{{ url($fourthChild->url) }}" target="{{ $fourthChild->target }}" class="block py-0.5 hover:text-[#0b4622]">
-                                    {{ $fourthChild->title }}
-                                  </a>
-                                @endforeach
-                              </div>
-                            </div>
-                          @endif
-                        @endforeach
-                      @endif
+                      @foreach($child->activeChildren as $gcIdx => $grandChild)
+                        <a href="{{ url($grandChild->url) }}" target="{{ $grandChild->target }}" class="block py-1 hover:text-[#0b4622]">
+                          {{ $grandChild->title }}
+                        </a>
+                      @endforeach
                     </div>
                   </div>
                 @endif

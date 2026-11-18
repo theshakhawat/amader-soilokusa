@@ -140,11 +140,27 @@
           @endif
         </div>
 
-        {{-- Address --}}
+        {{-- Occupation --}}
+        <div class="p-4 rounded-xl bg-gray-50 border border-gray-100">
+          <p class="text-gray-500 text-[11px] font-semibold">পেশা:</p>
+          <p class="text-xs sm:text-sm font-bold text-gray-800 mt-1">
+            {{ $member->occupation ?: '—' }}
+          </p>
+        </div>
+
+        {{-- Current Address --}}
         <div class="p-4 rounded-xl bg-gray-50 border border-gray-100">
           <p class="text-gray-500 text-[11px] font-semibold">বর্তমান ঠিকানা:</p>
           <p class="text-xs sm:text-sm font-bold text-gray-800 mt-1 leading-relaxed">
             {{ $member->address ?: '—' }}
+          </p>
+        </div>
+
+        {{-- Permanent Address --}}
+        <div class="p-4 rounded-xl bg-gray-50 border border-gray-100">
+          <p class="text-gray-500 text-[11px] font-semibold">স্থায়ী ঠিকানা:</p>
+          <p class="text-xs sm:text-sm font-bold text-gray-800 mt-1 leading-relaxed">
+            {{ $member->permanent_address ?: '—' }}
           </p>
         </div>
 
