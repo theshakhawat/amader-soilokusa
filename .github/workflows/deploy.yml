@@ -266,8 +266,6 @@ jobs:
           🌿 Branch: ${GITHUB_REF_NAME}
           📝 Commit: ${GITHUB_SHA}
 
-          🔗 Website: https://${DOMAIN}
-
           🎉 Deployment completed successfully!"
 
           curl --fail --silent --show-error \
