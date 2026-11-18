@@ -316,7 +316,7 @@
     <script>
         $(document).ready(function() {
             $('#nestable-menu').nestable({
-                maxDepth: 4,
+                maxDepth: 3,
                 group: 1,
                 handleClass: 'dd-handle',
                 noDragClass: 'dd-nodrag'

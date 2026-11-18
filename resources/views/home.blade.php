@@ -309,6 +309,107 @@
       </a>
     </section>
 
+
+    <!-- ===================================================================
+         7. ROW 3: কৃতি সন্তান (LEFT) & কমিটি (RIGHT)
+         =================================================================== -->
+    <section id="personalities-section" class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-stretch">
+      <!-- Left: কৃতি সন্তান (7 Cols) -->
+      <div class="lg:col-span-7 ui-card p-4 sm:p-6 flex flex-col justify-between">
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-4 sm:mb-5">
+          <div class="flex items-center gap-2">
+            <span class="text-[#c8102e] text-lg sm:text-xl flex items-center">
+              <i class="ri-award-fill"></i>
+            </span>
+            <h2 class="text-base sm:text-[20px] font-extrabold text-gray-900">কৃতি সন্তান</h2>
+          </div>
+          <a
+            href="{{ route('our.pride') }}"
+            class="text-[#c8102e] hover:text-[#a30b24] text-xs sm:text-[13.5px] font-bold inline-flex items-center gap-1 transition"
+          >
+            <span>সবাই দেখুন</span>
+            <i class="ri-arrow-right-line"></i>
+          </a>
+        </div>
+
+        <!-- 4 Prides Grid (Dynamic from DB) -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-2 sm:divide-x sm:divide-gray-100">
+          @forelse($prides as $prideItem)
+            <a
+              href="{{ route('our.pride.details', $prideItem->id) }}"
+              class="flex flex-col items-center text-center px-1 sm:px-2 group cursor-pointer block hover:no-underline"
+            >
+              <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-[96px] md:h-[96px] rounded-2xl overflow-hidden bg-gray-100 border border-gray-200 shadow-2xs mb-2 group-hover:border-[#0b4622]/60 group-hover:shadow-md transition duration-300">
+                <img
+                  src="{{ $prideItem->photo_url }}"
+                  alt="{{ $prideItem->name }}"
+                  class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                  onerror="this.src='https://placehold.co/400x400/0b4622/ffffff?text={{ urlencode($prideItem->name) }}'"
+                />
+              </div>
+              <h3 class="text-xs sm:text-[14px] font-extrabold text-gray-900 leading-snug group-hover:text-[#0b4622] transition line-clamp-1">
+                {{ $prideItem->name }}
+              </h3>
+              <p class="text-[10px] sm:text-[11.5px] text-gray-600 mt-0.5 line-clamp-2">
+                {{ $prideItem->designation }}
+              </p>
+            </a>
+          @empty
+            <div class="col-span-full py-6 text-center text-xs text-gray-400">
+              কোনো কৃতি সন্তানের তথ্য পাওয়া যায়নি।
+            </div>
+          @endforelse
+        </div>
+      </div>
+
+      <!-- Right: কমিটি (5 Cols) -->
+      @php
+        $committeeName = $committee ? $committee->name : 'কার্যনির্বাহী কমিটি';
+        $committeeSession = $committee ? $committee->session_duration : '২০২৬-২০২৮';
+        $committeeSubtitle = $committee && $committee->subtitle ? $committee->subtitle : 'আগামীর শৈলকুপা';
+        $committeeImg = $committee ? $committee->image_url : asset('assets/images/committee.jpg');
+        $committeeDesc = $committee && $committee->description ? $committee->description : "সভাপতি: মোঃ আব্দুল করিম\nসহ-প্রতিষ্ঠাতা: নিটুল ইসলাম\nসাধারণ সম্পাদক ও অন্যান্য সম্পাদকমণ্ডলীর পূর্ণাঙ্গ তালিকা অফিসে সংরক্ষিত রয়েছে।";
+        $committeeTitleFull = $committeeName . ' (' . $committeeSession . ')';
+      @endphp
+      <div id="committee-section" class="lg:col-span-5 ui-card p-4 sm:p-6 flex flex-col justify-between">
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-3 sm:mb-4">
+          <div class="flex items-center gap-2">
+            <span class="text-[#c8102e] text-lg sm:text-xl flex items-center">
+              <i class="fa-solid fa-users"></i>
+            </span>
+            <h2 class="text-base sm:text-[20px] font-extrabold text-gray-900">কমিটি</h2>
+          </div>
+          <a
+            href="{{ route('committee.index') }}"
+            class="text-[#c8102e] hover:text-[#a30b24] text-xs sm:text-[13.5px] font-bold inline-flex items-center gap-1 transition cursor-pointer"
+          >
+            <span>সবাই দেখুন</span>
+            <i class="ri-arrow-right-line"></i>
+          </a>
+        </div>
+
+        <!-- Committee Photo & Caption -->
+        <a
+          href="{{ route('committee.index') }}"
+          class="flex flex-col items-center text-center cursor-pointer group block"
+        >
+          <div class="w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm aspect-[16/8] sm:aspect-[16/6.2] bg-gray-100">
+            <img src="{{ $committeeImg }}" alt="{{ $committeeTitleFull }}" class="w-full h-full object-cover group-hover:scale-102 transition duration-300" />
+          </div>
+          <h3 class="text-sm sm:text-base font-extrabold text-gray-900 group-hover:text-[#c8102e] transition mt-2.5 sm:mt-3">
+            {{ $committeeTitleFull }}
+          </h3>
+          <p class="text-[11px] sm:text-xs font-medium text-gray-600 mt-0.5">
+            {{ $committeeSubtitle }}
+          </p>
+        </a>
+      </div>
+    </section>
+
+
+
     <!-- ===================================================================
          6. ROW 2: আসন্ন ও চলমান কার্যক্রম (LEFT) & নোটিশ (RIGHT)
          =================================================================== -->
@@ -441,178 +542,55 @@
     </section>
 
     <!-- ===================================================================
-         7. ROW 3: কৃতি সন্তান (LEFT) & কমিটি (RIGHT)
+         8. ROW 4: TWO FEATURE CARDS (১. দর্শনীয় স্থান, ২. উন্নয়ন প্রকল্পসমূহ)
          =================================================================== -->
-    <section id="personalities-section" class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-stretch">
-      <!-- Left: কৃতি সন্তান (7 Cols) -->
-      <div class="lg:col-span-7 ui-card p-4 sm:p-6 flex flex-col justify-between">
-        <!-- Header -->
-        <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-4 sm:mb-5">
-          <div class="flex items-center gap-2">
-            <span class="text-[#c8102e] text-lg sm:text-xl flex items-center">
-              <i class="ri-award-fill"></i>
-            </span>
-            <h2 class="text-base sm:text-[20px] font-extrabold text-gray-900">কৃতি সন্তান</h2>
-          </div>
-          <a
-            href="{{ route('our.pride') }}"
-            class="text-[#c8102e] hover:text-[#a30b24] text-xs sm:text-[13.5px] font-bold inline-flex items-center gap-1 transition"
-          >
-            <span>সবাই দেখুন</span>
-            <i class="ri-arrow-right-line"></i>
-          </a>
+    <section id="places-projects-section" class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-7">
+      <!-- Feature Card 1: দর্শনীয় স্থান (প্রথমে থাকবে) -->
+      <a
+        href="{{ route('places.index') }}"
+        class="ui-card feature-card-watermark p-4 sm:p-6 flex items-center gap-4 sm:gap-5 sub-card-hover block cursor-pointer group"
+      >
+        <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-[105px] md:h-[105px] rounded-xl overflow-hidden shrink-0 border border-gray-100 shadow-sm">
+          <img src="{{ asset('assets/images/place-mosque.jpg') }}" alt="দর্শনীয় স্থান" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
         </div>
-
-        <!-- 4 Prides Grid (Dynamic from DB) -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-2 sm:divide-x sm:divide-gray-100">
-          @forelse($prides as $prideItem)
-            <a
-              href="{{ route('our.pride.details', $prideItem->id) }}"
-              class="flex flex-col items-center text-center px-1 sm:px-2 group cursor-pointer block hover:no-underline"
-            >
-              <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-[96px] md:h-[96px] rounded-2xl overflow-hidden bg-gray-100 border border-gray-200 shadow-2xs mb-2 group-hover:border-[#0b4622]/60 group-hover:shadow-md transition duration-300">
-                <img
-                  src="{{ $prideItem->photo_url }}"
-                  alt="{{ $prideItem->name }}"
-                  class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                  onerror="this.src='https://placehold.co/400x400/0b4622/ffffff?text={{ urlencode($prideItem->name) }}'"
-                />
-              </div>
-              <h3 class="text-xs sm:text-[14px] font-extrabold text-gray-900 leading-snug group-hover:text-[#0b4622] transition line-clamp-1">
-                {{ $prideItem->name }}
-              </h3>
-              <p class="text-[10px] sm:text-[11.5px] text-gray-600 mt-0.5 line-clamp-2">
-                {{ $prideItem->designation }}
-              </p>
-            </a>
-          @empty
-            <div class="col-span-full py-6 text-center text-xs text-gray-400">
-              কোনো কৃতি সন্তানের তথ্য পাওয়া যায়নি।
-            </div>
-          @endforelse
-        </div>
-      </div>
-
-      <!-- Right: কমিটি (5 Cols) -->
-      @php
-        $committeeName = $committee ? $committee->name : 'কার্যনির্বাহী কমিটি';
-        $committeeSession = $committee ? $committee->session_duration : '২০২৬-২০২৮';
-        $committeeSubtitle = $committee && $committee->subtitle ? $committee->subtitle : 'আগামীর শৈলকুপা';
-        $committeeImg = $committee ? $committee->image_url : asset('assets/images/committee.jpg');
-        $committeeDesc = $committee && $committee->description ? $committee->description : "সভাপতি: মোঃ আব্দুল করিম\nসহ-প্রতিষ্ঠাতা: নিটুল ইসলাম\nসাধারণ সম্পাদক ও অন্যান্য সম্পাদকমণ্ডলীর পূর্ণাঙ্গ তালিকা অফিসে সংরক্ষিত রয়েছে।";
-        $committeeTitleFull = $committeeName . ' (' . $committeeSession . ')';
-      @endphp
-      <div id="committee-section" class="lg:col-span-5 ui-card p-4 sm:p-6 flex flex-col justify-between">
-        <!-- Header -->
-        <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-3 sm:mb-4">
-          <div class="flex items-center gap-2">
-            <span class="text-[#c8102e] text-lg sm:text-xl flex items-center">
-              <i class="fa-solid fa-users"></i>
-            </span>
-            <h2 class="text-base sm:text-[20px] font-extrabold text-gray-900">কমিটি</h2>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <i class="ri-map-pin-line text-[#c8102e] text-base sm:text-xl"></i>
+            <h3 class="text-base sm:text-[19px] font-extrabold text-[#0b4622] group-hover:text-[#c8102e] transition truncate">দর্শনীয় স্থান</h3>
           </div>
-          <a
-            href="{{ route('committee.index') }}"
-            class="text-[#c8102e] hover:text-[#a30b24] text-xs sm:text-[13.5px] font-bold inline-flex items-center gap-1 transition cursor-pointer"
-          >
-            <span>সবাই দেখুন</span>
-            <i class="ri-arrow-right-line"></i>
-          </a>
-        </div>
-
-        <!-- Committee Photo & Caption -->
-        <a
-          href="{{ route('committee.index') }}"
-          class="flex flex-col items-center text-center cursor-pointer group block"
-        >
-          <div class="w-full rounded-xl overflow-hidden border border-gray-200 shadow-sm aspect-[16/8] sm:aspect-[16/6.2] bg-gray-100">
-            <img src="{{ $committeeImg }}" alt="{{ $committeeTitleFull }}" class="w-full h-full object-cover group-hover:scale-102 transition duration-300" />
-          </div>
-          <h3 class="text-sm sm:text-base font-extrabold text-gray-900 group-hover:text-[#c8102e] transition mt-2.5 sm:mt-3">
-            {{ $committeeTitleFull }}
-          </h3>
-          <p class="text-[11px] sm:text-xs font-medium text-gray-600 mt-0.5">
-            {{ $committeeSubtitle }}
+          <p class="text-xs sm:text-[13.5px] text-gray-600 leading-relaxed mt-1 line-clamp-2">
+            শৈলকুপার ঐতিহাসিক, প্রাকৃতিক ও সাংস্কৃতিক দর্শনীয় স্থানসমূহ।
           </p>
-        </a>
-      </div>
-    </section>
+          <div
+            class="mt-2 text-xs sm:text-[13.5px] font-extrabold text-gray-900 group-hover:text-[#c8102e] inline-flex items-center gap-1 transition"
+          >
+            <span>বিস্তারিত দেখুন</span>
+            <i class="ri-arrow-right-line text-[#c8102e] group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+      </a>
 
-    <!-- ===================================================================
-         8. ROW 4: THREE FEATURE CARDS (উন্নয়ন প্রকল্পসমূহ, দর্শনীয় স্থান, গ্যালারি)
-         =================================================================== -->
-    <section id="projects-section" class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-7">
-      <!-- Feature Card 1: উন্নয়ন প্রকল্পসমূহ -->
+      <!-- Feature Card 2: উন্নয়ন প্রকল্পসমূহ (তারপরে থাকবে) -->
       <a
         href="{{ route('projects.index') }}"
-        class="ui-card feature-card-watermark p-3.5 sm:p-5 flex items-center gap-3.5 sm:gap-4 sub-card-hover block cursor-pointer group"
+        id="projects-section"
+        class="ui-card feature-card-watermark p-4 sm:p-6 flex items-center gap-4 sm:gap-5 sub-card-hover block cursor-pointer group"
       >
-        <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-[100px] md:h-[100px] rounded-xl overflow-hidden shrink-0 border border-gray-100 shadow-sm">
+        <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-[105px] md:h-[105px] rounded-xl overflow-hidden shrink-0 border border-gray-100 shadow-sm">
           <img src="{{ asset('assets/images/project-road.jpg') }}" alt="উন্নয়ন প্রকল্পসমূহ" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
         </div>
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-1.5 sm:gap-2">
-            <i class="ri-stack-line text-[#c8102e] text-base sm:text-lg"></i>
-            <h3 class="text-base sm:text-[18px] font-extrabold text-[#0b4622] group-hover:text-[#c8102e] transition truncate">উন্নয়ন প্রকল্পসমূহ</h3>
+            <i class="ri-stack-line text-[#c8102e] text-base sm:text-xl"></i>
+            <h3 class="text-base sm:text-[19px] font-extrabold text-[#0b4622] group-hover:text-[#c8102e] transition truncate">উন্নয়ন প্রকল্পসমূহ</h3>
           </div>
-          <p class="text-xs sm:text-[13px] text-gray-600 leading-relaxed mt-1 line-clamp-2">
+          <p class="text-xs sm:text-[13.5px] text-gray-600 leading-relaxed mt-1 line-clamp-2">
             শৈলকুপার অবকাঠামো, শিক্ষা, স্বাস্থ্য ও সামাজিক উন্নয়নের চলমান প্রকল্পসমূহ।
           </p>
           <div
-            class="mt-1.5 sm:mt-2 text-xs sm:text-[13px] font-extrabold text-gray-900 group-hover:text-[#c8102e] inline-flex items-center gap-1 transition"
+            class="mt-2 text-xs sm:text-[13.5px] font-extrabold text-gray-900 group-hover:text-[#c8102e] inline-flex items-center gap-1 transition"
           >
             <span>বিস্তারিত দেখুন</span>
-            <i class="ri-arrow-right-line text-[#c8102e] group-hover:translate-x-1 transition-transform"></i>
-          </div>
-        </div>
-      </a>
-
-      <!-- Feature Card 2: দর্শনীয় স্থান -->
-      <a
-        href="{{ route('places.index') }}"
-        class="ui-card feature-card-watermark p-3.5 sm:p-5 flex items-center gap-3.5 sm:gap-4 sub-card-hover block cursor-pointer group"
-      >
-        <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-[100px] md:h-[100px] rounded-xl overflow-hidden shrink-0 border border-gray-100 shadow-sm">
-          <img src="{{ asset('assets/images/place-mosque.jpg') }}" alt="দর্শনীয় স্থান" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
-        </div>
-        <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-1.5 sm:gap-2">
-            <i class="ri-map-pin-line text-[#c8102e] text-base sm:text-lg"></i>
-            <h3 class="text-base sm:text-[18px] font-extrabold text-[#0b4622] group-hover:text-[#c8102e] transition truncate">দর্শনীয় স্থান</h3>
-          </div>
-          <p class="text-xs sm:text-[13px] text-gray-600 leading-relaxed mt-1 line-clamp-2">
-            শৈলকুপার ঐতিহাসিক, প্রাকৃতিক ও সাংস্কৃতিক দর্শনীয় স্থানসমূহ।
-          </p>
-          <div
-            class="mt-1.5 sm:mt-2 text-xs sm:text-[13px] font-extrabold text-gray-900 group-hover:text-[#c8102e] inline-flex items-center gap-1 transition"
-          >
-            <span>বিস্তারিত দেখুন</span>
-            <i class="ri-arrow-right-line text-[#c8102e] group-hover:translate-x-1 transition-transform"></i>
-          </div>
-        </div>
-      </a>
-
-      <!-- Feature Card 3: গ্যালারি -->
-      <a
-        href="{{ route('gallery') }}"
-        id="gallery-section"
-        class="ui-card feature-card-watermark p-3.5 sm:p-5 flex items-center gap-3.5 sm:gap-4 sub-card-hover block cursor-pointer group"
-      >
-        <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-[100px] md:h-[100px] rounded-xl overflow-hidden shrink-0 border border-gray-100 shadow-sm">
-          <img src="{{ asset('assets/images/gallery-event.jpg') }}" alt="গ্যালারি" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
-        </div>
-        <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-1.5 sm:gap-2">
-            <i class="ri-image-line text-[#c8102e] text-base sm:text-lg"></i>
-            <h3 class="text-base sm:text-[18px] font-extrabold text-[#0b4622] group-hover:text-[#c8102e] transition truncate">গ্যালারি</h3>
-          </div>
-          <p class="text-xs sm:text-[13px] text-gray-600 leading-relaxed mt-1 line-clamp-2">
-            আমাদের বিভিন্ন কার্যক্রম, অনুষ্ঠান ও মুহূর্তের ছবিসমূহ।
-          </p>
-          <div
-            class="mt-1.5 sm:mt-2 text-xs sm:text-[13px] font-extrabold text-gray-900 group-hover:text-[#c8102e] inline-flex items-center gap-1 transition"
-          >
-            <span>গ্যালারি দেখুন</span>
             <i class="ri-arrow-right-line text-[#c8102e] group-hover:translate-x-1 transition-transform"></i>
           </div>
         </div>
@@ -620,21 +598,21 @@
     </section>
 
     <!-- ===================================================================
-         9. ROW 5: ব্লগ ও আপডেট (LEFT) & DONATION BANNER (RIGHT)
+         9. ROW 5: গ্যালারি (LEFT) & DONATION BANNER (RIGHT)
          =================================================================== -->
-    <section id="blog-section" class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-stretch">
-      <!-- Left: ব্লগ ও আপডেট (7 Cols) -->
-      <div class="lg:col-span-7 ui-card p-4 sm:p-6 flex flex-col justify-between">
+    <section id="gallery-donation-section" class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-stretch">
+      <!-- Left: গ্যালারি (7 Cols) -->
+      <div id="gallery-section" class="lg:col-span-7 ui-card p-4 sm:p-6 flex flex-col justify-between">
         <!-- Header -->
         <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-4 sm:mb-5">
           <div class="flex items-center gap-2">
             <span class="text-[#c8102e] text-lg sm:text-xl flex items-center">
-              <i class="ri-article-line"></i>
+              <i class="ri-image-line"></i>
             </span>
-            <h2 class="text-base sm:text-[20px] font-extrabold text-gray-900">ব্লগ ও আপডেট</h2>
+            <h2 class="text-base sm:text-[20px] font-extrabold text-gray-900">গ্যালারি</h2>
           </div>
           <a
-            href="{{ route('blogs.index') }}"
+            href="{{ route('gallery') }}"
             class="text-[#c8102e] hover:text-[#a30b24] text-xs sm:text-[13.5px] font-bold inline-flex items-center gap-1 transition cursor-pointer"
           >
             <span>সব দেখুন</span>
@@ -642,54 +620,79 @@
           </a>
         </div>
 
-        <!-- 3 Blog Cards Grid (Dynamic from Database) -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
-          @forelse($latestPosts ?? [] as $postItem)
+        <!-- Gallery Feature Highlight & Thumbnails -->
+        @php
+          $homeGalleryItems = \App\Models\GalleryItem::where('status', true)->latest()->take(3)->get();
+        @endphp
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4 flex-1">
+          @forelse($homeGalleryItems as $gItem)
+            @php
+              $hasLink = !empty($gItem->link_url);
+              $targetUrl = $hasLink ? $gItem->link_url : route('gallery');
+              $displayDate = $gItem->event_date ? $gItem->event_date->translatedFormat('d F Y') : ($gItem->created_at ? $gItem->created_at->translatedFormat('d F Y') : null);
+            @endphp
             <a
-              href="{{ route('blogs.details', $postItem->slug) }}"
+              href="{{ $targetUrl }}"
+              target="{{ ($hasLink && str_starts_with($targetUrl, 'http')) ? '_blank' : '_self' }}"
               class="sub-card-hover cursor-pointer bg-white rounded-xl border border-gray-200/80 overflow-hidden flex flex-col group justify-between"
             >
               <div>
-                <!-- Thumbnail -->
-                <div class="aspect-[16/10] bg-gray-100 overflow-hidden">
+                <div class="aspect-[16/11] bg-gray-100 overflow-hidden relative">
                   <img
-                    src="{{ $postItem->thumbnail_url }}"
-                    alt="{{ $postItem->title }}"
+                    src="{{ $gItem->thumbnail_url ?: asset('assets/images/gallery-event.jpg') }}"
+                    alt="{{ $gItem->title }}"
                     class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                    onerror="this.src='https://placehold.co/400x250/0b4622/ffffff?text={{ urlencode($postItem->title) }}'"
+                    onerror="this.src='{{ asset('assets/images/gallery-event.jpg') }}'"
                   />
+                  @if($gItem->type === 'video')
+                    <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
+                      <div class="w-8 h-8 rounded-full bg-red-600/90 text-white flex items-center justify-center text-sm shadow">
+                        <i class="ri-play-fill"></i>
+                      </div>
+                    </div>
+                  @endif
                 </div>
-                <!-- Content -->
                 <div class="p-3">
                   <h3 class="text-xs sm:text-[14px] font-extrabold text-gray-900 group-hover:text-[#c8102e] leading-snug transition line-clamp-2">
-                    {{ $postItem->title }}
+                    {{ $gItem->title }}
                   </h3>
+                  @if($gItem->subtitle)
+                    <p class="text-[11px] sm:text-xs text-gray-500 mt-1 line-clamp-2 leading-relaxed">
+                      {{ $gItem->subtitle }}
+                    </p>
+                  @endif
                 </div>
               </div>
-
-              <!-- Category & Date below title -->
-              <div class="px-3 pb-3 pt-0 space-y-1.5 border-t border-gray-50 mt-1">
-                @if($postItem->category)
-                  <div class="text-[11px] font-bold text-[#0b4622] flex items-center gap-1">
-                    <i class="ri-price-tag-3-line text-[10px]"></i>
-                    <span class="truncate">{{ $postItem->category->name }}</span>
-                  </div>
-                @endif
-                <p class="text-[11px] text-gray-500 flex items-center gap-1">
-                  <i class="ri-time-line text-[#c8102e]"></i>
-                  <span>{{ $postItem->published ? $postItem->published->format('d M, Y') : $postItem->created_at->format('d M, Y') }}</span>
-                </p>
+              <div class="px-3 pb-3 pt-2.5 flex items-center justify-between text-[11px] text-gray-400 border-t border-gray-100">
+                <span class="inline-flex items-center gap-1 font-medium">
+                  <i class="ri-calendar-line text-gray-400 text-xs"></i>
+                  <span class="pt-0.5">{{ $displayDate ?: '—' }}</span>
+                </span>
+                <span class="font-bold text-[#0b4622] inline-flex items-center gap-0.5 group-hover:text-[#c8102e] transition">
+                  <span>{{ $hasLink ? 'বিস্তারিত' : 'গ্যালারি' }}</span>
+                  <i class="ri-arrow-right-s-line"></i>
+                </span>
               </div>
             </a>
           @empty
-            <div class="col-span-3 py-8 text-center text-xs text-gray-400">
-              বর্তমানে কোনো ব্লগ আপডেট নেই।
-            </div>
+            <a
+              href="{{ route('gallery') }}"
+              class="col-span-3 sub-card-hover p-4 rounded-xl border border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row items-center gap-4 group"
+            >
+              <div class="w-24 h-24 rounded-xl overflow-hidden shrink-0">
+                <img src="{{ asset('assets/images/gallery-event.jpg') }}" alt="গ্যালারি" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+              </div>
+              <div>
+                <h3 class="text-base font-extrabold text-[#0b4622] group-hover:text-[#c8102e] transition">আমাদের ফটো ও ভিডিও গ্যালারি</h3>
+                <p class="text-xs text-gray-600 mt-1">শৈলকুপার বিভিন্ন সামাজিক, সাংস্কৃতিক ও উন্নয়নমূলক কর্মকাণ্ডের স্মরণীয় মুহূর্তসমূহ।</p>
+                <span class="mt-2 text-xs font-bold text-[#c8102e] inline-flex items-center gap-1">গ্যালারি পরিদর্শন করুন <i class="ri-arrow-right-line"></i></span>
+              </div>
+            </a>
           @endforelse
         </div>
       </div>
 
-      <!-- Right: Donation CTA Banner (Fully Responsive & Admin Controlled) -->
+      <!-- Right: Donation CTA Banner (শৈলকুপার উন্নয়নে আপনিও অংশ নিন) -->
       @php
         $donationBanner = $donation ?? \App\Models\DonationSetting::first();
       @endphp
@@ -751,6 +754,84 @@
           </div>
         </div>
       @endif
+    </section>
+
+    <!-- ===================================================================
+         10. ROW 6: ব্লগ ও আপডেট (সবার নিচে ফুল সেকশন জুড়ে)
+         =================================================================== -->
+    <section id="blog-section" class="w-full">
+      <div class="ui-card p-4 sm:p-7">
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-5 sm:mb-6">
+          <div class="flex items-center gap-2.5">
+            <span class="text-[#c8102e] text-xl sm:text-2xl flex items-center">
+              <i class="ri-article-line"></i>
+            </span>
+            <h2 class="text-base sm:text-[22px] font-extrabold text-gray-900">ব্লগ ও আপডেট</h2>
+          </div>
+          <a
+            href="{{ route('blogs.index') }}"
+            class="text-[#c8102e] hover:text-[#a30b24] text-xs sm:text-[14px] font-bold inline-flex items-center gap-1.5 transition cursor-pointer"
+          >
+            <span>সব ব্লগ দেখুন</span>
+            <i class="ri-arrow-right-line"></i>
+          </a>
+        </div>
+
+        <!-- 3 or 4 Blog Cards Grid Full Width -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          @forelse($latestPosts ?? [] as $postItem)
+            <a
+              href="{{ route('blogs.details', $postItem->slug) }}"
+              class="sub-card-hover cursor-pointer bg-white rounded-2xl border border-gray-200/80 overflow-hidden flex flex-col group justify-between shadow-2xs hover:shadow-md transition duration-300"
+            >
+              <div>
+                <!-- Thumbnail -->
+                <div class="aspect-[16/10] bg-gray-100 overflow-hidden">
+                  <img
+                    src="{{ $postItem->thumbnail_url }}"
+                    alt="{{ $postItem->title }}"
+                    class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                    onerror="this.src='https://placehold.co/400x250/0b4622/ffffff?text={{ urlencode($postItem->title) }}'"
+                  />
+                </div>
+                <!-- Content -->
+                <div class="p-4 sm:p-5">
+                  <h3 class="text-sm sm:text-base font-extrabold text-gray-900 group-hover:text-[#c8102e] leading-snug transition line-clamp-2">
+                    {{ $postItem->title }}
+                  </h3>
+                  @if($postItem->summary)
+                    <p class="text-xs sm:text-[13px] text-gray-600 line-clamp-2 mt-2 leading-relaxed">
+                      {{ $postItem->summary }}
+                    </p>
+                  @endif
+                </div>
+              </div>
+
+              <!-- Category & Date below title -->
+              <div class="px-4 sm:px-5 pb-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+                @if($postItem->category)
+                  <span class="font-bold text-[#0b4622] flex items-center gap-1">
+                    <i class="ri-price-tag-3-line text-[11px]"></i>
+                    <span class="truncate max-w-[130px]">{{ $postItem->category->name }}</span>
+                  </span>
+                @else
+                  <span></span>
+                @endif
+                <span class="flex items-center gap-1 font-medium">
+                  <i class="ri-time-line text-[#c8102e]"></i>
+                  <span>{{ $postItem->published ? $postItem->published->format('d M, Y') : $postItem->created_at->format('d M, Y') }}</span>
+                </span>
+              </div>
+            </a>
+          @empty
+            <div class="col-span-full py-12 text-center text-xs text-gray-400">
+              <i class="ri-article-line text-3xl text-gray-300 block mb-2"></i>
+              বর্তমানে কোনো ব্লগ আপডেট নেই।
+            </div>
+          @endforelse
+        </div>
+      </div>
     </section>
 
   </main>

@@ -217,6 +217,16 @@ class CheckAdminPermission
         'admin.pages.status'  => 'pages.edit',
         'admin.pages.destroy' => 'pages.delete',
 
+        // Organization Rules & Constitution Management
+        'admin.rules.index'   => 'pages.view',
+        'admin.rules.show'    => 'pages.view',
+        'admin.rules.create'  => 'pages.create',
+        'admin.rules.store'   => 'pages.create',
+        'admin.rules.edit'    => 'pages.edit',
+        'admin.rules.update'  => 'pages.edit',
+        'admin.rules.status'  => 'pages.edit',
+        'admin.rules.destroy' => 'pages.delete',
+
         // Contact Messages Management
         'admin.contact-messages.index'       => 'contact_messages.view',
         'admin.contact-messages.show'        => 'contact_messages.view',

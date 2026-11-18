@@ -129,6 +129,12 @@ Route::get('/union/union/{slug}', function ($slug) {
 Route::post('/donations/initiate', [\App\Http\Controllers\DonationController::class, 'initiate'])->name('donations.initiate');
 Route::match(['get', 'post'], '/donations/callback', [\App\Http\Controllers\DonationController::class, 'callback'])->name('donations.callback');
 
+// Public Page: Rules & Constitution (গঠনতন্ত্র ও বিধিমালা)
+Route::get('/rules', [HomeController::class, 'rules'])->name('rules.index');
+Route::get('/constitution', function () {
+    return redirect()->route('rules.index');
+});
+
 // Public Dynamic Pages
 Route::get('/page/{slug}', [HomeController::class, 'customPage'])->name('custom-page.show');
 // Authentication Routes (Guest Only)
@@ -282,6 +288,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.permission'])
     // Dynamic Pages Management (পেজ ব্যবস্থাপনা)
     Route::resource('pages', \App\Http\Controllers\Admin\PageController::class)->names('pages')->except(['show']);
     Route::patch('pages/{page}/status', [\App\Http\Controllers\Admin\PageController::class, 'toggleStatus'])->name('pages.status');
+
+    // Organization Rules & Constitution Management (গঠনতন্ত্র ও বিধিমালা)
+    Route::resource('rules', \App\Http\Controllers\Admin\OrganizationRuleController::class)->names('rules')->except(['show']);
+    Route::patch('rules/{rule}/status', [\App\Http\Controllers\Admin\OrganizationRuleController::class, 'toggleStatus'])->name('rules.status');
 
     // Person Messages Management (ব্যক্তিবর্গের বাণী ব্যবস্থাপনা)
     Route::resource('person-messages', \App\Http\Controllers\Admin\PersonMessageController::class)->names('person-messages')->except(['show']);

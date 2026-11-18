@@ -195,8 +195,8 @@
             @enderror
           </div>
 
-          {{-- Blood Group --}}
-          <div class="space-y-1.5 sm:col-span-2">
+          {{-- Blood Group & Occupation (Same Row) --}}
+          <div class="space-y-1.5">
             <label for="blood_group" class="block text-xs sm:text-sm font-bold text-gray-800">
               রক্তের গ্রুপ (Blood Group) <span class="text-red-500">*</span>
             </label>
@@ -207,13 +207,13 @@
                       class="w-full pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm border {{ $errors->has('blood_group') ? 'border-red-500 ring-2 ring-red-500/20' : 'border-gray-300 focus:border-[#0b4622] focus:ring-[#0b4622]/15' }} rounded-xl focus:outline-none focus:ring-2 transition bg-white appearance-none">
                 <option value="">-- রক্তের গ্রুপ নির্বাচন করুন --</option>
                 <option value="A+" {{ old('blood_group') === 'A+' ? 'selected' : '' }}>A+ (পজিটিভ)</option>
-                <option value="A-" {{ old('blood_group') === 'A-"' ? 'selected' : '' }}>A- (নেগেটিভ)</option>
+                <option value="A-" {{ old('blood_group') === 'A-' ? 'selected' : '' }}>A- (নেগেটিভ)</option>
                 <option value="B+" {{ old('blood_group') === 'B+' ? 'selected' : '' }}>B+ (পজিটিভ)</option>
-                <option value="B-" {{ old('blood_group') === 'B-"' ? 'selected' : '' }}>B- (নেগেটিভ)</option>
+                <option value="B-" {{ old('blood_group') === 'B-' ? 'selected' : '' }}>B- (নেগেটিভ)</option>
                 <option value="AB+" {{ old('blood_group') === 'AB+' ? 'selected' : '' }}>AB+ (পজিটিভ)</option>
-                <option value="AB-" {{ old('blood_group') === 'AB-"' ? 'selected' : '' }}>AB- (নেগেটিভ)</option>
+                <option value="AB-" {{ old('blood_group') === 'AB-' ? 'selected' : '' }}>AB- (নেগেটিভ)</option>
                 <option value="O+" {{ old('blood_group') === 'O+' ? 'selected' : '' }}>O+ (পজিটিভ)</option>
-                <option value="O-" {{ old('blood_group') === 'O-"' ? 'selected' : '' }}>O- (নেগেটিভ)</option>
+                <option value="O-" {{ old('blood_group') === 'O-' ? 'selected' : '' }}>O- (নেগেটিভ)</option>
               </select>
               <i class="ri-drop-line absolute left-3.5 top-3 sm:top-3.5 text-red-500 text-base"></i>
               <i class="ri-arrow-down-s-line absolute right-3.5 top-3 sm:top-3.5 text-gray-400 pointer-events-none"></i>
@@ -225,7 +225,28 @@
             @enderror
           </div>
 
-          {{-- Address --}}
+          {{-- Occupation --}}
+          <div class="space-y-1.5">
+            <label for="occupation" class="block text-xs sm:text-sm font-bold text-gray-800">
+              পেশা (Occupation) <span class="text-xs font-normal text-gray-400">(ঐচ্ছিক)</span>
+            </label>
+            <div class="relative">
+              <input type="text"
+                     id="occupation"
+                     name="occupation"
+                     value="{{ old('occupation') }}"
+                     placeholder="উদা: শিক্ষক, ব্যবসায়ী, চাকরিজীবী, শিক্ষার্থী"
+                     class="w-full pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm border {{ $errors->has('occupation') ? 'border-red-500 ring-2 ring-red-500/20' : 'border-gray-300 focus:border-[#0b4622] focus:ring-[#0b4622]/15' }} rounded-xl focus:outline-none focus:ring-2 transition">
+              <i class="ri-briefcase-line absolute left-3.5 top-3 sm:top-3.5 text-gray-400 text-base"></i>
+            </div>
+            @error('occupation')
+              <p class="text-xs text-red-600 font-semibold flex items-center gap-1 mt-1">
+                <i class="ri-error-warning-line"></i> {{ $message }}
+              </p>
+            @enderror
+          </div>
+
+          {{-- Current Address --}}
           <div class="space-y-1.5 sm:col-span-2">
             <label for="address" class="block text-xs sm:text-sm font-bold text-gray-800">
               বর্তমান ঠিকানা (গ্রাম / ওয়ার্ড / উপজেলা / জেলা) <span class="text-red-500">*</span>
@@ -233,13 +254,33 @@
             <div class="relative">
               <textarea id="address"
                         name="address"
-                        rows="3"
+                        rows="2"
                         required
-                        placeholder="আপনার বিস্তারিত ঠিকানা লিখুন..."
+                        placeholder="আপনার বর্তমান ঠিকানা লিখুন..."
                         class="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm border {{ $errors->has('address') ? 'border-red-500 ring-2 ring-red-500/20' : 'border-gray-300 focus:border-[#0b4622] focus:ring-[#0b4622]/15' }} rounded-xl focus:outline-none focus:ring-2 transition">{{ old('address') }}</textarea>
               <i class="ri-map-pin-line absolute left-3.5 top-3 text-gray-400 text-base"></i>
             </div>
             @error('address')
+              <p class="text-xs text-red-600 font-semibold flex items-center gap-1 mt-1">
+                <i class="ri-error-warning-line"></i> {{ $message }}
+              </p>
+            @enderror
+          </div>
+
+          {{-- Permanent Address --}}
+          <div class="space-y-1.5 sm:col-span-2">
+            <label for="permanent_address" class="block text-xs sm:text-sm font-bold text-gray-800">
+              স্থায়ী ঠিকানা (গ্রাম / ওয়ার্ড / উপজেলা / জেলা) <span class="text-xs font-normal text-gray-400">(ঐচ্ছিক)</span>
+            </label>
+            <div class="relative">
+              <textarea id="permanent_address"
+                        name="permanent_address"
+                        rows="2"
+                        placeholder="আপনার স্থায়ী ঠিকানা লিখুন (বর্তমান ঠিকানার অনুরূপ হলে ফাঁকা রাখতে পারেন)..."
+                        class="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm border {{ $errors->has('permanent_address') ? 'border-red-500 ring-2 ring-red-500/20' : 'border-gray-300 focus:border-[#0b4622] focus:ring-[#0b4622]/15' }} rounded-xl focus:outline-none focus:ring-2 transition">{{ old('permanent_address') }}</textarea>
+              <i class="ri-home-office-line absolute left-3.5 top-3 text-gray-400 text-base"></i>
+            </div>
+            @error('permanent_address')
               <p class="text-xs text-red-600 font-semibold flex items-center gap-1 mt-1">
                 <i class="ri-error-warning-line"></i> {{ $message }}
               </p>

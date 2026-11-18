@@ -150,6 +150,20 @@
               </td>
             </tr>
 
+            @if(!empty($volunteer->occupation))
+            <tr class="hover:bg-gray-50/70 transition">
+              <td class="py-3.5 px-4 sm:px-5 font-bold text-gray-600 bg-gray-50/70 whitespace-nowrap">
+                পেশা
+              </td>
+              <td class="py-3.5 px-4 sm:px-5 font-semibold text-gray-800">
+                <span class="inline-flex items-center gap-1.5">
+                  <i class="ri-briefcase-line text-[#0b4622]"></i>
+                  <span>{{ $volunteer->occupation }}</span>
+                </span>
+              </td>
+            </tr>
+            @endif
+
             <tr class="hover:bg-gray-50/70 transition">
               <td class="py-3.5 px-4 sm:px-5 font-bold text-gray-600 bg-gray-50/70 whitespace-nowrap align-top">
                 বর্তমান ঠিকানা
@@ -161,6 +175,20 @@
                 </div>
               </td>
             </tr>
+
+            @if(!empty($volunteer->permanent_address))
+            <tr class="hover:bg-gray-50/70 transition">
+              <td class="py-3.5 px-4 sm:px-5 font-bold text-gray-600 bg-gray-50/70 whitespace-nowrap align-top">
+                স্থায়ী ঠিকানা
+              </td>
+              <td class="py-3.5 px-4 sm:px-5 text-gray-700 leading-relaxed">
+                <div class="flex items-start gap-1.5">
+                  <i class="ri-home-office-line text-[#0b4622] mt-0.5 shrink-0"></i>
+                  <span>{{ $volunteer->permanent_address }}</span>
+                </div>
+              </td>
+            </tr>
+            @endif
 
             <tr class="hover:bg-gray-50/70 transition">
               <td class="py-3.5 px-4 sm:px-5 font-bold text-gray-600 bg-gray-50/70 whitespace-nowrap">

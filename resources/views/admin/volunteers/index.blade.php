@@ -172,7 +172,7 @@
             <th class="px-4 py-3.5 text-center w-12 border-r border-gray-200">ক্র.</th>
             <th class="px-4 py-3.5 border-r border-gray-200">স্বেচ্ছাসেবী / আবেদনকারী</th>
             <th class="px-4 py-3.5 border-r border-gray-200">যোগাযোগ</th>
-            <th class="px-4 py-3.5 border-r border-gray-200 text-center">রক্তের গ্রুপ</th>
+            <th class="px-4 py-3.5 border-r border-gray-200 text-center">রক্তের গ্রুপ ও পেশা</th>
             <th class="px-4 py-3.5 border-r border-gray-200">ঠিকানা</th>
             <th class="px-4 py-3.5 border-r border-gray-200 text-center">স্ট্যাটাস ও অনুমোদন</th>
             <th class="px-4 py-3.5 border-r border-gray-200">আবেদনের তারিখ</th>
@@ -212,7 +212,7 @@
                 @endif
               </td>
 
-              {{-- Blood Group --}}
+              {{-- Blood Group & Occupation --}}
               <td class="px-4 py-3.5 border-r border-gray-200 text-center">
                 @if($volunteer->blood_group)
                   <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-200">
@@ -220,6 +220,11 @@
                   </span>
                 @else
                   <span class="text-gray-400 text-xs">—</span>
+                @endif
+                @if($volunteer->occupation)
+                  <span class="block text-[11px] text-gray-600 mt-1 font-medium truncate max-w-[120px] mx-auto" title="{{ $volunteer->occupation }}">
+                    {{ $volunteer->occupation }}
+                  </span>
                 @endif
               </td>
 

@@ -21,6 +21,7 @@ use App\Models\Project;
 use App\Models\Institution;
 use App\Models\InstitutionCategory;
 use App\Models\Office;
+use App\Models\OrganizationRule;
 use App\Models\Union;
 use App\Models\StatCounter;
 use App\Services\CacheService;
@@ -714,5 +715,14 @@ class HomeController extends Controller
         }
 
         return view('pages.unions.detail', compact('union'));
+    }
+
+    /**
+     * Public: Organization Rules & Constitution (গঠনতন্ত্র ও বিধিমালা)
+     */
+    public function rules(): View
+    {
+        $rules = OrganizationRule::active()->get();
+        return view('pages.rules', compact('rules'));
     }
 }

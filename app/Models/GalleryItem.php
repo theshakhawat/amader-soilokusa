@@ -15,6 +15,9 @@ class GalleryItem extends Model
     protected $fillable = [
         'type',
         'title',
+        'subtitle',
+        'link_url',
+        'event_date',
         'file_path',
         'video_url',
         'thumbnail',
@@ -25,6 +28,7 @@ class GalleryItem extends Model
     protected $casts = [
         'status' => 'boolean',
         'order_index' => 'integer',
+        'event_date' => 'date',
     ];
 
     /**

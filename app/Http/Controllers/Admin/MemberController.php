@@ -109,7 +109,9 @@ class MemberController extends Controller
             'photo'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
             'signature'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'blood_group'    => 'nullable|string|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+            'occupation'     => 'nullable|string|max:150',
             'address'        => 'required|string|max:500',
+            'permanent_address' => 'nullable|string|max:500',
             'status'         => 'required|boolean',
             'notes'          => 'nullable|string|max:1000',
         ], [
@@ -154,7 +156,9 @@ class MemberController extends Controller
             'phone'          => $validated['phone'],
             'email'          => $validated['email'],
             'blood_group'    => $validated['blood_group'] ?? null,
+            'occupation'     => $validated['occupation'] ?? null,
             'address'        => $validated['address'],
+            'permanent_address' => $validated['permanent_address'] ?? null,
             'status'         => $isApproved,
             'approved_at'    => $isApproved ? now() : null,
             'approved_by'    => $isApproved ? auth()->id() : null,
@@ -213,7 +217,9 @@ class MemberController extends Controller
             'photo'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
             'signature'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'blood_group'    => 'nullable|string|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+            'occupation'     => 'nullable|string|max:150',
             'address'        => 'required|string|max:500',
+            'permanent_address' => 'nullable|string|max:500',
             'status'         => 'required|boolean',
             'notes'          => 'nullable|string|max:1000',
         ], [
@@ -251,7 +257,9 @@ class MemberController extends Controller
         $member->phone = $validated['phone'];
         $member->email = $validated['email'];
         $member->blood_group = $validated['blood_group'] ?? null;
+        $member->occupation = $validated['occupation'] ?? null;
         $member->address = $validated['address'];
+        $member->permanent_address = $validated['permanent_address'] ?? null;
         $member->status = $isNowApproved;
         $member->notes = $validated['notes'] ?? null;
 
@@ -345,7 +353,9 @@ class MemberController extends Controller
                 'মোবাইল নম্বর',
                 'ইমেইল',
                 'রক্তের গ্রুপ',
-                'ঠিকানা',
+                'পেশা',
+                'বর্তমান ঠিকানা',
+                'স্থায়ী ঠিকানা',
                 'স্ট্যাটাস',
                 'আবেদনের তারিখ',
                 'অনুমোদনের তারিখ',
@@ -362,7 +372,9 @@ class MemberController extends Controller
                     $m->phone,
                     $m->email,
                     $m->blood_group ?? '',
+                    $m->occupation ?? '',
                     $m->address ?? '',
+                    $m->permanent_address ?? '',
                     $m->status ? 'Active' : 'Inactive',
                     $m->created_at ? $m->created_at->format('d/m/Y h:i A') : '',
                     $m->approved_at ? Carbon::parse($m->approved_at)->format('d/m/Y h:i A') : '',

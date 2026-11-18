@@ -27,8 +27,10 @@ class VolunteerRegistrationController extends Controller
                 $q->where('name', 'like', "%{$searchTerm}%")
                   ->orWhere('phone', 'like', "%{$searchTerm}%")
                   ->orWhere('email', 'like', "%{$searchTerm}%")
+                  ->orWhere('occupation', 'like', "%{$searchTerm}%")
                   ->orWhere('blood_group', 'like', "%{$searchTerm}%")
                   ->orWhere('address', 'like', "%{$searchTerm}%")
+                  ->orWhere('permanent_address', 'like', "%{$searchTerm}%")
                   ->orWhere('id_card_number', 'like', "%{$searchTerm}%");
             });
         }
@@ -82,9 +84,11 @@ class VolunteerRegistrationController extends Controller
                 'max:150',
                 'unique:volunteers,email',
             ],
-            'photo'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
-            'blood_group' => 'required|string|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
-            'address'     => 'required|string|max:500',
+            'photo'             => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
+            'blood_group'       => 'required|string|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+            'occupation'        => 'nullable|string|max:150',
+            'address'           => 'required|string|max:500',
+            'permanent_address' => 'nullable|string|max:500',
         ], [
             'name.required'        => 'আপনার পূর্ণ নাম লিখুন।',
             'phone.required'       => 'মোবাইল নম্বর লিখুন।',
@@ -117,15 +121,17 @@ class VolunteerRegistrationController extends Controller
 
         // Create volunteer record with status = false (pending approval)
         $volunteer = Volunteer::create([
-            'name'        => $validated['name'],
-            'slug'        => $slug,
-            'photo'       => $photoPath,
-            'phone'       => $validated['phone'],
-            'email'       => $validated['email'] ?? null,
-            'blood_group' => $validated['blood_group'] ?? null,
-            'address'     => $validated['address'],
-            'status'      => false, // Always false by default until admin approves
-            'created_by'  => null,
+            'name'              => $validated['name'],
+            'slug'              => $slug,
+            'photo'             => $photoPath,
+            'phone'             => $validated['phone'],
+            'email'             => $validated['email'] ?? null,
+            'blood_group'       => $validated['blood_group'] ?? null,
+            'occupation'        => $validated['occupation'] ?? null,
+            'address'           => $validated['address'],
+            'permanent_address' => $validated['permanent_address'] ?? null,
+            'status'            => false, // Always false by default until admin approves
+            'created_by'        => null,
         ]);
 
         // Send notification to admin panel

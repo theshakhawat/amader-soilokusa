@@ -107,13 +107,74 @@
               id="title"
               name="title"
               value="{{ old('title') }}"
-              placeholder="উদাঃ বার্ষিক সাধারণ সভা ও স্বেচ্ছাসেবী মিলনমেলা"
+              placeholder="উদাঃ বৃক্ষরোপণ কর্মসূচি"
               class="w-full px-4 py-2.5 text-sm bg-gray-50 border @error('title') border-[#c8102e] bg-red-50/20 @else border-gray-200 @enderror rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0b4622]/20 focus:border-[#0b4622] transition"
               required
             >
             @error('title')
               <p class="mt-1 text-xs text-[#c8102e] font-medium">{{ $message }}</p>
             @enderror
+          </div>
+
+          <!-- Subtitle / Short Description -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="subtitle" class="block text-xs font-bold text-gray-700">
+                সাব-টাইটেল বা বিবরণ (Subtitle) <span class="text-xs font-normal text-gray-400">(ঐচ্ছিক)</span>
+              </label>
+              <span id="subtitle-char-count" class="text-[11px] text-gray-400 font-mono">০ / ২০০০ অক্ষর</span>
+            </div>
+            <textarea
+              id="subtitle"
+              name="subtitle"
+              rows="3"
+              maxlength="2000"
+              oninput="document.getElementById('subtitle-char-count').innerText = this.value.length + ' / ২০০০ অক্ষর'"
+              placeholder="উদাঃ কুলাঘাট ইউনিয়নে ১০০০টি বৃক্ষরোপণ কর্মসূচি।"
+              class="w-full px-4 py-2.5 text-xs sm:text-sm bg-gray-50 border @error('subtitle') border-[#c8102e] @else border-gray-200 @enderror rounded-xl focus:bg-white focus:outline-none focus:border-[#0b4622] transition"
+            >{{ old('subtitle') }}</textarea>
+            @error('subtitle')
+              <p class="mt-1 text-xs text-[#c8102e] font-medium">{{ $message }}</p>
+            @enderror
+          </div>
+
+          <!-- Hyperlink URL & Event Date Row -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Action / Hyperlink URL -->
+            <div>
+              <label for="link_url" class="block text-xs font-bold text-gray-700 mb-1.5">
+                ক্লিক করলে যে লিংকে যাবে (Hyperlink URL) <span class="text-xs font-normal text-gray-400">(ঐচ্ছিক)</span>
+              </label>
+              <input
+                type="text"
+                id="link_url"
+                name="link_url"
+                value="{{ old('link_url') }}"
+                placeholder="উদাঃ https://... অথবা /events/1"
+                class="w-full px-4 py-2.5 text-xs bg-gray-50 border @error('link_url') border-[#c8102e] @else border-gray-200 @enderror rounded-xl focus:bg-white focus:outline-none focus:border-[#0b4622] transition"
+              >
+              <p class="text-[10px] text-gray-400 mt-1">লিংক দেওয়া থাকলে কার্ডে ক্লিক করলে সরাসরি ওই পেজে নিয়ে যাবে।</p>
+              @error('link_url')
+                <p class="mt-1 text-xs text-[#c8102e] font-medium">{{ $message }}</p>
+              @enderror
+            </div>
+
+            <!-- Event Date -->
+            <div>
+              <label for="event_date" class="block text-xs font-bold text-gray-700 mb-1.5">
+                তারিখ (Event Date) <span class="text-xs font-normal text-gray-400">(ঐচ্ছিক)</span>
+              </label>
+              <input
+                type="date"
+                id="event_date"
+                name="event_date"
+                value="{{ old('event_date', date('Y-m-d')) }}"
+                class="w-full px-4 py-2.5 text-xs bg-gray-50 border @error('event_date') border-[#c8102e] @else border-gray-200 @enderror rounded-xl focus:bg-white focus:outline-none focus:border-[#0b4622] transition"
+              >
+              @error('event_date')
+                <p class="mt-1 text-xs text-[#c8102e] font-medium">{{ $message }}</p>
+              @enderror
+            </div>
           </div>
 
           <!-- Photo Upload Field (Shown when photo selected) -->

@@ -58,25 +58,70 @@
        TAB 1: PHOTO GALLERY
        ========================================================================= -->
   <div id="gallery-photo-content" class="{{ $activeTab === 'photo' ? '' : 'hidden' }}">
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
       @forelse($photos as $index => $photo)
+        @php
+          $hasLink = !empty($photo->link_url);
+          $targetUrl = $hasLink ? $photo->link_url : null;
+          $displayDate = $photo->event_date ? $photo->event_date->translatedFormat('d F Y') : ($photo->created_at ? $photo->created_at->translatedFormat('d F Y') : null);
+        @endphp
+
         <div
-          onclick="openPhotoLightbox({{ $index }})"
-          class="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-100 border border-gray-200/80 shadow-2xs hover:shadow-lg transition duration-300 cursor-pointer"
+          @if($hasLink)
+            onclick="window.open('{{ $targetUrl }}', '{{ str_starts_with($targetUrl, 'http') ? '_blank' : '_self' }}')"
+          @else
+            onclick="openPhotoLightbox({{ $index }})"
+          @endif
+          class="bg-white rounded-2xl border border-gray-200/90 shadow-2xs hover:shadow-md hover:border-[#0b4622]/40 transition-all duration-300 overflow-hidden flex flex-col justify-between group cursor-pointer relative"
         >
-          <img
-            src="{{ $photo->image_url }}"
-            alt="{{ $photo->title }}"
-            class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-            loading="lazy"
-          >
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-between p-4">
-            <span class="self-end w-8 h-8 rounded-full bg-white/90 text-[#0b4622] flex items-center justify-center shadow">
-              <i class="ri-fullscreen-line text-sm"></i>
-            </span>
-            <h4 class="text-xs sm:text-sm font-bold text-white line-clamp-2">
-              {{ $photo->title }}
-            </h4>
+          <div>
+            {{-- Image Box --}}
+            <div class="relative aspect-[16/11] bg-gray-100 overflow-hidden">
+              <img
+                src="{{ $photo->image_url }}"
+                alt="{{ $photo->title }}"
+                class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                loading="lazy"
+              >
+
+              {{-- Lightbox Fullscreen Button (Only this opens fullscreen lightbox) --}}
+              <button
+                type="button"
+                onclick="event.stopPropagation(); event.preventDefault(); openPhotoLightbox({{ $index }})"
+                title="বড় করে দেখুন"
+                class="absolute top-2.5 right-2.5 w-9 h-9 rounded-full bg-black/60 hover:bg-black/85 text-white flex items-center justify-center transition duration-200 cursor-pointer shadow-md z-20"
+              >
+                <i class="ri-fullscreen-line text-base"></i>
+              </button>
+            </div>
+
+            {{-- Text Content --}}
+            <div class="p-4 sm:p-5">
+              <h3 class="text-sm sm:text-base font-extrabold text-[#0b4622] group-hover:text-[#c8102e] transition leading-snug line-clamp-2">
+                {{ $photo->title }}
+              </h3>
+
+              @if($photo->subtitle)
+                <p class="text-xs text-gray-600 mt-2 leading-relaxed line-clamp-2">
+                  {{ $photo->subtitle }}
+                </p>
+              @endif
+            </div>
+          </div>
+
+          {{-- Card Footer: Date & Link Indicator (Clean margin and padding so date is properly spaced below the border line) --}}
+          <div class="px-4 sm:px-5 pb-4 pt-3.5 flex items-center justify-between text-xs text-gray-400 border-t border-gray-100">
+            <div class="flex items-center gap-1.5 font-medium text-gray-400">
+              <i class="ri-calendar-line text-sm"></i>
+              <span class="pt-0.5">{{ $displayDate ?: '—' }}</span>
+            </div>
+
+            @if($hasLink)
+              <span class="inline-flex items-center gap-1 text-[11px] font-bold text-[#0b4622] group-hover:text-[#c8102e] transition">
+                <span>বিস্তারিত</span>
+                <i class="ri-arrow-right-line"></i>
+              </span>
+            @endif
           </div>
         </div>
       @empty

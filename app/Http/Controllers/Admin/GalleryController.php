@@ -50,6 +50,9 @@ class GalleryController extends Controller
         $validated = $request->validate([
             'type'        => 'required|in:photo,video',
             'title'       => 'required|string|max:255',
+            'subtitle'    => 'nullable|string|max:2000',
+            'link_url'    => 'nullable|string|max:500',
+            'event_date'  => 'nullable|date',
             'file'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:20480', // max 20MB for photos
             'video_url'   => 'nullable|required_if:type,video|url|max:500',
             'thumbnail'   => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
@@ -57,6 +60,7 @@ class GalleryController extends Controller
             'status'      => 'nullable|boolean',
         ], [
             'title.required'         => 'মিডিয়া শিরোনাম প্রদান করুন।',
+            'subtitle.max'           => 'সাব-টাইটেল বা বিবরণ সর্বোচ্চ ২০০০ অক্ষরের মধ্যে হতে হবে।',
             'video_url.required_if'  => 'ভিডিও গ্যালারির জন্য ইউটিউব লিংক প্রদান করা আবশ্যক।',
             'video_url.url'          => 'সঠিক ইউটিউব ভিডিও লিংক (URL) লিখুন।',
             'file.image'             => 'ছবি অবশ্যই একটি বৈধ ইমেজ ফাইল হতে হবে।',
@@ -66,6 +70,9 @@ class GalleryController extends Controller
         $data = [
             'type'        => $validated['type'],
             'title'       => $validated['title'],
+            'subtitle'    => $validated['subtitle'] ?? null,
+            'link_url'    => $validated['link_url'] ?? null,
+            'event_date'  => $validated['event_date'] ?? null,
             'video_url'   => null,
             'file_path'   => null,
             'order_index' => $validated['order_index'] ?? 0,
@@ -109,6 +116,9 @@ class GalleryController extends Controller
         $validated = $request->validate([
             'type'        => 'required|in:photo,video',
             'title'       => 'required|string|max:255',
+            'subtitle'    => 'nullable|string|max:2000',
+            'link_url'    => 'nullable|string|max:500',
+            'event_date'  => 'nullable|date',
             'file'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:20480',
             'video_url'   => 'nullable|required_if:type,video|url|max:500',
             'thumbnail'   => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
@@ -116,6 +126,7 @@ class GalleryController extends Controller
             'status'      => 'nullable|boolean',
         ], [
             'title.required'        => 'মিডিয়া শিরোনাম প্রদান করুন।',
+            'subtitle.max'          => 'সাব-টাইটেল বা বিবরণ সর্বোচ্চ ২০০০ অক্ষরের মধ্যে হতে হবে।',
             'video_url.required_if' => 'ভিডিও গ্যালারির জন্য ইউটিউব লিংক প্রদান করা আবশ্যক।',
             'video_url.url'         => 'সঠিক ইউটিউব ভিডিও লিংক (URL) লিখুন।',
             'file.image'            => 'ছবি অবশ্যই একটি বৈধ ইমেজ ফাইল হতে হবে।',
@@ -125,6 +136,9 @@ class GalleryController extends Controller
         $data = [
             'type'        => $validated['type'],
             'title'       => $validated['title'],
+            'subtitle'    => $validated['subtitle'] ?? null,
+            'link_url'    => $validated['link_url'] ?? null,
+            'event_date'  => $validated['event_date'] ?? null,
             'order_index' => $validated['order_index'] ?? $gallery->order_index,
             'status'      => $request->has('status'),
         ];
