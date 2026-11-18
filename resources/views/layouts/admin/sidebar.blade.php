@@ -967,6 +967,25 @@
         </a>
         @endif
 
+        {{-- ফন্ট সেটিংস (Font Settings) --}}
+        @if($can('customization.view') || $can('settings.mail'))
+        @php
+          $isFontActive = request()->routeIs('admin.settings.font*');
+        @endphp
+        <a
+          href="{{ route('admin.settings.font') }}"
+          class="flex items-center justify-between px-3.5 py-2 rounded-xl font-medium transition cursor-pointer {{ $isFontActive ? 'bg-gray-100/70 text-[#0b4622] font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}"
+        >
+          <div class="flex items-center gap-3">
+            <i class="ri-font-size text-base w-5 text-center {{ $isFontActive ? 'text-[#0b4622]' : 'text-gray-400' }}"></i>
+            <span>ফন্ট সেটিংস</span>
+          </div>
+          <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-800">
+            Font
+          </span>
+        </a>
+        @endif
+
       </div>
     </div>
     @endif

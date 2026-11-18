@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\ContactSetting;
+use App\Models\FontSetting;
 use App\Models\FooterSetting;
 use App\Models\MailSetting;
 use App\Models\NavItem;
@@ -52,6 +53,7 @@ class AppServiceProvider extends ServiceProvider
             static $cachedUnions = null;
             static $cachedCommittees = null;
             static $cachedNavItems = null;
+            static $cachedFontSetting = null;
 
             if ($siteBranding === null) {
                 $siteBranding = SiteSetting::first();
@@ -81,6 +83,12 @@ class AppServiceProvider extends ServiceProvider
                     ->orderBy('order', 'asc')
                     ->get();
             }
+            if ($cachedFontSetting === null) {
+                $cachedFontSetting = Cache::rememberForever('global_font_settings_arr', function () {
+                    $setting = \Illuminate\Support\Facades\DB::table('font_settings')->first();
+                    return $setting ? (array) $setting : [];
+                });
+            }
 
             $view->with([
                 'sharedSiteBranding'    => $siteBranding,
@@ -88,6 +96,7 @@ class AppServiceProvider extends ServiceProvider
                 'sharedSiteSocialLinks' => $siteSocialLinks,
                 'sharedTopbarSetting'   => $topbarSetting,
                 'sharedFooterSetting'   => $footerSetting,
+                'sharedFontSetting'     => $cachedFontSetting,
                 'sharedActiveUnions'    => $cachedUnions,
                 'sharedActiveCommittees'=> $cachedCommittees,
                 'sharedNavItems'        => $cachedNavItems,

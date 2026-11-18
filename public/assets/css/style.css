@@ -3,15 +3,23 @@
    ========================================================================== */
 
 /* Google Fonts Import for Bangla & English */
-@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Tiro+Bangla:ital@0;1&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@100;200;300;400;500;600;700;800;900&family=Noto+Serif+Bengali:wght@100;200;300;400;500;600;700;800;900&family=Tiro+Bangla:ital@0;1&family=Galada&family=Mina:wght@400;700&family=Atma:wght@300;400;500;600;700&family=Anek+Bangla:wght@100;200;300;400;500;600;700;800&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
-/* Custom @font-face Declarations for Bangla Typography */
+/* Popular Bangla Fonts (@font-face local reliable files) */
 @font-face {
   font-family: 'SolaimanLipi';
   src: local('SolaimanLipi'),
-       url('https://cdn.jsdelivr.net/gh/atik-ulla/solaimanlipi-font@master/SolaimanLipi.woff2') format('woff2'),
-       url('https://fonts.gstatic.com/s/hindsiliguri/v12/ijwTs5juQtsyLLR5jN4cxBEoTI7ax9k0.woff2') format('woff2');
-  font-weight: 400;
+       url('../fonts/SolaimanLipi-Normal.woff2') format('woff2');
+  font-weight: 100 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SolaimanLipi';
+  src: local('SolaimanLipi Bold'),
+       url('../fonts/SolaimanLipi-Bold.woff2') format('woff2');
+  font-weight: 600 900;
   font-style: normal;
   font-display: swap;
 }
@@ -19,18 +27,87 @@
 @font-face {
   font-family: 'Kalpurush';
   src: local('Kalpurush'),
-       url('https://fonts.gstatic.com/s/notosansbengali/v20/Cn-SJsCGWQxOjaGwMQ6fIiMywrNJIky6nvd8BjzVMvJx2mcSPVFpVEqE-6KmsolKudCk8izI0lc.woff2') format('woff2');
-  font-weight: 400 700;
+       url('../fonts/Kalpurush.woff2') format('woff2');
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'AgamirBangla';
-  src: local('Hind Siliguri'),
-       local('Noto Sans Bengali'),
-       url('https://fonts.gstatic.com/s/hindsiliguri/v12/ijwTs5juQtsyLLR5jN4cxBEoTI7ax9k0.woff2') format('woff2');
-  font-weight: 300 700;
+  font-family: 'Nikosh';
+  src: local('Nikosh'),
+       local('NikoshBAN'),
+       url('../fonts/Nikosh.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sonar Bangla';
+  src: local('Sonar Bangla'),
+       local('Shonar Bangla'),
+       url('../fonts/Nikosh.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Bangla';
+  src: local('Bangla'),
+       local('Bangla Sangam MN'),
+       url('../fonts/Bangla.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AdorshoLipi';
+  src: local('AdorshoLipi'),
+       local('Adorsho Lipi'),
+       url('../fonts/AdorshoLipi.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SutonnyMJ';
+  src: local('SutonnyMJ'),
+       local('SutonnyMJ Unicode'),
+       local('SolaimanLipi'),
+       url('../fonts/SolaimanLipi-Bold.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mukti';
+  src: local('Mukti'),
+       url('../fonts/Mukti-Bold.woff2') format('woff2'),
+       url('../fonts/Mukti.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Charukola';
+  src: local('Charukola'),
+       url('../fonts/Charukola.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BenSen';
+  src: local('BenSen'),
+       url('../fonts/BenSen.woff2') format('woff2');
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
