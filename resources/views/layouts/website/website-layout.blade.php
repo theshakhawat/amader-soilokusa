@@ -26,13 +26,32 @@
   <!-- Remix Icon CDN -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" />
 
-  <!-- Google Fonts: Hind Siliguri & Noto Sans Bengali -->
+  <!-- SolaimanLipi, Google Fonts & Custom Stylesheet -->
+  <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@100;200;300;400;500;600;700;800;900&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
   <!-- Custom Stylesheet & Bangla @font-face -->
   <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}?v={{ file_exists(public_path('assets/css/style.css')) ? filemtime(public_path('assets/css/style.css')) : time() }}" />
+
+  <style>
+    @php
+      $webFont = is_array($sharedFontSetting) ? ($sharedFontSetting['website_font_family'] ?? 'SolaimanLipi') : ($sharedFontSetting->website_font_family ?? 'SolaimanLipi');
+    @endphp
+
+    /* Force selected font, bold weight and size across the whole website */
+    html, body {
+      font-family: '{{ $webFont }}', 'SolaimanLipi', 'Hind Siliguri', 'Inter', system-ui, -apple-system, sans-serif !important;
+      font-size: 18px !important;
+      font-weight: 700 !important;
+    }
+
+    body, p, span, a, li, div, h1, h2, h3, h4, h5, h6, label, button, input, select, textarea {
+      font-family: '{{ $webFont }}', 'SolaimanLipi', 'Hind Siliguri', 'Inter', system-ui, -apple-system, sans-serif !important;
+      font-weight: 700;
+    }
+  </style>
   @stack('styles')
 </head>
 <body class="bg-[#f4f5f7] text-gray-800 antialiased selection:bg-[#c8102e] selection:text-white w-full">

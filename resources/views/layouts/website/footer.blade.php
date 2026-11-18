@@ -66,7 +66,7 @@
         </a>
 
         @if(!empty($aboutText))
-        <p class="text-white/80 text-xs sm:text-[13.5px] leading-relaxed mt-3.5 max-w-sm">
+        <p class="text-white text-[15px] sm:text-[16px] leading-relaxed mt-3.5 max-w-sm font-bold">
           {{ $aboutText }}
         </p>
         @endif
@@ -90,108 +90,60 @@
 
       <!-- Col 2: দ্রুত লিংক -->
       <div class="lg:col-span-2">
-        <h3 class="text-sm sm:text-[16px] font-extrabold text-white mb-2.5 sm:mb-3.5">{{ $quickLinksTitle }}</h3>
-        <ul class="space-y-1.5 sm:space-y-2 text-xs sm:text-[13.5px] text-white/85">
-          @php
-            $hasMemberQuickLink = false;
-            $hasVolunteerQuickLink = false;
-          @endphp
+        <h3 class="text-base sm:text-lg font-black text-white mb-2.5 sm:mb-3.5">{{ $quickLinksTitle }}</h3>
+        <ul class="space-y-1.5 sm:space-y-2 text-[15px] sm:text-[16px] font-bold text-white">
           @foreach($quickLinks as $link)
             @if(!empty($link['label']))
-              @php
-                if (str_contains($link['label'], 'সদস্যগণ')) $hasMemberQuickLink = true;
-                if (str_contains($link['label'], 'স্বেচ্ছাসেবী')) $hasVolunteerQuickLink = true;
-              @endphp
               <li>
-                <a href="{{ $link['url'] ?? '#' }}" class="hover:text-white inline-flex items-center gap-1.5 transition">
-                  <i class="ri-arrow-right-s-line text-emerald-300"></i>
+                <a href="{{ $link['url'] ?? '#' }}" class="hover:text-emerald-300 inline-flex items-center gap-2 py-0.5 transition font-bold">
+                  <i class="ri-arrow-right-s-line text-emerald-400 text-sm"></i>
                   <span>{{ $link['label'] }}</span>
                 </a>
               </li>
             @endif
           @endforeach
-
-          @if(!$hasMemberQuickLink)
-            <li>
-              <a href="{{ route('members.index') }}" class="hover:text-white inline-flex items-center gap-1.5 transition">
-                <i class="ri-arrow-right-s-line text-emerald-300"></i>
-                <span>সদস্যগণ</span>
-              </a>
-            </li>
-          @endif
-
-          @if(!$hasVolunteerQuickLink)
-            <li>
-              <a href="{{ route('volunteers.index') }}" class="hover:text-white inline-flex items-center gap-1.5 transition">
-                <i class="ri-arrow-right-s-line text-emerald-300"></i>
-                <span>স্বেচ্ছাসেবী কর্মীগণ</span>
-              </a>
-            </li>
-          @endif
         </ul>
       </div>
 
       <!-- Col 3: গুরুত্বপূর্ণ লিংক -->
       <div class="lg:col-span-3">
-        <h3 class="text-sm sm:text-[16px] font-extrabold text-white mb-2.5 sm:mb-3.5">{{ $importantLinksTitle }}</h3>
-        <ul class="space-y-1.5 sm:space-y-2 text-xs sm:text-[13.5px] text-white/85">
-          @php $hasVolunteerLink = false; @endphp
+        <h3 class="text-base sm:text-lg font-black text-white mb-2.5 sm:mb-3.5">{{ $importantLinksTitle }}</h3>
+        <ul class="space-y-1.5 sm:space-y-2 text-[15px] sm:text-[16px] font-bold text-white">
           @foreach($importantLinks as $link)
             @if(!empty($link['label']))
-              @php
-                if (str_contains($link['label'], 'স্বেচ্ছাসেবী')) {
-                  $hasVolunteerLink = true;
-                }
-              @endphp
               <li>
-                <a href="{{ $link['url'] ?? '#' }}" class="hover:text-white inline-flex items-center gap-1.5 transition">
-                  <i class="ri-arrow-right-s-line text-emerald-300"></i>
+                <a href="{{ $link['url'] ?? '#' }}" class="hover:text-emerald-300 inline-flex items-center gap-2 py-0.5 transition font-bold">
+                  <i class="ri-arrow-right-s-line text-emerald-400 text-sm"></i>
                   <span>{{ $link['label'] }}</span>
                 </a>
               </li>
             @endif
           @endforeach
-
-          @if(!$hasVolunteerLink)
-            <li>
-              <a href="{{ route('volunteers.apply') }}" class="hover:text-white inline-flex items-center gap-1.5 transition">
-                <i class="ri-arrow-right-s-line text-emerald-300"></i>
-                <span>স্বেচ্ছাসেবী কর্মী নিয়োগ</span>
-              </a>
-            </li>
-          @endif
-
-          <li>
-            <a href="{{ route('members.apply') }}" class="hover:text-white inline-flex items-center gap-1.5 transition">
-              <i class="ri-arrow-right-s-line text-emerald-300"></i>
-              <span>সদস্য হিসেবে যোগদান করুন</span>
-            </a>
-          </li>
         </ul>
       </div>
 
       <!-- Col 4: যোগাযোগ -->
       <div class="lg:col-span-3">
-        <h3 class="text-sm sm:text-[16px] font-extrabold text-white mb-2.5 sm:mb-3.5">{{ $contactTitle }}</h3>
-        <ul class="space-y-2 text-xs sm:text-[13.5px] text-white/85">
+        <h3 class="text-base sm:text-lg font-black text-white mb-2.5 sm:mb-3.5">{{ $contactTitle }}</h3>
+        <ul class="space-y-2 sm:space-y-2.5 text-[15px] sm:text-[16px] font-bold text-white">
           @if(!empty($footerContact->location))
-          <li class="flex items-start gap-2">
-            <i class="fa-solid fa-location-dot text-white mt-0.5"></i>
-            <span>{{ $footerContact->location }}</span>
+          <li class="flex items-start gap-2.5">
+            <i class="fa-solid fa-location-dot text-emerald-400 mt-1"></i>
+            <span class="font-bold">{{ $footerContact->location }}</span>
           </li>
           @endif
 
           @if(!empty($footerContact->phone))
-          <li class="flex items-center gap-2">
-            <i class="fa-solid fa-phone text-white"></i>
-            <a href="tel:{{ $footerContact->phone }}" class="font-sans hover:text-white transition">{{ $footerContact->phone }}</a>
+          <li class="flex items-center gap-2.5">
+            <i class="fa-solid fa-phone text-emerald-400"></i>
+            <a href="tel:{{ $footerContact->phone }}" class="font-sans hover:text-white transition font-bold">{{ $footerContact->phone }}</a>
           </li>
           @endif
 
           @if(!empty($footerContact->email))
-          <li class="flex items-center gap-2">
-            <i class="fa-solid fa-envelope text-white"></i>
-            <a href="mailto:{{ $footerContact->email }}" class="font-sans hover:text-white transition">{{ $footerContact->email }}</a>
+          <li class="flex items-center gap-2.5">
+            <i class="fa-solid fa-envelope text-emerald-400"></i>
+            <a href="mailto:{{ $footerContact->email }}" class="font-sans hover:text-white transition font-bold">{{ $footerContact->email }}</a>
           </li>
           @endif
         </ul>
@@ -201,15 +153,15 @@
   </div>
 
   <!-- Bottom Copyright Bar -->
-  <div class="bg-[#052913] border-t border-white/10 py-3 text-[11px] sm:text-xs text-white/75">
-    <div class="max-w-[1220px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+  <div class="bg-[#052913] border-t border-white/10 py-3.5 text-xs sm:text-sm text-white/85 font-medium">
+    <div class="max-w-[1220px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-left">
       <p>{{ $copyrightText }}</p>
-      <div class="flex items-center gap-2.5 sm:gap-3">
+      <div class="flex items-center gap-3 sm:gap-4">
         @if(!empty($privacyPolicyText))
           <a href="{{ $privacyPolicyLink }}" class="hover:text-white transition">{{ $privacyPolicyText }}</a>
         @endif
         @if(!empty($privacyPolicyText) && !empty($termsText))
-          <span>|</span>
+          <span class="text-white/40">|</span>
         @endif
         @if(!empty($termsText))
           <a href="{{ $termsLink }}" class="hover:text-white transition">{{ $termsText }}</a>

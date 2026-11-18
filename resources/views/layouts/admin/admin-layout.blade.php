@@ -15,10 +15,12 @@
   <!-- Remix Icon CDN -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" />
 
-  <!-- Google Fonts: Hind Siliguri & Inter -->
+  <!-- SolaimanLipi, Google Fonts & Custom Stylesheet -->
+  <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@100;200;300;400;500;600;700;800;900&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}?v={{ file_exists(public_path('assets/css/style.css')) ? filemtime(public_path('assets/css/style.css')) : time() }}" />
 
   <!-- Quill.js Rich Text Editor CDN -->
   <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
@@ -58,8 +60,19 @@
       background: #0b4622;
     }
 
-    body {
-      font-family: 'Hind Siliguri', 'Inter', sans-serif;
+    @php
+      $adminFont = is_array($sharedFontSetting) ? ($sharedFontSetting['admin_font_family'] ?? 'SolaimanLipi') : ($sharedFontSetting->admin_font_family ?? 'SolaimanLipi');
+    @endphp
+
+    html, body {
+      font-family: '{{ $adminFont }}', 'SolaimanLipi', 'Hind Siliguri', 'Inter', system-ui, -apple-system, sans-serif !important;
+      font-size: 16px !important;
+      font-weight: 700 !important;
+    }
+
+    body, p, span, a, li, div, h1, h2, h3, h4, h5, h6, label, button, input, select, textarea {
+      font-family: '{{ $adminFont }}', 'SolaimanLipi', 'Hind Siliguri', 'Inter', system-ui, -apple-system, sans-serif !important;
+      font-weight: 700;
     }
 
     /* Toast Animation */

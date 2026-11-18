@@ -36,7 +36,7 @@
     </a>
 
     <!-- Desktop Navigation Menu (Dynamic from Database) -->
-    <nav class="hidden lg:flex items-center gap-0.5 xl:gap-1 text-[13px] xl:text-[14px] 2xl:text-[15px] font-semibold text-gray-800">
+    <nav class="hidden lg:flex items-center gap-1 xl:gap-1.5 text-[15px] xl:text-[15.5px] 2xl:text-[16px] font-bold text-gray-800">
       @foreach($dynamicNavItems as $navItem)
         @php
           $isCommitteeNav = ($navItem->title === 'কমিটি' || str_contains($navItem->title, 'কমিটি'));
@@ -51,7 +51,7 @@
           <!-- Simple Nav Link (হোম হলে লাল ব্যাকগ্রাউন্ড বাটন, বাকিগুলো সাধারণ নরমাল টেক্সট লিংক) -->
           @if($isHome)
             <a href="{{ url($navItem->url) }}" target="{{ $navItem->target }}" 
-               class="bg-[#c8102e] text-white px-4 py-1.5 rounded-[6px] shadow-sm hover:bg-[#a30b24] transition flex items-center gap-1">
+               class="bg-[#c8102e] text-white px-3 py-1.5 rounded-[6px] shadow-sm hover:bg-[#a30b24] transition flex items-center gap-1">
               @if($navItem->icon)
                 <i class="{{ $navItem->icon }}"></i>
               @endif
@@ -59,7 +59,7 @@
             </a>
           @else
             <a href="{{ url($navItem->url) }}" target="{{ $navItem->target }}" 
-               class="px-3.5 py-1.5 rounded-[6px] hover:text-[#c8102e] transition flex items-center gap-1">
+               class="px-2.5 py-1.5 rounded-[6px] hover:text-[#c8102e] transition flex items-center gap-1">
               @if($navItem->icon)
                 <i class="{{ $navItem->icon }}"></i>
               @endif
@@ -69,7 +69,7 @@
         @else
           <!-- Dropdown Nav Item (Level 1) -->
           <div class="relative group">
-            <button type="button" class="px-3 py-1.5 rounded-[6px] hover:text-[#c8102e] inline-flex items-center gap-1 transition focus:outline-none cursor-pointer">
+            <button type="button" class="px-2.5 py-1.5 rounded-[6px] hover:text-[#c8102e] inline-flex items-center gap-1 transition focus:outline-none cursor-pointer">
               @if($navItem->icon)
                 <i class="{{ $navItem->icon }} text-[#0b4622]"></i>
               @endif
@@ -78,11 +78,11 @@
             </button>
 
             <!-- Level 2 Container (Dropdown Menu) -->
-            <div class="absolute left-0 top-full pt-1.5 w-60 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
-              <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 text-sm">
+            <div class="absolute left-0 top-full pt-1.5 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
+              <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 text-[13.5px]">
                 @if($isCommitteeNav && $navItem->activeChildren->count() === 0)
                   <a href="{{ route('committee.index') }}"
-                     class="flex items-center justify-between px-4 py-2 bg-emerald-50/70 hover:bg-emerald-100/80 text-[#0b4622] transition text-xs font-bold border-b border-emerald-100">
+                     class="flex items-center justify-between px-3.5 py-2 bg-emerald-50/70 hover:bg-emerald-100/80 text-[#0b4622] transition text-[13px] font-bold border-b border-emerald-100">
                     <span class="flex items-center gap-1.5">
                       <i class="ri-function-line text-sm text-[#0b4622]"></i>
                       <span>সকল কমিটি সমূহ</span>
@@ -91,12 +91,12 @@
                   </a>
                   @forelse($activeCommitteesDropdown as $comm)
                     <a href="{{ route('committee.show', $comm->slug ?: $comm->id) }}"
-                       class="flex items-center gap-2 px-4 py-2 hover:bg-emerald-50 hover:text-[#0b4622] transition text-xs font-semibold text-gray-700">
+                       class="flex items-center gap-2 px-3.5 py-2 hover:bg-emerald-50 hover:text-[#0b4622] transition text-[13px] font-bold text-gray-800">
                       <i class="ri-team-line text-[#0b4622]"></i>
                       <span>{{ $comm->name }}</span>
                     </a>
                   @empty
-                    <div class="px-4 py-2 text-xs text-gray-400">কোনো সক্রিয় কমিটি নেই</div>
+                    <div class="px-3.5 py-2 text-[12.5px] text-gray-400">কোনো সক্রিয় কমিটি নেই</div>
                   @endforelse
                 @else
                   @foreach($navItem->activeChildren as $child)
@@ -106,19 +106,19 @@
 
                     @if(!$hasSubChildren)
                       <a href="{{ url($child->url) }}" target="{{ $child->target }}"
-                         class="flex items-center gap-2 px-4 py-2 hover:bg-red-50 hover:text-[#c8102e] transition text-xs font-semibold text-gray-700">
+                         class="flex items-center gap-2 px-3.5 py-2 hover:bg-red-50 hover:text-[#c8102e] transition text-[13px] font-bold text-gray-800">
                         @if($child->icon)
-                          <i class="{{ $child->icon }} text-[#0b4622]"></i>
+                          <i class="{{ $child->icon }} text-[#0b4622] text-sm"></i>
                         @endif
                         <span>{{ $child->title }}</span>
                       </a>
                     @else
                       <!-- Level 2 Item with Level 3 Flyout (Max 3rd Level) -->
                       <div class="relative group/lvl2">
-                        <a href="{{ url($child->url) }}" target="{{ $child->target }}" class="px-4 py-2 hover:bg-emerald-50 hover:text-[#0b4622] flex items-center justify-between cursor-pointer text-xs font-bold text-gray-800 transition">
+                        <a href="{{ url($child->url) }}" target="{{ $child->target }}" class="px-3.5 py-2 hover:bg-emerald-50 hover:text-[#0b4622] flex items-center justify-between cursor-pointer text-[13px] font-bold text-gray-800 transition">
                           <span class="flex items-center gap-2">
                             @if($child->icon)
-                              <i class="{{ $child->icon }} text-[#0b4622]"></i>
+                              <i class="{{ $child->icon }} text-[#0b4622] text-sm"></i>
                             @endif
                             {{ $child->title }}
                           </span>
@@ -126,13 +126,13 @@
                         </a>
 
                         <!-- Level 3 Flyout -->
-                        <div class="absolute left-full top-0 pl-1.5 w-60 hidden group-hover/lvl2:block lvl3-flyout z-50">
-                          <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 text-xs">
+                        <div class="absolute left-full top-0 pl-1.5 w-64 hidden group-hover/lvl2:block lvl3-flyout z-50">
+                          <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 text-[13px]">
                             @foreach($child->activeChildren as $grandChild)
                               <a href="{{ url($grandChild->url) }}" target="{{ $grandChild->target }}"
-                                 class="flex items-center gap-2 px-3.5 py-1.5 hover:bg-emerald-50 hover:text-[#0b4622] text-gray-700 font-medium transition">
+                                 class="flex items-center gap-2 px-3.5 py-2 hover:bg-emerald-50 hover:text-[#0b4622] text-gray-800 font-bold transition">
                                 @if($grandChild->icon)
-                                  <i class="{{ $grandChild->icon }} text-[#0b4622]"></i>
+                                  <i class="{{ $grandChild->icon }} text-[#0b4622] text-sm"></i>
                                 @endif
                                 <span>{{ $grandChild->title }}</span>
                               </a>
@@ -263,19 +263,19 @@
             </button>
 
             <!-- Level 2 Mobile Submenu -->
-            <div id="mobile-nav-{{ $mIdx }}" class="hidden pl-4 pr-2 py-1.5 space-y-1 text-sm text-gray-600 border-l-2 border-emerald-500 ml-4 mt-1">
+            <div id="mobile-nav-{{ $mIdx }}" class="hidden pl-4 pr-2 py-2 space-y-1.5 text-base text-gray-700 border-l-2 border-emerald-500 ml-4 mt-1">
               @if($isCommitteeNavMobile && $navItem->activeChildren->count() === 0)
-                <a href="{{ route('committee.index') }}" class="mobile-nav-link block py-1.5 hover:text-[#0b4622] text-xs font-bold text-[#0b4622] border-b border-gray-100 mb-1">
+                <a href="{{ route('committee.index') }}" class="mobile-nav-link block py-2 hover:text-[#0b4622] text-sm font-bold text-[#0b4622] border-b border-gray-100 mb-1">
                   <i class="ri-function-line mr-1"></i>
                   সকল কমিটি সমূহ
                 </a>
                 @forelse($activeCommitteesDropdownMobile as $comm)
-                  <a href="{{ route('committee.show', $comm->slug ?: $comm->id) }}" class="mobile-nav-link block py-1.5 hover:text-[#0b4622] text-xs font-semibold">
+                  <a href="{{ route('committee.show', $comm->slug ?: $comm->id) }}" class="mobile-nav-link block py-2 hover:text-[#0b4622] text-sm font-bold">
                     <i class="ri-team-line text-[#0b4622] mr-1"></i>
                     {{ $comm->name }}
                   </a>
                 @empty
-                  <span class="block py-1 text-gray-400 text-xs">কোনো সক্রিয় কমিটি নেই</span>
+                  <span class="block py-1.5 text-gray-400 text-sm">কোনো সক্রিয় কমিটি নেই</span>
                 @endforelse
               @else
                 @foreach($navItem->activeChildren as $cIdx => $child)
@@ -284,20 +284,20 @@
                   @endphp
 
                 @if(!$hasSubChildren)
-                  <a href="{{ url($child->url) }}" target="{{ $child->target }}" class="mobile-nav-link block py-1.5 hover:text-[#c8102e] text-xs">
+                  <a href="{{ url($child->url) }}" target="{{ $child->target }}" class="mobile-nav-link block py-2 hover:text-[#c8102e] text-sm font-bold">
                     {{ $child->title }}
                   </a>
                 @else
                   <!-- Level 3 Mobile Submenu (Max 3rd Level) -->
                   <div class="py-1">
                     <button type="button" onclick="toggleMobileSub('mobile-sub-{{ $mIdx }}-{{ $cIdx }}', 'mobile-sub-arrow-{{ $mIdx }}-{{ $cIdx }}')" 
-                            class="w-full flex items-center justify-between py-1 text-xs font-bold text-gray-800 hover:text-[#0b4622]">
+                            class="w-full flex items-center justify-between py-1.5 text-sm font-bold text-gray-800 hover:text-[#0b4622]">
                       <span>{{ $child->title }}</span>
-                      <i id="mobile-sub-arrow-{{ $mIdx }}-{{ $cIdx }}" class="ri-arrow-down-s-line text-xs transition-transform"></i>
+                      <i id="mobile-sub-arrow-{{ $mIdx }}-{{ $cIdx }}" class="ri-arrow-down-s-line text-sm transition-transform"></i>
                     </button>
-                    <div id="mobile-sub-{{ $mIdx }}-{{ $cIdx }}" class="hidden pl-3 space-y-1 text-xs border-l border-gray-200 ml-2 mt-1">
+                    <div id="mobile-sub-{{ $mIdx }}-{{ $cIdx }}" class="hidden pl-3 space-y-1.5 text-sm border-l border-gray-200 ml-2 mt-1">
                       @foreach($child->activeChildren as $gcIdx => $grandChild)
-                        <a href="{{ url($grandChild->url) }}" target="{{ $grandChild->target }}" class="block py-1 hover:text-[#0b4622]">
+                        <a href="{{ url($grandChild->url) }}" target="{{ $grandChild->target }}" class="block py-1.5 font-bold hover:text-[#0b4622]">
                           {{ $grandChild->title }}
                         </a>
                       @endforeach

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AboutSettingController;
 use App\Http\Controllers\Admin\BrandingSettingController;
 use App\Http\Controllers\Admin\MailSettingController;
+use App\Http\Controllers\Admin\FontSettingController;
 use App\Http\Controllers\Admin\RolePermissionController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\UserController;
@@ -193,6 +194,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.permission'])
     Route::get('/settings/mail', [MailSettingController::class, 'index'])->name('settings.mail');
     Route::put('/settings/mail', [MailSettingController::class, 'update'])->name('settings.mail.update');
     Route::post('/settings/mail/test', [MailSettingController::class, 'sendTestMail'])->name('settings.mail.test');
+
+    // Font Settings: Typography Configuration (ফন্ট সেটিংস)
+    Route::get('/settings/font', [FontSettingController::class, 'index'])->name('settings.font');
+    Route::put('/settings/font', [FontSettingController::class, 'update'])->name('settings.font.update');
 
     // User Management (ব্যবহারকারী ব্যবস্থাপনা)
     Route::resource('users', UserController::class)->names('users')->except(['show']);

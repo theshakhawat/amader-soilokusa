@@ -54,35 +54,35 @@
       @endif
 
       <!-- Hero Content -->
-      <div class="relative z-20 max-w-[1220px] mx-auto w-full px-7 sm:px-14 md:px-20 py-8 sm:py-12">
-        <div id="hero-content-box" class="max-w-xl transition-all duration-300 ease-out">
-          <h1 id="hero-title" class="text-white text-2xl sm:text-3xl md:text-[44px] font-extrabold tracking-tight leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+      <div class="relative z-20 max-w-[1220px] mx-auto w-full px-5 sm:px-14 md:px-20 py-8 sm:py-14">
+        <div id="hero-content-box" class="max-w-2xl transition-all duration-300 ease-out">
+          <h1 id="hero-title" class="text-white text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black tracking-tight leading-[1.25] sm:leading-[1.2] drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
             {{ $heroBanners->first()->title }}
           </h1>
           @if($heroBanners->first()->subtitle)
-            <p id="hero-subtitle" class="text-white/95 text-xs sm:text-base md:text-[20px] font-medium leading-relaxed mt-2.5 sm:mt-4 drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
+            <p id="hero-subtitle" class="text-white/95 text-sm sm:text-lg md:text-[22px] font-bold leading-relaxed mt-3 sm:mt-5 drop-shadow-[0_1px_5px_rgba(0,0,0,0.5)]">
               {{ $heroBanners->first()->subtitle }}
             </p>
           @else
-            <p id="hero-subtitle" class="text-white/95 text-xs sm:text-base md:text-[20px] font-medium leading-relaxed mt-2.5 sm:mt-4 drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)] hidden"></p>
+            <p id="hero-subtitle" class="text-white/95 text-sm sm:text-lg md:text-[22px] font-bold leading-relaxed mt-3 sm:mt-5 drop-shadow-[0_1px_5px_rgba(0,0,0,0.5)] hidden"></p>
           @endif
 
           <!-- Hero Action Buttons -->
-          <div class="mt-5 sm:mt-7 flex flex-wrap items-center gap-2.5 sm:gap-3.5">
+          <div class="mt-6 sm:mt-8 flex flex-wrap items-center gap-3 sm:gap-4">
             <a
               id="hero-primary-btn"
               href="{{ $heroBanners->first()->primary_button_link ?? '#about-section' }}"
-              class="bg-[#c8102e] hover:bg-[#a30b24] text-white text-xs sm:text-sm md:text-[15px] font-semibold px-4 sm:px-6 py-2.5 rounded-full shadow-md inline-flex items-center gap-1.5 sm:gap-2 hover:shadow-lg transition cursor-pointer"
+              class="bg-[#c8102e] hover:bg-[#a30b24] text-white text-sm sm:text-base md:text-[17px] font-bold px-5 sm:px-7 py-2.5 sm:py-3 rounded-full shadow-md inline-flex items-center gap-2 hover:shadow-lg transition cursor-pointer"
             >
               <span id="hero-primary-btn-text">{{ $heroBanners->first()->primary_button_text }}</span>
-              <i class="ri-arrow-right-line text-sm sm:text-base"></i>
+              <i class="ri-arrow-right-line text-base sm:text-lg"></i>
             </a>
 
             @if($heroBanners->first()->secondary_button_text)
               <a
                 id="hero-secondary-btn"
                 href="{{ $heroBanners->first()->secondary_button_link ?? '#video' }}"
-                class="border border-white/85 bg-[#06381a]/55 hover:bg-white/20 text-white text-xs sm:text-sm md:text-[15px] font-semibold px-3.5 sm:px-5 py-2.5 rounded-full inline-flex items-center gap-1.5 sm:gap-2 backdrop-blur-[2px] transition cursor-pointer"
+                class="border border-white/85 bg-[#06381a]/55 hover:bg-white/20 text-white text-sm sm:text-base md:text-[17px] font-bold px-4 sm:px-6 py-2.5 sm:py-3 rounded-full inline-flex items-center gap-2 backdrop-blur-[2px] transition cursor-pointer"
               >
                 <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-white text-[#c8102e] flex items-center justify-center">
                   <i class="fa-solid fa-play text-[8px] sm:text-[9px] ml-0.5"></i>
@@ -93,7 +93,7 @@
               <a
                 id="hero-secondary-btn"
                 href="#"
-                class="hidden border border-white/85 bg-[#06381a]/55 hover:bg-white/20 text-white text-xs sm:text-sm md:text-[15px] font-semibold px-3.5 sm:px-5 py-2.5 rounded-full inline-flex items-center gap-1.5 sm:gap-2 backdrop-blur-[2px] transition cursor-pointer"
+                class="hidden border border-white/85 bg-[#06381a]/55 hover:bg-white/20 text-white text-sm sm:text-base md:text-[17px] font-bold px-4 sm:px-6 py-2.5 sm:py-3 rounded-full inline-flex items-center gap-2 backdrop-blur-[2px] transition cursor-pointer"
               >
                 <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-white text-[#c8102e] flex items-center justify-center">
                   <i class="fa-solid fa-play text-[8px] sm:text-[9px] ml-0.5"></i>
@@ -147,8 +147,8 @@
       $activeStats = isset($statCounters) && $statCounters->count() > 0 ? $statCounters : null;
     @endphp
     <section aria-label="পরিসংখ্যান" class="ui-card px-3 sm:px-6 py-4 sm:py-6">
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-{{ $activeStats ? min($activeStats->count(), 5) : 5 }} gap-y-5 gap-x-3 lg:gap-x-0 lg:divide-x lg:divide-gray-200/80">
-        @if($activeStats)
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-{{ $activeStats ? min($activeStats->count(), 6) : 6 }} gap-y-5 gap-x-3 lg:gap-x-0 lg:divide-x lg:divide-gray-200/80">
+        @if($activeStats && $activeStats->count() > 0)
           @foreach($activeStats as $stat)
             <div class="flex items-center justify-center gap-2.5 sm:gap-3.5 px-1 sm:px-2">
               <div class="text-[#c8102e] text-2xl sm:text-[34px] shrink-0">
@@ -161,8 +161,8 @@
                 @endif
               </div>
               <div>
-                <div class="text-lg sm:text-2xl font-extrabold text-gray-900 leading-none">{{ $stat->count }}</div>
-                <div class="text-[11px] sm:text-[13.5px] font-medium text-gray-600 mt-1">{{ $stat->title }}</div>
+                <div class="text-xl sm:text-2xl md:text-[26px] font-black text-gray-900 leading-none">{{ $stat->count }}</div>
+                <div class="text-xs sm:text-[14px] md:text-[15px] font-bold text-gray-700 mt-1.5 leading-tight">{{ $stat->title }}</div>
               </div>
             </div>
           @endforeach
@@ -225,11 +225,11 @@
       <div class="lg:col-span-7 ui-card p-4 sm:p-7 flex flex-col md:flex-row items-center gap-5 sm:gap-6 relative overflow-hidden">
         <div class="w-full md:w-[52%] flex flex-col justify-between z-10">
           <div>
-            <h2 class="text-xl sm:text-[25px] font-extrabold text-[#0b4622] leading-snug">
+            <h2 class="text-xl sm:text-[26px] font-black text-[#0b4622] leading-snug">
               {{ $about->title ?? 'আমাদের সম্পর্কে' }}
             </h2>
             <div class="section-underline"></div>
-            <p class="text-gray-700 text-xs sm:text-[15px] leading-relaxed font-medium">
+            <p class="text-gray-800 text-sm sm:text-base md:text-[16.5px] leading-relaxed font-bold">
               {{ $about->short_description ?? 'আগামীর শৈলকুপা একটি অরাজনৈতিক সামাজিক উদ্যোগ, যা শৈলকুপার সার্বিক উন্নয়ন, শিক্ষা, স্বাস্থ্য, সামাজিক কল্যাণ ও ঐতিহ্য সংরক্ষণে কাজ করে যাচ্ছে।' }}
             </p>
           </div>
@@ -237,10 +237,10 @@
           <div class="mt-4 sm:mt-5">
             <a
               href="{{ route('about.us') }}"
-              class="bg-[#c8102e] hover:bg-[#a30b24] text-white text-xs sm:text-sm font-semibold px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg inline-flex items-center gap-1.5 shadow-sm transition cursor-pointer"
+              class="bg-[#c8102e] hover:bg-[#a30b24] text-white text-sm sm:text-[15px] font-bold px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg inline-flex items-center gap-2 shadow-sm transition cursor-pointer"
             >
               <span>{{ $about->button_text ?? 'বিস্তারিত পড়ুন' }}</span>
-              <i class="ri-arrow-right-line text-sm sm:text-base"></i>
+              <i class="ri-arrow-right-line text-base"></i>
             </a>
           </div>
         </div>
@@ -328,7 +328,7 @@
             href="{{ route('our.pride') }}"
             class="text-[#c8102e] hover:text-[#a30b24] text-xs sm:text-[13.5px] font-bold inline-flex items-center gap-1 transition"
           >
-            <span>সবাই দেখুন</span>
+            <span>সব দেখুন</span>
             <i class="ri-arrow-right-line"></i>
           </a>
         </div>
@@ -348,10 +348,10 @@
                   onerror="this.src='https://placehold.co/400x400/0b4622/ffffff?text={{ urlencode($prideItem->name) }}'"
                 />
               </div>
-              <h3 class="text-xs sm:text-[14px] font-extrabold text-gray-900 leading-snug group-hover:text-[#0b4622] transition line-clamp-1">
+              <h3 class="text-[15px] sm:text-[17px] font-black text-gray-900 leading-snug group-hover:text-[#0b4622] transition line-clamp-1">
                 {{ $prideItem->name }}
               </h3>
-              <p class="text-[10px] sm:text-[11.5px] text-gray-600 mt-0.5 line-clamp-2">
+              <p class="text-[10.5px] sm:text-[11.5px] text-gray-600 mt-0.5 line-clamp-2 font-bold leading-relaxed">
                 {{ $prideItem->designation }}
               </p>
             </a>
@@ -385,7 +385,7 @@
             href="{{ route('committee.index') }}"
             class="text-[#c8102e] hover:text-[#a30b24] text-xs sm:text-[13.5px] font-bold inline-flex items-center gap-1 transition cursor-pointer"
           >
-            <span>সবাই দেখুন</span>
+            <span>সব দেখুন</span>
             <i class="ri-arrow-right-line"></i>
           </a>
         </div>

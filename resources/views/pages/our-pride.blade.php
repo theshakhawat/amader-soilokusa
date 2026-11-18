@@ -105,13 +105,13 @@
               >
             </div>
 
-            <!-- Name -->
-            <h4 class="text-sm sm:text-base font-extrabold text-gray-900 group-hover:text-[#0b4622] transition line-clamp-1">
+            <!-- Name (Bigger) -->
+            <h4 class="text-lg sm:text-xl md:text-[21px] font-black text-gray-900 group-hover:text-[#0b4622] transition line-clamp-1">
               {{ $pride->name }}
             </h4>
 
-            <!-- Designation -->
-            <p class="text-xs text-gray-600 mt-1 line-clamp-2 leading-relaxed font-medium">
+            <!-- Designation (Smaller than name) -->
+            <p class="text-[12px] sm:text-[13px] text-gray-600 mt-1 line-clamp-2 leading-relaxed font-bold">
               {{ $pride->designation }}
             </p>
           </a>
